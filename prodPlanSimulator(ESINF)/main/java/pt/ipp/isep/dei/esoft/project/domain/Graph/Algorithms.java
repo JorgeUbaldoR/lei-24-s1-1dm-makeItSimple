@@ -45,6 +45,31 @@ public class Algorithms {
         return result;
     }
 
+    public static <V, E> LinkedList<V> BreadthFirstSearchAll(Graph<V, E> g) {
+        LinkedList<V> result = new LinkedList<>();
+        Set<V> visited = new HashSet<>();
+
+        for (V vertex : g.vertices()) {
+            if (!visited.contains(vertex)) {
+                Queue<V> queue = new LinkedList<>();
+                queue.add(vertex);
+                visited.add(vertex);
+
+                while (!queue.isEmpty()) {
+                    V currentVertex = queue.poll();
+                    result.add(currentVertex);
+                    for (V adjVert : g.adjVertices(currentVertex)) {
+                        if (!visited.contains(adjVert)) {
+                            queue.add(adjVert);
+                            visited.add(adjVert);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     /**
      * Performs depth-first search starting in a vertex
      *
