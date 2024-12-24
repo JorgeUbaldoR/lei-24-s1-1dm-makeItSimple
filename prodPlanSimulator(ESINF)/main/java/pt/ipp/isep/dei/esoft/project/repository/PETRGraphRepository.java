@@ -50,5 +50,14 @@ public class PETRGraphRepository {
         return null;
     }
 
+    public Optional<String> getFileName(String fileName) {
+        Optional<String> optionalValue = Optional.empty();
+
+        if (fileName != null) {
+            optionalValue = Optional.of(fileName);
+        }
+        return optionalValue;
+    }
+
 
 }
