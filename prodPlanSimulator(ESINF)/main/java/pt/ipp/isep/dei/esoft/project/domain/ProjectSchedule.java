@@ -3,6 +3,7 @@ package pt.ipp.isep.dei.esoft.project.domain;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.Algorithms;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.repository.PETRGraphRepository;
+import pt.ipp.isep.dei.esoft.project.repository.Repositories;
 
 import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.*;
 
@@ -18,12 +19,18 @@ public class ProjectSchedule {
     private final PETRGraphRepository mapGraphRepository;
     private final ID graphID;
     private static final String FILE_PATH = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/output/";
+    private static final int START_ID_DEFAULT = 7777;
+    private static final int FINISH_ID_DEFAULT = 7778;
 
     public ProjectSchedule(MapGraph<Activity, Double> graph, ID graphId) {
         this.projectGraph = graph;
         this.verticesList = new LinkedList<>();
-        this.mapGraphRepository = new PETRGraphRepository();
+        this.mapGraphRepository = getRepositories().getPetrGraphRepository();
         this.graphID = graphId;
+    }
+
+    private Repositories getRepositories() {
+        return Repositories.getInstance();
     }
 
     private void generateVerticesListBFS() {
@@ -44,20 +51,25 @@ public class ProjectSchedule {
 
             double earliestFinish = earliestStart + a.getDuration();
             a.setEarliestFinish(earliestFinish);
+        }
 
-            double latestFinish = a.getPredecessors().isEmpty() ? earliestFinish : getMinLatestStart(a.getPredecessors());
+        ListIterator<Activity> iterator = verticesList.listIterator(verticesList.size());
+        while (iterator.hasPrevious()) {
+            Activity a = iterator.previous();
+
+            double latestFinish = a.getSuccessors().isEmpty() ? a.getEarliestFinish() : getMinLatestStart(a.getSuccessors());
             a.setLatestFinish(latestFinish);
 
             double latestStart = latestFinish - a.getDuration();
             a.setLatestStart(latestStart);
 
-            a.setSlack(latestFinish - earliestFinish);
-
+            double slack = latestFinish - a.getEarliestFinish();
+            a.setSlack(slack);
         }
     }
 
     private double getMaxEarliestFinish(List<ID> predecessors) {
-        double max = Double.NEGATIVE_INFINITY;
+        double max = Double.MIN_VALUE;
         for (ID pred : predecessors) {
             Activity ac = mapGraphRepository.getActivityByID(graphID, pred);
             if (ac != null) {
@@ -68,7 +80,7 @@ public class ProjectSchedule {
     }
 
     private double getMinLatestStart(List<ID> predecessors) {
-        double min = Double.POSITIVE_INFINITY;
+        double min = Double.MAX_VALUE;
         for (ID pred : predecessors) {
             Activity ac = mapGraphRepository.getActivityByID(graphID, pred);
             if (ac != null) {
@@ -81,18 +93,22 @@ public class ProjectSchedule {
     public void sendProjectScheduleToFile(String fileName) {
         calculateScheduleAnalysis();
         try {
-            PrintWriter writer = new PrintWriter(FILE_PATH + fileName);
-            writer.println("act_id,cost,duration,es,ls,ef,lf,prev_act_ids...");
+            PrintWriter writer = new PrintWriter(FILE_PATH + fileName + ".csv");
+            writer.println("act_id;cost;duration;es;ls;ef;lf;prev_act_ids...");
             for (Activity a : verticesList) {
-                writer.printf("%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f", a.getId(), a.getCost(), a.getDuration(),
-                        a.getEarliestStart(), a.getLatestStart(), a.getEarliestFinish(), a.getLatestFinish());
-                for (ID pred : a.getPredecessors()) {
-                    writer.print("," + pred.toString());
+                if (a.getId().getSerial() != START_ID_DEFAULT && a.getId().getSerial() != FINISH_ID_DEFAULT) {
+
+                    writer.printf("%s;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f", a.getId(), a.getCost(), a.getDuration(),
+                            a.getEarliestStart(), a.getLatestStart(), a.getEarliestFinish(), a.getLatestFinish());
+                    for (ID pred : a.getPredecessors()) {
+                        writer.print(";" + pred.toString());
+                    }
                 }
+
                 writer.println();
             }
 
-        writer.close();
+            writer.close();
         } catch (IOException e) {
             System.out.println(ANSI_BRIGHT_RED + "Error writing to file " + FILE_PATH + fileName + ANSI_RESET);
         }

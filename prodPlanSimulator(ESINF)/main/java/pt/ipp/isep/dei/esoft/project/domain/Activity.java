@@ -21,6 +21,7 @@ public class Activity {
     private double cost;
     private String costUnit;
     private List<ID> predecessors;
+    private List<ID> successors;
 
     // Attributes for forward and backward pass
     private double earliestStart;
@@ -39,6 +40,8 @@ public class Activity {
         this.cost = cost;
         this.costUnit = costUnit;
         this.predecessors = predecessors;
+        this.successors = new ArrayList<>();
+
     }
 
     public Activity(ID id, String description) {
@@ -49,6 +52,7 @@ public class Activity {
         this.cost = DEAFULT_COST;
         this.costUnit = DEFUALT_COST_UNIT;
         this.predecessors = new ArrayList<>();
+        this.successors = new ArrayList<>();
     }
 
     public ID getId() {
@@ -79,6 +83,10 @@ public class Activity {
         return predecessors;
     }
 
+    public List<ID> getSuccessors() {
+        return successors;
+    }
+
     public double getEarliestStart() {
         return earliestStart;
     }
@@ -105,6 +113,10 @@ public class Activity {
 
     public void setDuration(double duration) {
         this.duration = duration;
+    }
+
+    public void setSuccessors(List<ID> successors) {
+        this.successors = successors;
     }
 
     public void setDurationUnit(String durationUnit) {

@@ -115,6 +115,15 @@ public class ActivityReader {
                 }
             }
 
+            // Add successors to each activity
+            for (Activity activity : graph.vertices()) {
+                List<ID> successors = new ArrayList<>();
+                for (Activity otherActivity : graph.adjVertices(activity)) {
+                    successors.add(otherActivity.getId());
+                }
+                activity.setSuccessors(successors);
+            }
+
             // Check for circular dependencies
             if (Algorithms.hasCircularDependencies(graph)) {
                 throw new IllegalArgumentException("ERROR IN FILE: Graph has Circular Dependencies.");
