@@ -97,15 +97,22 @@ public class ProjectSchedule {
             writer.println("act_id;cost;duration;es;ls;ef;lf;prev_act_ids...");
             for (Activity a : verticesList) {
                 if (a.getId().getSerial() != START_ID_DEFAULT && a.getId().getSerial() != FINISH_ID_DEFAULT) {
-
                     writer.printf("%s;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f", a.getId(), a.getCost(), a.getDuration(),
                             a.getEarliestStart(), a.getLatestStart(), a.getEarliestFinish(), a.getLatestFinish());
                     for (ID pred : a.getPredecessors()) {
-                        writer.print(";" + pred.toString());
+                        if (pred.getSerial() != START_ID_DEFAULT) {
+                            writer.print(";" + pred);
+                        } else {
+                            writer.print(";" + "START");
+                        }
                     }
+                    writer.println();
+                } else if (a.getId().getSerial() == FINISH_ID_DEFAULT) {
+                    writer.println("FINISH");
+                } else {
+                    writer.println("Start");
                 }
 
-                writer.println();
             }
 
             writer.close();
