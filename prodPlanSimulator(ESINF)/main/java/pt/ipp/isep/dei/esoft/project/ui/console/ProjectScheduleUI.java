@@ -73,7 +73,7 @@ public class ProjectScheduleUI implements Runnable {
 
     private void displayTypedInfo(String fileName, ID inputID) {
         System.out.printf("%nChosen file name -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]", fileName);
-        System.out.printf("%nChosen ID -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]", inputID);
+        System.out.printf("%nChosen ID -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]%n", inputID);
     }
 
 

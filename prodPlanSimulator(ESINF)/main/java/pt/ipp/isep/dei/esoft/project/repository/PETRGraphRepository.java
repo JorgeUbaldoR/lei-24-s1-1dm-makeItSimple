@@ -42,8 +42,11 @@ public class PETRGraphRepository {
     }
 
     public Activity getActivityByID(ID graphID, ID activityID){
-        MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);
+        if(!idGraphExistInRepository(graphID)){
+            return null;
+        }
 
+        MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);
         for (Activity activity : graph.vertices()) {
             if(activity.getId().equals(activityID)){
                 return activity;
@@ -53,7 +56,7 @@ public class PETRGraphRepository {
     }
 
     public Optional<Pair<String, ID>> getScheduleInfo(String fileName, ID graphID) {
-        if (fileName == null || fileName.trim().isEmpty() || graphID == null) {
+        if (fileName == null || fileName.trim().isEmpty() || graphID == null || !idGraphExistInRepository(graphID)) {
             return Optional.empty();
         }
         MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);

@@ -17,7 +17,7 @@ public class ProjectSchedule {
     private final MapGraph<Activity, Double> projectGraph;
     private final PETRGraphRepository mapGraphRepository;
     private final ID graphID;
-    private static final String FILE_PATH = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/output";
+    private static final String FILE_PATH = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/output/";
 
     public ProjectSchedule(MapGraph<Activity, Double> graph, ID graphId) {
         this.projectGraph = graph;
@@ -79,6 +79,7 @@ public class ProjectSchedule {
     }
 
     public void sendProjectScheduleToFile(String fileName) {
+        calculateScheduleAnalysis();
         try {
             PrintWriter writer = new PrintWriter(FILE_PATH + fileName);
             writer.println("act_id,cost,duration,es,ls,ef,lf,prev_act_ids...");
@@ -91,7 +92,7 @@ public class ProjectSchedule {
                 writer.println();
             }
 
-
+        writer.close();
         } catch (IOException e) {
             System.out.println(ANSI_BRIGHT_RED + "Error writing to file " + FILE_PATH + fileName + ANSI_RESET);
         }

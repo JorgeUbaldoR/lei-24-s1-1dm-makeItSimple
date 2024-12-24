@@ -1,6 +1,7 @@
 package pt.ipp.isep.dei.esoft.project.ui.console.menu;
 
 import pt.ipp.isep.dei.esoft.project.ui.console.CreatePETRGraphUI;
+import pt.ipp.isep.dei.esoft.project.ui.console.ProjectScheduleUI;
 import pt.ipp.isep.dei.esoft.project.ui.console.utils.Utils;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class PERTCPMUI implements Runnable {
     public void run() {
         List<MenuItem> options = new ArrayList<MenuItem>();
         options.add(new MenuItem("Generate PETR-CPM Graph", new CreatePETRGraphUI()));
+        options.add(new MenuItem("Generate Project Schedule", new ProjectScheduleUI()));
 
 
         int option = 0;
