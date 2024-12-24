@@ -1,0 +1,152 @@
+#include <DHT.h>
+#define RED_1 0       
+#define YELLOW 6      
+#define GREEN_1 11     
+#define RED_2 2        
+#define GREEN_2 15    
+#define MACHINE 16 
+#define DHT_PIN 28     
+#define DHT_TYPE DHT11 
+DHT dht(DHT_PIN, DHT_TYPE);
+
+#define DELAY_TIME 200  
+#define DURATION 6000  
+
+unsigned long previousMillis = 0;  
+unsigned long blinkInterval = DELAY_TIME; 
+unsigned long blinkStartTime = 0;  
+unsigned long ledStartTime = 0;  
+bool isMachineBlinking = false;  
+bool machineState = LOW;  
+bool ledsOn = false;  
+
+void blinkLED(int pin) {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= blinkInterval) {
+    previousMillis = currentMillis;  
+    machineState = !machineState;  
+    digitalWrite(pin, machineState);  
+  }
+}
+
+void setup() {
+  Serial.begin(9600);  
+
+  pinMode(RED_1, OUTPUT);
+  pinMode(YELLOW, OUTPUT);
+  pinMode(GREEN_1, OUTPUT);
+  pinMode(GREEN_2, OUTPUT);
+  pinMode(RED_2, OUTPUT);
+  pinMode(MACHINE, OUTPUT);
+  
+  digitalWrite(RED_1, LOW);   
+  digitalWrite(RED_2, LOW); 
+  digitalWrite(YELLOW, LOW);   
+  digitalWrite(GREEN_1, LOW);  
+  digitalWrite(GREEN_2, LOW); 
+  digitalWrite(MACHINE, LOW); 
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');  
+    processInput(input);  
+  }
+
+  if (isMachineBlinking) {
+    unsigned long currentMillis = millis();
+
+    if (currentMillis - blinkStartTime >= DURATION) {
+      isMachineBlinking = false; 
+      digitalWrite(MACHINE, LOW);  
+    }
+  }
+
+
+  if (ledsOn) {
+    unsigned long currentMillis = millis();
+    if (currentMillis - ledStartTime >= DURATION) {
+      digitalWrite(RED_1, LOW);
+      digitalWrite(RED_2, LOW);
+      digitalWrite(YELLOW, LOW);
+      digitalWrite(GREEN_1, LOW);
+      digitalWrite(GREEN_2, LOW);  
+      digitalWrite(MACHINE, LOW); 
+      ledsOn = false;  
+    }
+  }
+
+  if (isMachineBlinking) {
+    blinkLED(MACHINE);
+  }
+  
+  delay(100); 
+}
+
+void processInput(String input) {
+  
+  int commaIndex = input.indexOf(',');
+  String state = input.substring(0, commaIndex); 
+  input = input.substring(commaIndex + 1);
+
+  int led1 = input.substring(0, input.indexOf(',')).toInt(); 
+  Serial.println(led1);
+  input = input.substring(input.indexOf(',') + 1);
+  
+  int led2 = input.substring(0, input.indexOf(',')).toInt(); 
+  Serial.println(led2);
+  input = input.substring(input.indexOf(',') + 1);
+  
+  int led3 = input.substring(0, input.indexOf(',')).toInt();
+  Serial.println(led3); 
+  input = input.substring(input.indexOf(',') + 1);
+  
+  int led4 = input.substring(0, input.indexOf(',')).toInt();
+  Serial.println(led4);
+  input = input.substring(input.indexOf(',') + 1);
+
+  int led5 = input.toInt(); 
+  Serial.println(led5); 
+
+  if (state == "ON") {
+    digitalWrite(RED_1, led1);
+    digitalWrite(RED_2, led2);
+    digitalWrite(YELLOW, led3);
+    digitalWrite(GREEN_1, led4);
+    digitalWrite(GREEN_2, led5);  
+    digitalWrite(MACHINE, HIGH); 
+    getTemAndHum();
+
+    ledsOn = true;
+    ledStartTime = millis(); 
+  } 
+  else if (state == "OP") {
+    digitalWrite(RED_1, led1);
+    digitalWrite(RED_2, led2);
+    digitalWrite(YELLOW, led3);
+    digitalWrite(GREEN_1, led4);
+    digitalWrite(GREEN_2, led5); 
+    getTemAndHum(); 
+    
+    isMachineBlinking = true;
+    blinkStartTime = millis();  
+
+  
+    ledsOn = true;
+    ledStartTime = millis();  
+  }
+}
+
+void getTemAndHum(){
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Erro ao ler do sensor DHT!");
+  } else {
+  Serial.println(temperature);
+  Serial.println(humidity);
+  
+  }
+}
