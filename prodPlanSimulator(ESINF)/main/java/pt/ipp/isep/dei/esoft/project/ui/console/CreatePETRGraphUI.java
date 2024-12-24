@@ -22,7 +22,9 @@ public class CreatePETRGraphUI implements Runnable {
         controller = new PETRGraphController();
     }
 
-    private PETRGraphController getController(){return this.controller;}
+    private PETRGraphController getController() {
+        return this.controller;
+    }
 
     @Override
     public void run() {
@@ -39,6 +41,7 @@ public class CreatePETRGraphUI implements Runnable {
 
     /**
      * Executes actions based on the user's choice.
+     *
      * @param choice User's choice from the menu.
      */
     private void doChoice(int choice) {
@@ -46,17 +49,17 @@ public class CreatePETRGraphUI implements Runnable {
         ID idGraph;
         switch (choice) {
             case 1:
-                System.out.println(ANSI_BRIGHT_GREEN + "\n\n       GENERATING GRAPH | DEFAULT FILE" + ANSI_RESET+"\n");
+                System.out.println(ANSI_BRIGHT_GREEN + "\n\n       GENERATING GRAPH | DEFAULT FILE" + ANSI_RESET + "\n");
                 idGraph = getInputID();
-                confirmationData(idGraph,DEFAULT_PATH);
+                confirmationData(idGraph, DEFAULT_PATH);
                 break;
 
             case 2:
-                System.out.println(ANSI_BRIGHT_GREEN + "\n\n       GENERATING GRAPH | SPECIFIC FILE" + ANSI_RESET+"\n");
+                System.out.println(ANSI_BRIGHT_GREEN + "\n\n       GENERATING GRAPH | SPECIFIC FILE" + ANSI_RESET + "\n");
                 idGraph = getInputID();
                 System.out.print("Enter the path to the file:");
                 String path = in.nextLine();
-                confirmationData(idGraph,path);
+                confirmationData(idGraph, path);
                 break;
             default:
                 System.out.println(ANSI_BRIGHT_RED + "\nLEAVING..." + ANSI_RESET);
@@ -68,7 +71,7 @@ public class CreatePETRGraphUI implements Runnable {
      * Prompts the user to enter an ID (either item or operation) and validates the input.
      *
      * @return the ID entered by the user, or null if invalid input is provided.
-     *
+     * <p>
      * Complexity:
      * - Validation loop: O(n), where n is the number of attempts until valid input is provided.
      * - String parsing and ID creation: O(1).
@@ -102,7 +105,7 @@ public class CreatePETRGraphUI implements Runnable {
      *
      * @param inputID the input string to validate.
      * @return true if the input is valid; false otherwise.
-     *
+     * <p>
      * Complexity: O(1) as it performs a constant number of character checks.
      */
     private boolean checkInputID(String inputID) {
@@ -113,9 +116,10 @@ public class CreatePETRGraphUI implements Runnable {
 
     /**
      * Prompts the user to input their choice and validates it.
+     *
      * @return A valid choice between 0 and 2.
      */
-    private int getChoice () {
+    private int getChoice() {
         int choice = 0;
         boolean valid = false;
         do {
@@ -138,46 +142,45 @@ public class CreatePETRGraphUI implements Runnable {
     }
 
 
-
-    private void displayOption(String name,int flag) {
+    private void displayOption(String name, int flag) {
         if (flag == 0) {
             System.out.printf("%nChosen ID -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]", name);
-        }else{
+        } else {
             System.out.printf("%nChosen Path -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]", name);
         }
     }
 
-        private void confirmationData(ID idGraph, String path) {
+    private void confirmationData(ID idGraph, String path) {
         System.out.print("Type (y) for a DGraph or (n) for NotDGraph: ");
 
-        displayOption(idGraph.toString(),0);
-        displayOption(path,1);
+        displayOption(idGraph.toString(), 0);
+        displayOption(path, 1);
 
         System.out.print("\nDo you wish to save the operation? (y/n): ");
         String answer = yesNoConfirmation();
 
-        if(answer.equalsIgnoreCase("y")){
+        if (answer.equalsIgnoreCase("y")) {
 
-            try{
-                if(getController().idGraphExist(idGraph)){
-                    MapGraph<Activity, Double> createdMap = getController().createMapGraph(path,true);
+            try {
+                if (getController().idGraphExist(idGraph)) {
+                    MapGraph<Activity, Double> createdMap = getController().createMapGraph(path, true);
                     System.out.println(createdMap.toString(idGraph));
-                    getController().writeGraph(createdMap,idGraph);
-                    if(getController().saveGraph(createdMap,idGraph)){
-                        System.out.println("\n"+ANSI_BRIGHT_GREEN + "Graph successfully generated!" + ANSI_RESET);
-                    }else{
-                        System.out.println("\n"+ANSI_BRIGHT_YELLOW + "Graph successfully generated! - But ERROR saving MapGraph" + ANSI_RESET);
+                    getController().writeGraph(createdMap, idGraph);
+                    if (getController().saveGraph(createdMap, idGraph)) {
+                        System.out.println("\n" + ANSI_BRIGHT_GREEN + "Graph successfully generated!" + ANSI_RESET);
+                    } else {
+                        System.out.println("\n" + ANSI_BRIGHT_YELLOW + "Graph successfully generated! - But ERROR saving MapGraph" + ANSI_RESET);
                     }
-                }else{
-                    System.out.println("\n"+ANSI_BRIGHT_RED + "Operation canceled - The ID chosen already exist" + ANSI_RESET);
+                } else {
+                    System.out.println("\n" + ANSI_BRIGHT_RED + "Operation canceled - The ID chosen already exist" + ANSI_RESET);
                 }
 
             } catch (Exception e) {
-                System.out.println("\n"+ANSI_BRIGHT_RED +e.getMessage()+ ANSI_RESET);
+                System.out.println("\n" + ANSI_BRIGHT_RED + e.getMessage() + ANSI_RESET);
             }
 
-        }else{
-            System.out.println("\n"+ANSI_BRIGHT_RED + "Operation canceled." + ANSI_RESET);
+        } else {
+            System.out.println("\n" + ANSI_BRIGHT_RED + "Operation canceled." + ANSI_RESET);
         }
 
     }

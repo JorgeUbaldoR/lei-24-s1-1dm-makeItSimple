@@ -1,8 +1,10 @@
 package pt.ipp.isep.dei.esoft.project.repository;
 
 import pt.ipp.isep.dei.esoft.project.domain.Activity;
+import pt.ipp.isep.dei.esoft.project.domain.Graph.Pair;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.domain.ID;
+import pt.ipp.isep.dei.esoft.project.domain.ProjectSchedule;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,13 +52,15 @@ public class PETRGraphRepository {
         return null;
     }
 
-    public Optional<String> getFileName(String fileName) {
-        Optional<String> optionalValue = Optional.empty();
-
-        if (fileName != null) {
-            optionalValue = Optional.of(fileName);
+    public Optional<Pair<String, ID>> getScheduleInfo(String fileName, ID graphID) {
+        if (fileName == null || fileName.trim().isEmpty() || graphID == null) {
+            return Optional.empty();
         }
-        return optionalValue;
+        MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);
+        ProjectSchedule projectSchedule = new ProjectSchedule(graph, graphID);
+        projectSchedule.sendProjectScheduleToFile(fileName);
+
+        return Optional.of(new Pair<>(fileName, graphID));
     }
 
 

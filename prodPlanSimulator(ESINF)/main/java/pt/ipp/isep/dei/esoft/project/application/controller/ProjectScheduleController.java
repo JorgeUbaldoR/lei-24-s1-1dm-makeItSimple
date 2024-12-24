@@ -1,5 +1,7 @@
 package pt.ipp.isep.dei.esoft.project.application.controller;
 
+import pt.ipp.isep.dei.esoft.project.domain.Graph.Pair;
+import pt.ipp.isep.dei.esoft.project.domain.ID;
 import pt.ipp.isep.dei.esoft.project.repository.PETRGraphRepository;
 import pt.ipp.isep.dei.esoft.project.repository.Repositories;
 
@@ -23,8 +25,8 @@ public class ProjectScheduleController {
         return graphRepository;
     }
 
-    public Optional<String> getFileName(String fileName) {
-        return graphRepository.getFileName(fileName);
+    public Optional<Pair<String, ID>> getScheduleInfo(String fileName, ID graphID) {
+        return graphRepository.getScheduleInfo(fileName, graphID);
 
     }
 }

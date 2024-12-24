@@ -19,10 +19,10 @@ public class ProjectSchedule {
     private final ID graphID;
     private static final String FILE_PATH = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/output";
 
-    public ProjectSchedule(MapGraph<Activity, Double> graph, ID graphId, PETRGraphRepository mapGraphRepository) {
+    public ProjectSchedule(MapGraph<Activity, Double> graph, ID graphId) {
         this.projectGraph = graph;
         this.verticesList = new LinkedList<>();
-        this.mapGraphRepository = mapGraphRepository;
+        this.mapGraphRepository = new PETRGraphRepository();
         this.graphID = graphId;
     }
 
