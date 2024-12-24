@@ -1,0 +1,16 @@
+op_designation,op_number,machine_id
+cutting,1,3
+welding,2,1
+packaging,3,5
+assembly,4,4
+painting,5,2
+drilling,6,2
+polishing,7,5
+sealing,8,1
+testing,9,3
+labeling,10,4
+stamping,11,1
+grinding,12,3
+coating,13,5
+packaging,14,2
+shipping,15,4

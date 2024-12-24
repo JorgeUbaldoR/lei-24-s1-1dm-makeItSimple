@@ -1,0 +1,13 @@
+state,machine_id,operation_id
+OP,1,21
+OP,1,2
+OP,1,8
+OP,2,6
+OP,3,9
+OP,4,15
+OP,13,2
+OP,5,13
+ON,2,6
+ON,1,2
+OP,1,11
+ON,1,11
