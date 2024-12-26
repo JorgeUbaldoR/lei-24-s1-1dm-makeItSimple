@@ -2,7 +2,8 @@
 
 ### 1. User Story Description
 
->  As a Production Manager, I want to get the list of parts used in a product.
+> As a Production Manager, I want to know if we have the necessary materials and components in stock to fulfil a given order.
+
 
 
 ### 2. Resolution

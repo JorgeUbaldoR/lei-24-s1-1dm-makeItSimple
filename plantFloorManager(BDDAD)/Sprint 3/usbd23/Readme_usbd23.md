@@ -2,7 +2,7 @@
 
 ### 1. User Story Description
 
->  As a Production Manager, I want to get the list of parts used in a product.
+>  As a Production Manager, I want to make sure that the expected execution time of an operation is not greater than the maximum execution time of every workstation type where it may be run. A trigger should be developed to avoid this issue in both insert and update operations.
 
 
 ### 2. Resolution
@@ -19,62 +19,29 @@ part is a subproduct made at the factory
 >
 >The second part of the query handles parts related to the product indirectly. It selects parts from the BOO_OUTPUT table, ensuring that parts are not linked directly to the product but are part of a more complex relationship. The query joins BOO_OUTPUT and BOO_INPUT and filters based on a subquery that identifies parts associated with the subproducts through specific operations. This query also sums the quantities and groups them by part number.
 
-    CREATE OR REPLACE FUNCTION list_parts_used_product(
-        product_id IN Operation.BOOProductProduct_ID%TYPE
-    )
-    RETURN SYS_REFCURSOR
-    IS
-        list_parts_cursor SYS_REFCURSOR;
-    BEGIN
-        OPEN list_parts_cursor FOR
-            -- Base case: Select parts directly associated with the product
-            SELECT BI.PartPARTNUMBER, SUM(BI.QUANTITY) AS QUANTITY
-            FROM BOO_INPUT BI
-            JOIN Operation O ON BI.OperationOPERATION_ID = O.OPERATION_ID
-            WHERE O.BOOProductProduct_ID = product_id
-            GROUP BY BI.PartPARTNUMBER
-    
-            UNION ALL
-    
-            SELECT BO.PartPARTNUMBER, SUM(BO.QUANTITY) AS QUANTITY
-            FROM BOO_OUTPUT BO
-            JOIN Operation O ON BO.OperationOPERATION_ID = O.OPERATION_ID
-            JOIN BOO_INPUT BI ON BI.OperationOPERATION_ID = BO.OperationOPERATION_ID
-            WHERE BO.PartPARTNUMBER NOT LIKE O.BOOProductProduct_ID
-                AND O.BOOProductProduct_ID IN (
-                    SELECT BI.PartPARTNUMBER
-                    FROM BOO_INPUT BI
-                    JOIN Part P ON BI.PartPARTNUMBER = P.PARTNUMBER
-                    JOIN Operation O ON BI.OperationOPERATION_ID = O.OPERATION_ID
-                    WHERE O.BOOProductProduct_ID = product_id and P.TYPE LIKE 'Product'
-                    GROUP BY BI.PartPARTNUMBER
-                ) 
-            GROUP BY BO.PartPARTNUMBER;
-    
-        RETURN list_parts_cursor;
-    END;
-    /
-
+    CREATE OR REPLACE TRIGGER validate_expected_time
+    BEFORE INSERT OR UPDATE ON Operation
+    FOR EACH ROW
     DECLARE
-        parts_cursor	SYS_REFCURSOR;
-        part_number	BOO_INPUT.PartPARTNUMBER%TYPE;
-        quantity	BOO_INPUT.QUANTITY%TYPE;
+        max_time NUMBER;
     BEGIN
-        -- Call the function with product 'AS12945S22'
-        parts_cursor := list_parts_used_product('AS12945S22');
-    
-        -- Loop through the result set and display parts and quantities
-        LOOP
-            FETCH parts_cursor INTO part_number, quantity;
-            EXIT WHEN parts_cursor%NOTFOUND;
-            
-            DBMS_OUTPUT.PUT_LINE('Part Number: ' || part_number || ', Quantity: ' || quantity);
-        END LOOP;
-        
-        -- Close the cursor after processing
-        CLOSE parts_cursor;
+        SELECT MAX_EXECUTIONTIME
+        INTO max_time
+        FROM Workstation_Type Wt
+        JOIN Workstation_Type_Operation_TYPE WtOt ON WtOt.Workstation_TypeWS_TYPE_ID = Wt.WS_TYPE_ID
+        WHERE Operation_TYPEOPTYPE_ID = :NEW.Operation_TYPEOPTYPE_ID;
+
+        IF :NEW.EXPECTEDTIME > max_time THEN
+            RAISE_APPLICATION_ERROR(
+                -20001,
+                'Expected execution time exceeds the maximum execution time for the operation type.'
+            );
+        END IF;
     END;
     /
+    
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (9999, 'Teflon painting', 3300, 'AS99999S99', 5671, NULL);
 
 
 ### 3. Resolution

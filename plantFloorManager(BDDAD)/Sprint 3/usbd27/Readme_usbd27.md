@@ -2,7 +2,7 @@
 
 ### 1. User Story Description
 
->  As a Production Manager, I want to get the list of parts used in a product.
+>  As a Production Manager, I want to reserve the necessary materials and components to fulfil a given order. The reserved materials and components should be registered in the database, but not automatically deducted from stock. The reservation should be created only if the whole order can be fulfilled.
 
 
 ### 2. Resolution

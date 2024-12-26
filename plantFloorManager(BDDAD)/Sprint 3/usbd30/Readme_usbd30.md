@@ -2,8 +2,7 @@
 
 ### 1. User Story Description
 
->  As a Production Manager, I want to get the list of parts used in a product.
-
+>  As a Factory Manager, I want to use/consume a material/component, i.e. to deduct a given amount from the stock. The operation should not be allowed if the remaining stock falls below the currently reserved quantity.
 
 ### 2. Resolution
 >**AC1:** Minimum expected requirement: demonstrated with data imported from the
@@ -19,60 +18,63 @@ part is a subproduct made at the factory
 >
 >The second part of the query handles parts related to the product indirectly. It selects parts from the BOO_OUTPUT table, ensuring that parts are not linked directly to the product but are part of a more complex relationship. The query joins BOO_OUTPUT and BOO_INPUT and filters based on a subquery that identifies parts associated with the subproducts through specific operations. This query also sums the quantities and groups them by part number.
 
-    CREATE OR REPLACE FUNCTION list_parts_used_product(
-        product_id IN Operation.BOOProductProduct_ID%TYPE
-    )
-    RETURN SYS_REFCURSOR
+    CREATE OR REPLACE FUNCTION update_stock (
+        p_PartPARTNUMBER IN Part.PARTNUMBER%TYPE,
+        p_Amount IN NUMBER) 
+    RETURN VARCHAR2
     IS
-        list_parts_cursor SYS_REFCURSOR;
+        v_Part_Type VARCHAR2(50);
     BEGIN
-        OPEN list_parts_cursor FOR
-            -- Base case: Select parts directly associated with the product
-            SELECT BI.PartPARTNUMBER, SUM(BI.QUANTITY) AS QUANTITY
-            FROM BOO_INPUT BI
-            JOIN Operation O ON BI.OperationOPERATION_ID = O.OPERATION_ID
-            WHERE O.BOOProductProduct_ID = product_id
-            GROUP BY BI.PartPARTNUMBER
-    
-            UNION ALL
-    
-            SELECT BO.PartPARTNUMBER, SUM(BO.QUANTITY) AS QUANTITY
-            FROM BOO_OUTPUT BO
-            JOIN Operation O ON BO.OperationOPERATION_ID = O.OPERATION_ID
-            JOIN BOO_INPUT BI ON BI.OperationOPERATION_ID = BO.OperationOPERATION_ID
-            WHERE BO.PartPARTNUMBER NOT LIKE O.BOOProductProduct_ID
-                AND O.BOOProductProduct_ID IN (
-                    SELECT BI.PartPARTNUMBER
-                    FROM BOO_INPUT BI
-                    JOIN Part P ON BI.PartPARTNUMBER = P.PARTNUMBER
-                    JOIN Operation O ON BI.OperationOPERATION_ID = O.OPERATION_ID
-                    WHERE O.BOOProductProduct_ID = product_id and P.TYPE LIKE 'Product'
-                    GROUP BY BI.PartPARTNUMBER
-                ) 
-            GROUP BY BO.PartPARTNUMBER;
-    
-        RETURN list_parts_cursor;
+        EXECUTE IMMEDIATE 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE';
+
+        BEGIN
+            SELECT Part_TypePART_TYPE
+            INTO v_Part_Type
+            FROM Part
+            WHERE PARTNUMBER = p_PartPARTNUMBER;
+
+            IF v_Part_Type = 'Component' THEN
+                UPDATE Component
+                SET STOCK = STOCK - p_Amount
+                WHERE PartPARTNUMBER = p_PartPARTNUMBER
+                AND STOCK - p_Amount >= (RESERVED+MIN_STOCK);
+
+                IF SQL%ROWCOUNT = 0 THEN
+                    RAISE_APPLICATION_ERROR(-20001, 'Insufficient stock to complete the operation.');
+                END IF;
+
+            ELSIF v_Part_Type = 'Raw Material' THEN
+                UPDATE "Raw Material"
+                SET STOCK = STOCK - p_Amount
+                WHERE PartPARTNUMBER = p_PartPARTNUMBER
+                AND STOCK - p_Amount >= (RESERVED+MIN_STOCK);
+
+                IF SQL%ROWCOUNT = 0 THEN
+                    RAISE_APPLICATION_ERROR(-20001, 'Insufficient stock to complete the operation.');
+                END IF;
+
+            ELSE
+                RAISE_APPLICATION_ERROR(-20002, 'The following part was not a component or material');
+            END IF;
+        END;
+        COMMIT;
+
+        RETURN 'Stock update successful';
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                ROLLBACK;
+                RETURN 'Error: ' || SQLERRM;
     END;
     /
-
-    DECLARE
-        parts_cursor	SYS_REFCURSOR;
-        part_number	BOO_INPUT.PartPARTNUMBER%TYPE;
-        quantity	BOO_INPUT.QUANTITY%TYPE;
-    BEGIN
-        -- Call the function with product 'AS12945S22'
-        parts_cursor := list_parts_used_product('AS12945S22');
     
-        -- Loop through the result set and display parts and quantities
-        LOOP
-            FETCH parts_cursor INTO part_number, quantity;
-            EXIT WHEN parts_cursor%NOTFOUND;
-            
-            DBMS_OUTPUT.PUT_LINE('Part Number: ' || part_number || ', Quantity: ' || quantity);
-        END LOOP;
-        
-        -- Close the cursor after processing
-        CLOSE parts_cursor;
+    
+    DECLARE
+        result VARCHAR2(100);
+    BEGIN
+        --PN12344A21 50 10 5
+        result := update_stock('PN12344A21', 40);
+        DBMS_OUTPUT.PUT_LINE(result);
     END;
     /
 

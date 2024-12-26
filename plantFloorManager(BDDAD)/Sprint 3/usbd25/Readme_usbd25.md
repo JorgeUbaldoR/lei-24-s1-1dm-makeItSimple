@@ -2,7 +2,7 @@
 
 ### 1. User Story Description
 
->  As a Production Manager, I want to get the list of parts used in a product.
+>  As a Production Manager, I want to get a list of a product’s operations necessary for the production plan module.
 
 
 ### 2. Resolution

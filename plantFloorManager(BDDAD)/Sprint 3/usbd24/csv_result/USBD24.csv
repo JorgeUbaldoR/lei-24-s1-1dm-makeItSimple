@@ -1,11 +1,1 @@
-Statement processed.
-Part Number: AS12947S22, Quantity: 1
-Part Number: AS12946S22, Quantity: 1
-Part Number: IP12945A03, Quantity: 2
-Part Number: IP12947A04, Quantity: 2
-Part Number: IP12945A01, Quantity: 1
-Part Number: IP12945A04, Quantity: 1
-Part Number: IP12947A03, Quantity: 1
-Part Number: IP12945A02, Quantity: 2
-Part Number: IP12947A02, Quantity: 2
-Part Number: IP12947A01, Quantity: 1
+ORA-20002: A product cannot be an input in its own BOO.

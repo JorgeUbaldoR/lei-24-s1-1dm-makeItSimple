@@ -2,7 +2,7 @@
 
 ### 1. User Story Description
 
-> As a Product Owner, I want to insert the provided data into the system.
+> As a Product Owner, I want to automatically generate the physical level SQL code of the database from the Visual Paradigm model.
 
 
 ### 2. Customer Specifications and Clarifications
@@ -18,6 +18,244 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
 
 >* **AC1:** Minimum expected requirement: manual creation of the data input scripts.
 
+    DROP TABLE BOO CASCADE CONSTRAINTS;
+    DROP TABLE BOO_INPUT CASCADE CONSTRAINTS;
+    DROP TABLE BOO_OUTPUT CASCADE CONSTRAINTS;
+    DROP TABLE BOO_Template CASCADE CONSTRAINTS;
+    DROP TABLE Component CASCADE CONSTRAINTS;
+    DROP TABLE Costumer CASCADE CONSTRAINTS;
+    DROP TABLE "Deactivated Costumers" CASCADE CONSTRAINTS;
+    DROP TABLE "Intermediate Product" CASCADE CONSTRAINTS;
+    DROP TABLE Operation CASCADE CONSTRAINTS;
+    DROP TABLE Operation_TYPE CASCADE CONSTRAINTS;
+    DROP TABLE "Order" CASCADE CONSTRAINTS;
+    DROP TABLE Order_Products CASCADE CONSTRAINTS;
+    DROP TABLE Part CASCADE CONSTRAINTS;
+    DROP TABLE Part_Type CASCADE CONSTRAINTS;
+    DROP TABLE Prod_Family CASCADE CONSTRAINTS;
+    DROP TABLE Product CASCADE CONSTRAINTS;
+    DROP TABLE Production_Order CASCADE CONSTRAINTS;
+    DROP TABLE Production_Order_WorkStation CASCADE CONSTRAINTS;
+    DROP TABLE "Raw Material" CASCADE CONSTRAINTS;
+    DROP TABLE Supplier CASCADE CONSTRAINTS;
+    DROP TABLE Supplier_Part CASCADE CONSTRAINTS;
+    DROP TABLE Work_Station CASCADE CONSTRAINTS;
+    DROP TABLE Workstation_Type CASCADE CONSTRAINTS;
+    DROP TABLE Workstation_Type_Operation_TYPE CASCADE CONSTRAINTS;
+    
+    CREATE TABLE BOO (
+      ProductProduct_ID varchar2(255) NOT NULL,
+      PRIMARY KEY (ProductProduct_ID)
+    );
+    
+    CREATE TABLE BOO_INPUT (
+      OperationOPERATION_ID number(10) NOT NULL,
+      PartPARTNUMBER varchar2(255) NOT NULL,
+      QUANTITY number(10) NOT NULL,
+      UNIT varchar2(255) NOT NULL,
+      PRIMARY KEY (OperationOPERATION_ID, PartPARTNUMBER)
+    );
+    
+    CREATE TABLE BOO_OUTPUT (
+      OperationOPERATION_ID number(10) NOT NULL,
+      PartPARTNUMBER varchar2(255) NOT NULL,
+      QUANTITY number(10) NOT NULL,
+      UNIT varchar2(255) NOT NULL,
+      PRIMARY KEY (OperationOPERATION_ID, PartPARTNUMBER)
+    );
+    
+    CREATE TABLE BOO_Template (
+      OPNUMBER number(10) NOT NULL,
+      OperationOPERATION_ID number(10) NOT NULL,
+      Prod_FamilyFAMILY_ID number(10) NOT NULL,
+      PRIMARY KEY (OPNUMBER, OperationOPERATION_ID, Prod_FamilyFAMILY_ID)
+    );
+    
+    CREATE TABLE Component (
+      PartPARTNUMBER varchar2(255) NOT NULL,
+      STOCK number(38),
+      MIN_STOCK number(38) NOT NULL,
+      RESERVED number(38),
+      PRIMARY KEY (PartPARTNUMBER)
+    );
+    
+    CREATE TABLE Costumer (
+      COSTUMER_ID number(10) NOT NULL,
+      VAT varchar2(100) NOT NULL,
+      NAME varchar2(255) NOT NULL,
+      ADDRESS varchar2(255) NOT NULL,
+      CITY varchar2(70) NOT NULL,
+      COUNTRY varchar2(70) NOT NULL,
+      ZIP varchar2(20) NOT NULL,
+      PHONE number(15) NOT NULL,
+      EMAIL varchar2(100) NOT NULL,
+      PRIMARY KEY (COSTUMER_ID)
+    );
+    
+    CREATE TABLE "Deactivated Costumers" (
+      CostumerCOSTUMER_ID number(10) NOT NULL,
+      PRIMARY KEY (CostumerCOSTUMER_ID)
+    );
+    
+    CREATE TABLE "Intermediate Product" (
+      PartPARTNUMBER varchar2(255) NOT NULL,
+      STOCK number(38),
+      MIN_STOCK number(38) NOT NULL,
+      RESERVED number(38),
+      PRIMARY KEY (PartPARTNUMBER)
+    );
+    
+    
+    CREATE TABLE Operation (
+      OPERATION_ID number(10) NOT NULL,
+      DESCRIPTION varchar2(100) NOT NULL,
+      EXPECTEDTIME number(10),
+      Operation_TYPEOPTYPE_ID number(10) NOT NULL,
+      BOOProductProduct_ID varchar2(255) NOT NULL,
+      NEXTSTEP number(10),
+      PRIMARY KEY (OPERATION_ID)
+    );
+    
+    CREATE TABLE Operation_TYPE (
+      OPTYPE_ID number(10) NOT NULL,
+      DESCRIPTION varchar2(255) NOT NULL,
+      PRIMARY KEY (OPTYPE_ID)
+    );
+    
+    CREATE TABLE "Order" (
+      ORDER_ID number(10) NOT NULL,
+      CostumerCOSTUMER_ID number(10) NOT NULL,
+      DELIVERY_DATE date NOT NULL,
+      ORDER_DATE date NOT NULL,
+      STATUS varchar2(255) NOT NULL,
+      PRIMARY KEY (ORDER_ID)
+    );
+    
+    CREATE TABLE Order_Products (
+      OrderORDER_ID number(10) NOT NULL,
+      ProductProduct_ID varchar2(255) NOT NULL,
+      AMOUNT_PRODUCT number(10) NOT NULL,
+      PRIMARY KEY (OrderORDER_ID, ProductProduct_ID)
+    );
+    
+    CREATE TABLE Part (
+      PARTNUMBER varchar2(255) NOT NULL,
+      DESCRIPTION varchar2(255) NOT NULL,
+      Part_TypePART_TYPE varchar2(50) NOT NULL,
+      PRIMARY KEY (PARTNUMBER)
+    );
+    
+    CREATE TABLE Part_Type (
+      PART_TYPE varchar2(50) NOT NULL,
+      PRIMARY KEY (PART_TYPE)
+    );
+    
+    CREATE TABLE Prod_Family (
+      FAMILY_ID number(10) NOT NULL,
+      NAME varchar2(100) NOT NULL,
+      PRIMARY KEY (FAMILY_ID)
+    );
+    
+    CREATE TABLE Product (
+      Product_ID varchar2(255) NOT NULL,
+      Prod_FamilyFAMILY_ID number(10) NOT NULL,
+      NAME varchar2(30) NOT NULL,
+      DESCRIPTION varchar2(100) NOT NULL,
+      PRIMARY KEY (Product_ID)
+    );
+    
+    CREATE TABLE Production_Order (
+      PO_ID number(10) NOT NULL,
+      Order_ProducstOrderORDER_ID number(10) NOT NULL,
+      Order_ProductsProductPRODUCT_ID varchar2(255) NOT NULL,
+      PRIMARY KEY (PO_ID)
+    );
+    
+    CREATE TABLE Production_Order_WorkStation (
+      Production_OrderPO_ID number(10) NOT NULL,
+      Work_StationWS_ID number(10) NOT NULL,
+      PRIMARY KEY (Production_OrderPO_ID, Work_StationWS_ID)
+    );
+    
+    CREATE TABLE "Raw Material" (
+      PartPARTNUMBER varchar2(255) NOT NULL,
+      STOCK number(38),
+      MIN_STOCK number(38) NOT NULL,
+      RESERVED number(38),
+      PRIMARY KEY (PartPARTNUMBER)
+    );
+    
+    
+    CREATE TABLE Supplier (
+      SupplierID number(10) NOT NULL,
+      START_DATE number(10) NOT NULL,
+      END_DATE number(10),
+      MIN_ORDER number(10) NOT NULL,
+      MIN_COST number(10) NOT NULL,
+      PRIMARY KEY (SupplierID)
+    );
+    
+    CREATE TABLE Supplier_Part (
+      SupplierSupplierID number(10) NOT NULL,
+      PartPARTNUMBER varchar2(255) NOT NULL,
+      PRIMARY KEY (SupplierSupplierID, PartPARTNUMBER)
+    );
+    
+    CREATE TABLE Work_Station (
+      WS_ID number(10) NOT NULL,
+      Workstation_TypeWS_TYPE_ID varchar2(100) NOT NULL,
+      NAME varchar2(30) NOT NULL,
+      DESCRIPTION varchar2(255) NOT NULL,
+      PRIMARY KEY (WS_ID)
+    );
+    
+    CREATE TABLE Workstation_Type (
+      WS_TYPE_ID varchar2(100) NOT NULL,
+      NAME varchar2(255) NOT NULL,
+      MAX_EXECUTIONTIME number(10) NOT NULL,
+      SETUP_TIME number(10),
+      PRIMARY KEY (WS_TYPE_ID)
+    );
+    
+    CREATE TABLE Workstation_Type_Operation_TYPE (
+      Workstation_TypeWS_TYPE_ID varchar2(100) NOT NULL,
+      Operation_TYPEOPTYPE_ID number(10) NOT NULL,
+      PRIMARY KEY (Workstation_TypeWS_TYPE_ID, Operation_TYPEOPTYPE_ID)
+    );
+    
+    ALTER TABLE "Order" ADD CONSTRAINT FKOrder227226 FOREIGN KEY (CostumerCOSTUMER_ID) REFERENCES Costumer (COSTUMER_ID);
+    ALTER TABLE Order_Products ADD CONSTRAINT FKOrder_Prod1393 FOREIGN KEY (OrderORDER_ID) REFERENCES "Order" (ORDER_ID);
+    ALTER TABLE Order_Products ADD CONSTRAINT FKOrder_Prod378230 FOREIGN KEY (ProductProduct_ID) REFERENCES Product (Product_ID);
+    ALTER TABLE Product ADD CONSTRAINT FKProduct726914 FOREIGN KEY (Prod_FamilyFAMILY_ID) REFERENCES Prod_Family (FAMILY_ID);
+    ALTER TABLE BOO_Template ADD CONSTRAINT FKBOO_Templa701380 FOREIGN KEY (Prod_FamilyFAMILY_ID) REFERENCES Prod_Family (FAMILY_ID);
+    ALTER TABLE Work_Station ADD CONSTRAINT FKWork_Stati805971 FOREIGN KEY (Workstation_TypeWS_TYPE_ID) REFERENCES Workstation_Type (WS_TYPE_ID);
+    ALTER TABLE Production_Order ADD CONSTRAINT FKProduction976348 FOREIGN KEY (Order_ProducstOrderORDER_ID, Order_ProductsProductPRODUCT_ID) REFERENCES Order_Products (OrderORDER_ID, ProductProduct_ID);
+    ALTER TABLE Production_Order_WorkStation ADD CONSTRAINT FKProduction913909 FOREIGN KEY (Work_StationWS_ID) REFERENCES Work_Station (WS_ID);
+    ALTER TABLE Production_Order_WorkStation ADD CONSTRAINT FKProduction656068 FOREIGN KEY (Production_OrderPO_ID) REFERENCES Production_Order (PO_ID);
+    ALTER TABLE BOO ADD CONSTRAINT FKBOO714323 FOREIGN KEY (ProductProduct_ID) REFERENCES Product (Product_ID);
+    ALTER TABLE BOO_INPUT ADD CONSTRAINT FKBOO_INPUT312560 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE Operation ADD CONSTRAINT FKOperation993690 FOREIGN KEY (BOOProductProduct_ID) REFERENCES BOO (ProductProduct_ID);
+    ALTER TABLE BOO_INPUT ADD CONSTRAINT FKBOO_INPUT741374 FOREIGN KEY (OperationOPERATION_ID) REFERENCES Operation (OPERATION_ID);
+    ALTER TABLE BOO_OUTPUT ADD CONSTRAINT FKBOO_OUTPUT969254 FOREIGN KEY (OperationOPERATION_ID) REFERENCES Operation (OPERATION_ID);
+    ALTER TABLE Operation ADD CONSTRAINT FKOperation405044 FOREIGN KEY (NEXTSTEP) REFERENCES Operation (OPERATION_ID);
+    ALTER TABLE Workstation_Type_Operation_TYPE ADD CONSTRAINT FKWorkstatio943732 FOREIGN KEY (Workstation_TypeWS_TYPE_ID) REFERENCES Workstation_Type (WS_TYPE_ID);
+    ALTER TABLE Workstation_Type_Operation_TYPE ADD CONSTRAINT FKWorkstatio342495 FOREIGN KEY (Operation_TYPEOPTYPE_ID) REFERENCES Operation_TYPE (OPTYPE_ID);
+    ALTER TABLE Operation ADD CONSTRAINT FKOperation169101 FOREIGN KEY (Operation_TYPEOPTYPE_ID) REFERENCES Operation_TYPE (OPTYPE_ID);
+    ALTER TABLE "Deactivated Costumers" ADD CONSTRAINT FKDeactivate25273 FOREIGN KEY (CostumerCOSTUMER_ID) REFERENCES Costumer (COSTUMER_ID);
+    ALTER TABLE "Intermediate Product" ADD CONSTRAINT FKIntermedia303416 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE "Raw Material" ADD CONSTRAINT "FKRaw Materi920417" FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE Component ADD CONSTRAINT FKComponent283794 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE Product ADD CONSTRAINT FKProduct889007 FOREIGN KEY (Product_ID) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE BOO_OUTPUT ADD CONSTRAINT FKBOO_OUTPUT601930 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE Supplier_Part ADD CONSTRAINT FKSupplier_P182195 FOREIGN KEY (SupplierSupplierID) REFERENCES Supplier (SupplierID);
+    ALTER TABLE Supplier_Part ADD CONSTRAINT FKSupplier_P947172 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE Part ADD CONSTRAINT FKPart81837 FOREIGN KEY (Part_TypePART_TYPE) REFERENCES Part_Type (PART_TYPE);
+    
+    
+    
+    
+    
+    
     -- Costumer
     INSERT INTO Costumer (COSTUMER_ID, VAT, NAME, ADDRESS, CITY, COUNTRY, ZIP, PHONE, EMAIL)
     VALUES (456, 'PT501245987', 'Carvalho & Carvalho, Lda', 'Tv. Augusto Lessa 23', 'Porto', 'Portugal', '4200-047', 3518340500, 'idont@care.com');
@@ -40,47 +278,55 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     INSERT INTO Prod_Family (FAMILY_ID, NAME)
     VALUES (146, 'Pro Clear Lids');
     
+    
+    -- Part_Type
+    INSERT INTO Part_Type (PART_TYPE) VALUES ('Component');
+    INSERT INTO Part_Type (PART_TYPE) VALUES ('Product');
+    INSERT INTO Part_Type (PART_TYPE) VALUES ('Intermediate Product');
+    INSERT INTO Part_Type (PART_TYPE) VALUES ('Raw Material');
+    
+    
     -- Part
     -- Component Parts
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN12344A21', 'Screw M6 35 mm', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN52384R50', '300x300 mm 5 mm stainless steel sheet', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN52384R10', '300x300 mm 1 mm stainless steel sheet', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN18544A21', 'Rivet 6 mm', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN18544C21', 'Stainless steel handle model U6', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN18324C54', 'Stainless steel handle model R12', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN52384R45', '250x250 mm 5mm stainless steel sheet', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN52384R12', '250x250 mm 1mm stainless steel sheet', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN18324C91', 'Stainless steel handle model S26', 'Component');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN18324C51', 'Stainless steel handle model R11', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN12344A21', 'Screw M6 35 mm', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN52384R50', '300x300 mm 5 mm stainless steel sheet', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN52384R10', '300x300 mm 1 mm stainless steel sheet', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN18544A21', 'Rivet 6 mm', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN18544C21', 'Stainless steel handle model U6', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN18324C54', 'Stainless steel handle model R12', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN52384R45', '250x250 mm 5mm stainless steel sheet', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN52384R12', '250x250 mm 1mm stainless steel sheet', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN18324C91', 'Stainless steel handle model S26', 'Component');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN18324C51', 'Stainless steel handle model R11', 'Component');
     -- Product Parts
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12945T22', '5l 22 cm aluminium and teflon non stick pot', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12945S22', '5l 22 cm stainless steel pot', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12946S22', '5l 22 cm stainless steel pot bottom', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12947S22', '22 cm stainless steel lid', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12945S20', '3l 20 cm stainless steel pot', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12946S20', '3l 20 cm stainless steel pot bottom', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12947S20', '20 cm stainless steel lid', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12945S17', '2l 17 cm stainless steel pot', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12945P17', '2l 17 cm stainless steel sauce pan', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12945S48', '17 cm stainless steel lid', 'Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('AS12945G48', '17 cm glass lid', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945T22', '5l 22 cm aluminium and teflon non stick pot', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945S22', '5l 22 cm stainless steel pot', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12946S22', '5l 22 cm stainless steel pot bottom', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12947S22', '22 cm stainless steel lid', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945S20', '3l 20 cm stainless steel pot', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12946S20', '3l 20 cm stainless steel pot bottom', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12947S20', '20 cm stainless steel lid', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945S17', '2l 17 cm stainless steel pot', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945P17', '2l 17 cm stainless steel sauce pan', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945S48', '17 cm stainless steel lid', 'Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945G48', '17 cm glass lid', 'Product');
     -- Intermediate Product Parts
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12945A01', '250 mm 5 mm stainless steel disc', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12945A02', '220 mm pot base phase 1', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12945A03', '220 mm pot base phase 2', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12945A04', '220 mm pot base final', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12947A01', '250 mm 1 mm stainless steel disc', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12947A02', '220 mm lid pressed', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12947A03', '220 mm lid polished', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12947A04', '220 mm lid with handle', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12945A32', '200 mm pot base phase 1', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12945A33', '200 mm pot base phase 2', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12945A34', '200 mm pot base final', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12947A32', '200 mm lid pressed', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12947A33', '200 mm lid polished', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('IP12947A34', '200 mm lid with handle', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A01', '250 mm 5 mm stainless steel disc', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A02', '220 mm pot base phase 1', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A03', '220 mm pot base phase 2', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A04', '220 mm pot base final', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A01', '250 mm 1 mm stainless steel disc', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A02', '220 mm lid pressed', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A03', '220 mm lid polished', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A04', '220 mm lid with handle', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A32', '200 mm pot base phase 1', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A33', '200 mm pot base phase 2', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A34', '200 mm pot base final', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A32', '200 mm lid pressed', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A33', '200 mm lid polished', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A34', '200 mm lid with handle', 'Intermediate Product');
     -- Raw Material Parts
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, TYPE) VALUES ('PN94561L67', 'Coolube 2210XP', 'Raw Material');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN94561L67', 'Coolube 2210XP', 'Raw Material');
     
     
     -- Product
@@ -202,19 +448,19 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     
     
     -- Workstation_Type
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('A4578', '600t cold forging stamping press');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('A4588', '600t cold forging precision stamping press');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('A4598', '1000t cold forging precision stamping press');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('S3271', 'Handle rivet');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('K3675', 'Packaging');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('K3676', 'Packaging for large items');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('C5637', 'Border trimming');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('D9123', 'Spot welding');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('Q5478', 'Teflon application station');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('Q3547', 'Stainless steel polishing');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('T3452', 'Assembly T1');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('G9273', 'Circular glass cutting');
-    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME) VALUES ('G9274', 'Glass trimming');
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('A4578', '600t cold forging stamping press', 120, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('A4588', '600t cold forging precision stamping press', 120, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('A4598', '1000t cold forging precision stamping press', 120, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('S3271', 'Handle rivet', 600, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('K3675', 'Packaging', 240, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('K3676', 'Packaging for large items', 300, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('C5637', 'Border trimming', 300, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('D9123', 'Spot welding', 420, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('Q5478', 'Teflon application station', 3200, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('Q3547', 'Stainless steel polishing', 1800, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('T3452', 'Assembly T1', 120, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('G9273', 'Circular glass cutting', 500, 30);
+    INSERT INTO Workstation_Type (WS_TYPE_ID, NAME, MAX_EXECUTIONTIME, SETUP_TIME) VALUES ('G9274', 'Glass trimming', 400, 30);
     
     
     -- Work_Station
@@ -269,7 +515,6 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     INSERT INTO Workstation_Type_Operation_TYPE (Workstation_TypeWS_TYPE_ID, Operation_TYPEOPTYPE_ID) VALUES ('K3675', 5688);
     
     
-    
     -- BOO
     INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12946S22');
     INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12947S22');
@@ -277,86 +522,90 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12946S20');
     INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12947S20');
     
-    -- Component
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN12344A21');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN52384R50');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN52384R10');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN18544A21');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN18544C21');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN18324C54');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN52384R45');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN52384R12');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN18324C91');
-    INSERT INTO Component (PartPARTNUMBER) VALUES ('PN18324C51');
     
+    
+    -- Component
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN12344A21', 50, 10, 5);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R50', 100, 20, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R10', 30, 15, 0);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18544A21', 25, 10, 5);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18544C21', 40, 10, 0);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18324C54', 75, 15, 20);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R45', 60, 10, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R12', 20, 10, 0);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18324C91', 15, 5, 3);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18324C51', 90, 25, 10);
     
     -- Intermediate Products
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12945A01');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12945A02');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12945A03');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12945A04');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12947A01');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12947A02');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12947A03');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12947A04');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12945A32');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12945A33');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12945A34');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12947A32');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12947A33');
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER) VALUES ('IP12947A34');
-    
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A01', 30, 10, 5);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A02', 45, 15, 10);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A03', 20, 5, 0);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A04', 25, 10, 5);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A01', 60, 15, 20);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A02', 50, 10, 15);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A03', 40, 10, 0);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A04', 35, 10, 5);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A32', 70, 20, 10);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A33', 80, 25, 15);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A34', 55, 10, 5);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A32', 65, 20, 5);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A33', 75, 25, 10);
+    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A34', 50, 15, 15);
     
     -- Raw Materials
-    INSERT INTO "Raw Material" (PartPARTNUMBER) VALUES ('PN94561L67');
+    INSERT INTO "Raw Material" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN94561L67', 200, 50, 25);
     
     
     -- Operation
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (115, 'Pot handles riveting', 'AS12946S22', 5659, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (114, 'Pot base finishing', 'AS12946S22', 5653, 115);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (112, 'Final pot base pressing', 'AS12946S22', 5651, 114);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (103, 'Initial pot base pressing', 'AS12946S22', 5649, 112);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (100, 'Disc cutting', 'AS12946S22', 5647, 103);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (124, 'Handle welding', 'AS12947S22', 5667, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (123, 'Pot test and packaging', 'AS12947S22', 5661, 124);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (122, 'Lid handle screw', 'AS12947S22', 5657, 123);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (121, 'Lid finishing', 'AS12947S22', 5655, 122);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (120, 'Lid pressing', 'AS12947S22', 5647, 121);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (130, 'Pan test and packaging', 'AS12945S22', 5663, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (150, 'Initial assembly of product', 'AS12946S20', 5671, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (151, 'Pan base welding', 'AS12946S20', 5672, 150);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (152, 'Lid fitting', 'AS12946S20', 5673, 151);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (153, 'Handle attachment', 'AS12946S20', 5674, 152);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (154, 'Final quality check and packaging', 'AS12946S20', 5675, 153);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (160, 'Handle fitting', 'AS12947S20', 5681, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (161, 'Base welding', 'AS12947S20', 5682, 160);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (162, 'Lid creation and welding', 'AS12947S20', 5683, 161);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (163, 'Final product assembly', 'AS12947S20', 5684, 162);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (164, 'Product quality check and packaging', 'AS12947S20', 5685, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (170, 'Initial assembly of product', 'AS12947S20', 5686, NULL);
-    
+    -- AS12946S22
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (115, 'Pot handles riveting', 600, 'AS12946S22', 5659, NULL);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (114, 'Pot base finishing', 300, 'AS12946S22', 5653, 115);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (112, 'Final pot base pressing', 120, 'AS12946S22', 5651, 114);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (103, 'Initial pot base pressing', 90, 'AS12946S22', 5649, 112);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (100, 'Disc cutting', 120, 'AS12946S22', 5647, 103);
+    -- AS12947S22
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (124, 'Handle welding', 420, 'AS12947S22', 5665, NULL);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (123, 'Pot test and packaging', 240, 'AS12947S22', 5663, 124);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (122, 'Lid handle screw', 120, 'AS12947S22', 5661, 123);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (121, 'Lid finishing', 240, 'AS12947S22', 5657, 122);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (120, 'Lid pressing', 60, 'AS12947S22', 5655, 121);
+    -- AS12945S22
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (130, 'Pan test and packaging', 1500, 'AS12945S22', 5688, NULL);
+    -- AS12946S20
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (150, 'Teflon painting', 3200, 'AS12946S20', 5671, NULL);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (151, 'Pan base finishing', 180, 'AS12946S20', 5683, 150);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (152, 'Lid polishing', 1200, 'AS12946S20', 5667, 151);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (153, 'Handle gluing', 900, 'AS12946S20', 5685, 152);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (154, 'Final quality check and packaging', 240, 'AS12946S20', 5669, 153);
+    -- AS12947S20
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (160, 'Initial pan base pressing', 120, 'AS12947S20', 5681, NULL);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (161, 'Final pan base pressing', 160, 'AS12947S20', 5682, 160);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (162, 'Pot base polishing', 1800, 'AS12947S20', 5669, 161);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (163, 'Pot handles riveting', 600, 'AS12947S20', 5659, 162);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (164, 'Pot test and packaging', 240, 'AS12947S20', 5663, 163);
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (170, 'Teflon painting', 3200, 'AS12947S20', 5671, NULL);
     
     -- BOO_INPUT
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (100, 'PN52384R50', 1, 'unit');
@@ -417,6 +666,31 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'IP12947A34', 1, 'unit');
     INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (164, 'AS12947S20', 1, 'unit');
     INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (170, 'AS12945S20', 1, 'unit');
+    
+    
+    
+    --Supplier
+    INSERT INTO Supplier (SupplierID, START_DATE, END_DATE, MIN_ORDER, MIN_COST) VALUES (1, 20230101, 20241231, 100, 500);
+    INSERT INTO Supplier (SupplierID, START_DATE, END_DATE, MIN_ORDER, MIN_COST) VALUES (2, 20220101, NULL, 50, 300);
+    INSERT INTO Supplier (SupplierID, START_DATE, END_DATE, MIN_ORDER, MIN_COST) VALUES (3, 20230115, 20250115, 200, 700);
+    
+    
+    --Supplier_Part
+    --Components
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (1, 'PN12344A21');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (1, 'PN52384R50');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (2, 'PN18544A21');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (3, 'PN18324C54');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (2, 'PN52384R45');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (1, 'PN18324C91');
+    --Intermediate Products
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (2, 'IP12945A01');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (2, 'IP12945A02');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (3, 'IP12947A01');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (1, 'IP12945A33');
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (3, 'IP12947A34');
+    --Raw Materials
+    INSERT INTO Supplier_Part (SupplierSupplierID, PartPARTNUMBER) VALUES (1, 'PN94561L67');
 
 
 
