@@ -1,6 +1,7 @@
 package pt.ipp.isep.dei.esoft.project.domain;
 
 import pt.ipp.isep.dei.esoft.project.domain.Graph.Algorithms;
+import pt.ipp.isep.dei.esoft.project.domain.Graph.Pair;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.repository.PETRGraphRepository;
 import pt.ipp.isep.dei.esoft.project.repository.Repositories;
@@ -18,9 +19,10 @@ public class ProjectSchedule {
     private final MapGraph<Activity, Double> projectGraph;
     private final PETRGraphRepository mapGraphRepository;
     private final ID graphID;
+
     private static final String FILE_PATH = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/output/";
-    private static final int START_ID_DEFAULT = 7777;
-    private static final int FINISH_ID_DEFAULT = 7778;
+    private static final Pair<String, Integer> START_PAIR = new Pair<>("START", 7777);
+    private static final Pair<String, Integer> FINISH_PAIR = new Pair<>("FINISH", 7778);
 
     public ProjectSchedule(MapGraph<Activity, Double> graph, ID graphId) {
         this.projectGraph = graph;
@@ -96,21 +98,21 @@ public class ProjectSchedule {
             PrintWriter writer = new PrintWriter(FILE_PATH + fileName + ".csv");
             writer.println("act_id;cost;duration;es;ls;ef;lf;prev_act_ids...");
             for (Activity a : verticesList) {
-                if (a.getId().getSerial() != START_ID_DEFAULT && a.getId().getSerial() != FINISH_ID_DEFAULT) {
+                if (a.getId().getSerial() != START_PAIR.getSecond() && a.getId().getSerial() != FINISH_PAIR.getSecond()) {
                     writer.printf("%s;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f", a.getId(), a.getCost(), a.getDuration(),
                             a.getEarliestStart(), a.getLatestStart(), a.getEarliestFinish(), a.getLatestFinish());
                     for (ID pred : a.getPredecessors()) {
-                        if (pred.getSerial() != START_ID_DEFAULT) {
+                        if (pred.getSerial() != START_PAIR.getSecond()) {
                             writer.print(";" + pred);
                         } else {
-                            writer.print(";" + "START");
+                            writer.print(";" + START_PAIR.getFirst());
                         }
                     }
                     writer.println();
-                } else if (a.getId().getSerial() == FINISH_ID_DEFAULT) {
-                    writer.println("FINISH");
+                } else if (a.getId().getSerial() == FINISH_PAIR.getSecond()) {
+                    writer.println(FINISH_PAIR.getFirst());
                 } else {
-                    writer.println("Start");
+                    writer.println(START_PAIR.getFirst());
                 }
 
             }
