@@ -160,7 +160,7 @@ public class Activity {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Activity activity = (Activity) o;
-        return Double.compare(duration, activity.duration) == 0 && Double.compare(cost, activity.cost) == 0 && Objects.equals(id, activity.id) && Objects.equals(description, activity.description) && Objects.equals(durationUnit, activity.durationUnit) && Objects.equals(costUnit, activity.costUnit) && Objects.equals(predecessors, activity.predecessors);
+        return Objects.equals(id, activity.id);
     }
 
     @Override
@@ -171,8 +171,8 @@ public class Activity {
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
-        string.append("["+ANSI_BRIGHT_WHITE).append(id.toString()).append(ANSI_RESET+"] \"Duration: ").append(duration +" ("+durationUnit+") ");
-        string.append("| Cost: ").append(cost+ " ("+costUnit+")\"");
+        string.append("[" + ANSI_BRIGHT_WHITE).append(id.toString()).append(ANSI_RESET + "] \"Duration: ").append(duration + " (" + durationUnit + ") ");
+        string.append("| Cost: ").append(cost + " (" + costUnit + ")\"");
         return string.toString();
     }
 }

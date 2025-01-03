@@ -45,38 +45,31 @@ public class Algorithms {
         return result;
     }
 
-    /**
-     *
-     * @param g the graph instance
-     * @return a LinkedList containing the vertices visited in BFS order
-     * @param <V> the type of vertices in the graph
-     * @param <E> the type of edges in the graph
-     *  Big O Complexity: O(V + E), where V is the number of vertices and E is the number of edges.
-     *  BFS visits each vertex and edge exactly once.
-     */
-    public static <V, E> LinkedList<V> BreadthFirstSearchAll(Graph<V, E> g) {
-        LinkedList<V> result = new LinkedList<>();
-        Set<V> visited = new HashSet<>();
+    public static <V, E> LinkedList<V> getTopologicalOrder(Graph<V, E> g) {
+        LinkedList<V> topologicalOrder = new LinkedList<>();
+        Map<V, Integer> inDegree = new HashMap<>();
+        Queue<V> queue = new LinkedList<>();
 
         for (V vertex : g.vertices()) {
-            if (!visited.contains(vertex)) {
-                Queue<V> queue = new LinkedList<>();
+            inDegree.put(vertex, g.inDegree(vertex));
+            if (inDegree.get(vertex) == 0) {
                 queue.add(vertex);
-                visited.add(vertex);
+            }
+        }
 
-                while (!queue.isEmpty()) {
-                    V currentVertex = queue.poll();
-                    result.add(currentVertex);
-                    for (V adjVert : g.adjVertices(currentVertex)) {
-                        if (!visited.contains(adjVert)) {
-                            queue.add(adjVert);
-                            visited.add(adjVert);
-                        }
-                    }
+        while (!queue.isEmpty()) {
+            V currentVertex = queue.poll();
+            topologicalOrder.add(currentVertex);
+
+            for (V adjVertex : g.adjVertices(currentVertex)) {
+                inDegree.put(adjVertex, inDegree.get(adjVertex) - 1);
+                if (inDegree.get(adjVertex) == 0) {
+                    queue.add(adjVertex);
                 }
             }
         }
-        return result;
+
+        return topologicalOrder;
     }
 
     /**

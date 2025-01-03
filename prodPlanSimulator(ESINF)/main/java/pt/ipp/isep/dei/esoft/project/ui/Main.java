@@ -14,7 +14,7 @@ public class Main {
     private static final String NEW_ITEMS_PATH = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/SQL Developer/files/ITEMS_LAPR.csv";
 
     public static void main(String[] args) throws IOException {
-        ArrangeData.createChangedItem(ITEMS_PATH,NEW_ITEMS_PATH);
+        ArrangeData.createChangedItem(ITEMS_PATH, NEW_ITEMS_PATH);
         ArrangeData.createChangedBoo(BOO_PATH, ITEMS_PATH, NEW_BOO_PATH);
 
         Bootstrap bootstrap = new Bootstrap();
