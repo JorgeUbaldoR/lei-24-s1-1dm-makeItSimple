@@ -516,5 +516,8 @@ public class MapGraphTest {
             assertEquals(co.get(i), ecu.getVDest());
             assertEquals(cw.get(i), ecu.getWeight());
         }
+
+        String toString = instance.toString();
+        assertEquals(toString, instance.toString(), "Graphs should be equal");
     }
 }

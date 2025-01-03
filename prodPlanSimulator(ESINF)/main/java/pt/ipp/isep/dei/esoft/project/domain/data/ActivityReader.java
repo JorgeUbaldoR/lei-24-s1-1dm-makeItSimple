@@ -191,7 +191,7 @@ public class ActivityReader {
      *
      * Time Complexity: O(1), constant time for the validations and conversions.
      */
-    private static int validateParametersUnits(String id, String duration, String cost, long row) {
+    static int validateParametersUnits(String id, String duration, String cost, long row) {
         checkString(id, "ID", row);
         checkString(duration, "DURATION", row);
         checkString(cost, "COST", row);
