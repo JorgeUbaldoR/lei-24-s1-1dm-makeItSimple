@@ -1,0 +1,63 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+
+class ItemRepository {
+- fillInventory()
+}
+
+class MachineRepository {
+- fillMachinery()
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getMachineRepository()
+    + getItemRepository()
+}
+
+class FileDataReader {
+    + getItemsDetails()
+    + getMachinesDetails()
+}
+
+note left of FileDataReader
+    - reads all the info from files and transfers it to the respective repositories
+end note
+
+
+
+Repositories -> Repositories : instance
+
+FileDataReader .> Repositories : repositories
+
+Repositories -> "1" ItemRepository
+
+FileDataReader ..> MachineRepository : machineRepository
+FileDataReader ..> ItemRepository : ItemRepository
+
+Repositories --> "1" MachineRepository
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@enduml

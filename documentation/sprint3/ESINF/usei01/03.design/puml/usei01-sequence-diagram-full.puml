@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Files" as files
+participant ":FileDataReader" as reader
+
+participant "MachineRepository" as MachineRepository
+participant "ItemRepository" as ItemRepository
+participant "OperationController" as controller
+participant "OperationRepository" as OperationRepository
+
+
+activate files
+activate reader
+
+        files -> reader : loads all the info
+
+deactivate files
+activate MachineRepository
+
+        reader -> MachineRepository: fillMachinery()
+
+
+deactivate MachineRepository
+activate ItemRepository
+
+        reader -> ItemRepository: fillInventory()
+
+deactivate reader
+
+activate controller
+
+        controller -> ItemRepository: fillOperationsFromItems()
+
+deactivate ItemRepository
+activate OperationRepository
+
+        controller -> OperationRepository: fillOperations(items)
+
+deactivate controller
+deactivate OperationRepository
+
+@enduml

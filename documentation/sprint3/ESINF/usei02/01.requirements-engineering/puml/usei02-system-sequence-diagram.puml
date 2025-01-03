@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title USEI02 - Simulator Without Priority
+
+autonumber
+
+actor "Production Manager" as PFM
+participant ":System" as System
+
+activate PFM
+
+    PFM -> System : asks to start a new simulation
+    activate System
+
+    System --> PFM : shows types of simulator and asks to select one
+    deactivate System
+
+    PFM -> System : select simulator without priority
+    activate System
+
+    System --> PFM : displays simulation information.
+    deactivate System
+
+@enduml

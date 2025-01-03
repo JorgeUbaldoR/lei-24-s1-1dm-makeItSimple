@@ -1,0 +1,42 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+
+
+class Simulator {
+ machineList
+operationQueueList
+operationTime
+waitingTime
+avgExecutionTime
+itemLinkedList
+itemLinkedListMap
+machineUsage
+executionPerOperation
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+'Platform "1" -- "*" Organization : has registered >
+'Platform "1" -- "*" Category : defines >
+Simulator "      1" --> "      1" Simulator: generates all the stats
+@enduml

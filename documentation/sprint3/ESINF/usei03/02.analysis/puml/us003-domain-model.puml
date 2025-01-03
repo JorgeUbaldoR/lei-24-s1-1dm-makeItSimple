@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+'hide methods
+
+title Domain Model USEI03 - Calculate the total production time for the items
+
+
+class Simulator {
+    itemList
+    machineList
+    totalTime
+    addOperationToQueue()
+    createQueues()
+    updateMachines()
+    printQueue()
+    printMachineStatus()
+    assignItemToMachine()
+}
+
+Simulator "      1 " --> "1   " Simulator: calculate the total time
+
+
+
+
+
+
+
+
+
+
+@enduml

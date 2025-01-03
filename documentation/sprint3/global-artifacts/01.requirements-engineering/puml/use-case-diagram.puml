@@ -1,0 +1,66 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+'skinparam shadowing false
+
+skinparam rectangle{
+    BorderColor black
+}
+
+'title Use Case Diagram Example
+
+left to right direction
+
+rectangle "System Actors" as actors {
+    actor "Production Manager" as PM
+    actor "Plant Floor" as PF
+}
+
+
+
+
+
+
+rectangle "Use Cases" as usecases{
+    usecase "UCEI1 - Read File" as UCEI1
+    usecase "UCEI2 - Simulator without priority" as UCEI2
+    usecase "UCEI3 - Total Production Time" as UCEI3
+    usecase "UCEI4 - Execution time by operation" as UCEI4
+    usecase "UCEI5 - List of workstations with total time of operation" as UCEI5
+    usecase "UCEI6 - Average execution time" as UCEI6
+    usecase "UCEI7 - Flow dependency" as UCEI7
+    usecase "UCEI8 - Simulator with priority" as UCEI8
+    PM --> UCEI1
+    PM --> UCEI2
+    PM --> UCEI3
+    PM --> UCEI4
+    PM --> UCEI5
+    PM --> UCEI6
+    PM --> UCEI7
+    PM --> UCEI8
+}
+
+rectangle "Use Cases" as usecases2{
+    usecase "UCBD1 - Glossary" as UCBD1
+    usecase "UCBD2 - Relational model " as UCBD2
+    usecase "UCBD3 - Relational model (physical level)" as UCBD3
+    usecase "UCBD4 - Import data from a legacy system" as UCBD4
+    usecase "UCBD5" as UCBD5
+    usecase "UCBD6" as UCBD6
+    usecase "UCBD7" as UCBD7
+    usecase "UCBD8" as UCBD8
+    usecase "UCBD9" as UCBD9
+    PF --> UCBD1
+    PF --> UCBD2
+    PF --> UCBD3
+    PF --> UCBD4
+    PF --> UCBD5
+    PF --> UCBD6
+    PF --> UCBD7
+    PF --> UCBD8
+    PF --> UCBD9
+}
+
+
+
+@enduml

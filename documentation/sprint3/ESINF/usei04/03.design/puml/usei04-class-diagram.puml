@@ -1,0 +1,149 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class ApplicationSession
+{
+    + static getInstance()
+    + getCurrentSession()
+}
+
+class UserSession
+{
+    + getUserEmail()
+}
+
+
+
+
+class ItemRepository {
+    + getItemList()
+}
+
+class MachineRepository {
+    + getMachineList()
+}
+
+class OperationRepository {
+    + getOperations()
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getItemRepository()
+    + getMachineRepository()
+    + getOperationRepository()
+}
+
+class SimulatorController {
+    + SimulatorController()
+    + startSimulationWithOutPriority(Map<Operation, Queue<Machine>> machines,
+    List<Item> items, List<Operation> operations, boolean priorityFlag)
+    - getMachinesMap()
+}
+
+class Simulator {
+    itemList
+    machineList
+    addOperationToQueue()
+    createQueues()
+    updateMachines()
+    printQueue()
+    printMachineStatus()
+    assignItemToMachine()
+}
+
+
+class Item {
+    itemID : ID
+    operationList : Qeueu<Operation>
+    currentOperation: Operation
+    getNextOperation()
+    getCurrentOperation()
+}
+
+class PriorityEnum{
+    high
+    normal
+    low
+}
+
+
+
+class Operation {
+    operationName : String
+    duration : float
+}
+
+class Machine{
+    idMachine : ID
+    operation : Operation
+    proccessingSpeed : float
+    available : boolean
+    timeLeftToFinish: float
+    currentProcessingItem : Item
+    processItem(Item item)
+    updateMachine()
+    resetMachine()
+    printStatus()
+
+}
+
+class OperationQueue{
+    operation : Operation
+    itemList : Queue<Item>
+    priority : boolean
+    getOperation()
+    addItemToQueue(Item item)
+    checkOperation(Item item)
+    getNextItem()
+    isEmpty()
+
+}
+
+
+class SimulatorUI {
+}
+
+Repositories -> Repositories : instance
+ApplicationSession -> ApplicationSession : instance
+
+SimulatorUI .> SimulatorController
+
+SimulatorController .> Repositories : repositories
+
+Repositories -> "1" ItemRepository
+Repositories --> "1" OperationRepository
+
+SimulatorController ..> MachineRepository : machineRepository
+SimulatorController ..> ItemRepository : itemRepository
+SimulatorController ..> OperationRepository : operationRepository
+
+Repositories --> "1" MachineRepository
+
+ApplicationSession --> "1" UserSession : userSession
+
+SimulatorController ..> ApplicationSession
+SimulatorController ..> UserSession
+
+
+SimulatorController ---> Simulator : startSimulation
+Item "1" --> "*" Operation : has >
+Machine --> Operation: execute >
+Item "1" -> "1" PriorityEnum : has >
+Simulator "1" --> "1" OperationQueue: has >
+Simulator "1" --> "1..*" Machine : has >
+OperationQueue "1" -> "1..*" Item
+
+
+
+
+@enduml

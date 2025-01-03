@@ -1,0 +1,23 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title USEI06 -  Average Execution Times and Waiting Times
+
+autonumber
+
+actor "Production Manager" as PFM
+participant ":System" as System
+
+activate PFM
+
+    PFM -> System : asks to start a new simulation
+    activate System
+
+    System --> PFM : displays average execution times per operation and the waiting times
+    deactivate System
+
+
+
+@enduml

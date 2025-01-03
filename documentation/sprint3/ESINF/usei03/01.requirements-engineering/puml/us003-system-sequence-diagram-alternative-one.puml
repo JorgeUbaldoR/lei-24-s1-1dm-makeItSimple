@@ -1,0 +1,23 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title USEI03 - Calculate the total production time for the items
+
+autonumber
+
+actor "Production Manager" as PFM
+participant ":System" as System
+
+activate PFM
+
+    PFM -> System : asks to start a new simulation
+    activate System
+
+    System --> PFM : displays the total production time for all items
+    deactivate System
+
+
+
+@enduml

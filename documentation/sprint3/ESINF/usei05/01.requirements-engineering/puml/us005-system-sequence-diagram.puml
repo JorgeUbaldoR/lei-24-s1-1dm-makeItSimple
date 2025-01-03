@@ -1,0 +1,29 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative One
+
+autonumber
+
+actor "Production Manager" as PFM
+participant ":System" as System
+
+activate PFM
+
+    PFM -> System : asks to activate the simulator
+    activate System
+
+        System --> PFM : requests a priority or non priority type of simulation
+    deactivate System
+
+    PFM -> System : types required simulation
+    activate System
+
+        System --> PFM : activates simulator and shows workstation related info
+    deactivate System
+
+
+
+@enduml

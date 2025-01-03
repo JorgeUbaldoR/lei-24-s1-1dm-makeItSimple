@@ -1,0 +1,152 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+'left to right direction
+
+class ProductionOrder {
+    ProductOrder_ID
+    Order_ID
+    Product_ID
+    StartDate
+    EndDate
+    Status
+    Priority
+    ListOfProductBOM_ID
+    ListOfProductBOO_ID
+}
+
+class ListOfProduct {
+    Order_ID
+    Product_ID
+    Amount_Product
+}
+
+class Product {
+    Product_ID
+    Family_ID
+    Name
+    Description
+    Category
+}
+
+class ProductFamily {
+    Family_ID
+}
+
+class Part {
+    Part_ID
+    Type
+}
+
+class "Intermediate Material" {
+    Part_ID
+    Description
+}
+
+class "Raw Material" {
+    Part_ID
+    Description
+}
+
+class Component {
+    Part_ID
+    Description
+}
+
+
+class BOM_Template {
+   BOM_ID
+    Product_ID
+    Quantity
+}
+class Operation {
+    Operation_ID
+    Description
+    OPTYPE_ID
+    Product_ID
+    NextStep
+}
+
+class Workstation {
+    Workstation_ID
+    Sector_ID
+    Name
+}
+
+class Sector {
+    Sector_ID
+    Name
+    Description
+}
+
+class BOO {
+    Product_ID
+}
+
+class Company {
+    Company_ID
+    Name
+}
+
+class Factory {
+    Factory_ID
+    Company_ID
+    Address
+}
+
+class BOO_Input{
+    Operation_ID
+    Part_ID
+    Quantity
+    Unit
+}
+
+class BOO_Output{
+    Operation_ID
+    Part_ID
+    Quantity
+    Unit
+}
+
+class Operation_Type{
+    OPTYPE_ID
+    Description
+}
+
+class Workstation_Type{
+    WS_TYPE_ID
+    Name
+}
+
+Company "1" - "1..*" Factory : posses >
+Factory "1" - "1..*" Sector: has >
+Sector "1" - "1..*" Workstation: includes >
+Product "1" -- "1" BOO: has >
+Product "1" ------ "1" ProductFamily : belongs to >
+Product "1" -- "1..*" Part : are >
+
+ListOfProduct "1" - "1..*" Product : contains >
+ProductionOrder "1" - "1" ListOfProduct : contains >
+Workstation "1" -- "*" ProductionOrder: has >
+
+Workstation "1" -- "1..*" Workstation_Type: has >
+Workstation_Type "1" - "1..*" Operation_Type: has >
+Operation_Type "1" -- "1..*" Operation: belong >
+
+Part "1" -- "1..*" Component : contains >
+Part "1" --- "1..*" "Raw Material" : contains >
+Part "1" --- "1..*" "Intermediate Material" : contains >
+
+Operation "1..*" --- "1" BOO: has <
+Operation "1" -- "1..*" BOO_Input: has >
+Operation "1" -- "1..*" BOO_Output: has >
+
+BOO_Input "1" ---- "1" Part: receive >
+BOO_Output "1" ---- "1" Part: output >
+
+BOM_Template "1" --- "1" ProductFamily : has <
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+'hide methods
+
+title Domain Model USEI06 - Average Execution Times and Waiting Times
+
+
+class Simulator {
+    itemList
+    machineList
+    avgExecutionTimeList
+    waitingTimeList
+    addOperationToQueue()
+    createQueues()
+    updateMachines()
+    printQueue()
+    printMachineStatus()
+    assignItemToMachine()
+    fillWaitingTime()
+    printWaitingTime()
+    fillExecutionPerOperation()
+    calculateAverageExecutionTimes()
+    printAverageExecutionTime()
+}
+
+class Item {
+    itemID : ID
+    operationList : Queue<Operation>
+    currentOperation: Operation
+    getNextOperation()
+    getCurrentOperation()
+    getItemList()
+
+}
+
+
+class Operation {
+    operationName : String
+    duration : float
+}
+
+class Machine{
+    idMachine : ID
+    operation : Operation
+    proccessingSpeed : float
+    available : boolean
+    timeLeftToFinish: float
+    currentProcessingItem : Item
+    processItem(Item item)
+    updateMachine()
+    resetMachine()
+    printStatus()
+
+}
+
+
+Item "1" ---- "*" Operation : has >
+Machine "1" ---- "         1" Operation: execute >
+Simulator "1" -- "1..*" Item : has >
+Simulator "1" -- "1..*" Machine : has >
+
+@enduml

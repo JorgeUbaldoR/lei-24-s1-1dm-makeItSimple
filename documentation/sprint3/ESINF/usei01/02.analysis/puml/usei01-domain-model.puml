@@ -1,0 +1,50 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+'title Domain Model
+
+'class Platform {
+'  -description
+'}
+
+class FileDataReader {
+}
+
+class Operation {
+    name
+    description
+    time
+}
+
+class Machine {
+    name
+    operation
+    processingSpeed
+    timeLeftToFinish
+    currentProcessingItem
+    availability
+}
+
+class Item {
+    id
+    priority
+    listOperations
+    currentOperation
+
+}
+
+
+
+FileDataReader "1" --- "0..*" Item : > stores
+FileDataReader "1" -- "0..*" Operation : > stores
+FileDataReader "1" -- "0..*" Machine : > stores
+@enduml
