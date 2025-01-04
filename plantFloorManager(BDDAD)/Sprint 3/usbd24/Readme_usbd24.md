@@ -10,37 +10,35 @@
 >**AC1:** Minimum expected requirement: demonstrated with data imported from the
 legacy system.
 > 
->**AC2:** A function should return a cursor with all the product
-parts and their quantity. The individual components should be included when a
-part is a subproduct made at the factory
+>**AC2:**  A trigger should be developed to avoid such circular
+references. This doesn’t apply to the BOOs of subproducts.
 
->This script defines a PL/SQL function called list_parts_used_product, which returns a cursor containing a list of parts used by a specific product, along with their quantities. The function accepts a product_id as input and opens a SYS_REFCURSOR to retrieve the relevant data.
+
+>This trigger is designed to prevent a product from being added as an input to its own Bill of Operations (BOO), which would create a logical inconsistency. It automatically executes before any new row is inserted or an existing row is updated in the BOO_INPUT table.
 >
->The first part of the query selects parts directly associated with the product by joining the BOO_INPUT and Operation tables. It sums the quantities for each part number and groups the results by part number.
+> When triggered, it retrieves the BOOProductProduct_ID from the Operation table, which represents the product associated with the operation in the new or updated record. The trigger then compares this product ID with the part number specified as an input in the same record.
 >
->The second part of the query handles parts related to the product indirectly. It selects parts from the BOO_OUTPUT table, ensuring that parts are not linked directly to the product but are part of a more complex relationship. The query joins BOO_OUTPUT and BOO_INPUT and filters based on a subquery that identifies parts associated with the subproducts through specific operations. This query also sums the quantities and groups them by part number.
+>If the product ID matches the input part number, the trigger raises an application error with the message, "A product cannot be an input in its own BOO." This stops the operation from being completed, ensuring the data remains valid. If no match is found, the operation proceeds without interruption.
 
     CREATE OR REPLACE TRIGGER add_product_input_in_own_BOO
     BEFORE INSERT OR UPDATE ON BOO_INPUT
     FOR EACH ROW
     DECLARE
-        ProductID Operation.BOOProductProduct_ID%TYPE;
+    ProductID Operation.BOOProductProduct_ID%TYPE;
     BEGIN
-        SELECT BOOProductProduct_ID
-        INTO ProductID
-        FROM Operation O
-        WHERE :NEW.OperationOPERATION_ID = O.OPERATION_ID;
-
+    SELECT BOOProductProduct_ID
+    INTO ProductID
+    FROM Operation O
+    WHERE :NEW.OperationOPERATION_ID = O.OPERATION_ID;
+    
         IF ProductID = :NEW.PartPARTNUMBER THEN
-            RAISE_APPLICATION_ERROR(
-                -20002,
-                'A product cannot be an input in its own BOO.'
-            );
+            RAISE_APPLICATION_ERROR(-20002,'A product cannot be an input in its own BOO.');
         END IF;
     END;
     /
     
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (100, 'AS12946S22', 1, 'unit');
+    
 
 
 

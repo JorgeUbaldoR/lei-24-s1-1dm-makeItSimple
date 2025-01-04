@@ -9,9 +9,10 @@
 >**AC1:** Minimum expected requirement: demonstrated with data imported from the
 legacy system.
 > 
->**AC2:** A function should return a cursor with all the product
-parts and their quantity. The individual components should be included when a
-part is a subproduct made at the factory
+>**AC2:** The reserved materials and components
+should be registered in the database, but not automatically deducted from stock.
+The reservation should be created only if the whole order can be fulfilled.
+
 
 >This script defines a PL/SQL function called list_parts_used_product, which returns a cursor containing a list of parts used by a specific product, along with their quantities. The function accepts a product_id as input and opens a SYS_REFCURSOR to retrieve the relevant data.
 >
@@ -76,6 +77,24 @@ part is a subproduct made at the factory
     END;
     /
 
+    --UPDATE Reserved
+    --SET RESERVED = 5
+    --WHERE PartPARTNUMBER = 'PN18544A21';
+    
+    --Select RESERVED FROM RESERVED WHERE PartPARTNUMBER = 'PN18544A21';
+    
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS99999S99', 'teste', 'Product');
+    INSERT INTO Product (PRODUCT_ID, Prod_FamilyFAMILY_ID, NAME, DESCRIPTION)
+    VALUES ('AS99999S99', 130, 'teste', 'teste');
+    
+    INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS99999S99');
+    
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (999, 'Operation 130 description', 240, 'AS99999S99', 5663, NULL);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (999, 'PN18544A21', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (999, 'PN52384R50', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (999, 'AS99999S99', 1, 'unit');
 
 ### 3. Resolution
 

@@ -25,7 +25,7 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     DROP TABLE Component CASCADE CONSTRAINTS;
     DROP TABLE Costumer CASCADE CONSTRAINTS;
     DROP TABLE "Deactivated Costumers" CASCADE CONSTRAINTS;
-    DROP TABLE "Intermediate Product" CASCADE CONSTRAINTS;
+    DROP TABLE Intermediate_Product CASCADE CONSTRAINTS;
     DROP TABLE Operation CASCADE CONSTRAINTS;
     DROP TABLE Operation_TYPE CASCADE CONSTRAINTS;
     DROP TABLE "Order" CASCADE CONSTRAINTS;
@@ -36,192 +36,197 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     DROP TABLE Product CASCADE CONSTRAINTS;
     DROP TABLE Production_Order CASCADE CONSTRAINTS;
     DROP TABLE Production_Order_WorkStation CASCADE CONSTRAINTS;
-    DROP TABLE "Raw Material" CASCADE CONSTRAINTS;
+    DROP TABLE Raw_Material CASCADE CONSTRAINTS;
+    DROP TABLE Reserved CASCADE CONSTRAINTS;
     DROP TABLE Supplier CASCADE CONSTRAINTS;
     DROP TABLE Supplier_Part CASCADE CONSTRAINTS;
     DROP TABLE Work_Station CASCADE CONSTRAINTS;
     DROP TABLE Workstation_Type CASCADE CONSTRAINTS;
     DROP TABLE Workstation_Type_Operation_TYPE CASCADE CONSTRAINTS;
     
+    
     CREATE TABLE BOO (
-      ProductProduct_ID varchar2(255) NOT NULL,
-      PRIMARY KEY (ProductProduct_ID)
+        ProductProduct_ID varchar2(255) NOT NULL,
+        PRIMARY KEY (ProductProduct_ID)
     );
     
     CREATE TABLE BOO_INPUT (
-      OperationOPERATION_ID number(10) NOT NULL,
-      PartPARTNUMBER varchar2(255) NOT NULL,
-      QUANTITY number(10) NOT NULL,
-      UNIT varchar2(255) NOT NULL,
-      PRIMARY KEY (OperationOPERATION_ID, PartPARTNUMBER)
+        OperationOPERATION_ID number(10) NOT NULL,
+        PartPARTNUMBER varchar2(255) NOT NULL,
+        QUANTITY number(10) NOT NULL,
+        UNIT varchar2(255) NOT NULL,
+        PRIMARY KEY (OperationOPERATION_ID, PartPARTNUMBER)
     );
     
     CREATE TABLE BOO_OUTPUT (
-      OperationOPERATION_ID number(10) NOT NULL,
-      PartPARTNUMBER varchar2(255) NOT NULL,
-      QUANTITY number(10) NOT NULL,
-      UNIT varchar2(255) NOT NULL,
-      PRIMARY KEY (OperationOPERATION_ID, PartPARTNUMBER)
+        OperationOPERATION_ID number(10) NOT NULL,
+        PartPARTNUMBER varchar2(255) NOT NULL,
+        QUANTITY number(10) NOT NULL,
+        UNIT varchar2(255) NOT NULL,
+        PRIMARY KEY (OperationOPERATION_ID, PartPARTNUMBER)
     );
     
     CREATE TABLE BOO_Template (
-      OPNUMBER number(10) NOT NULL,
-      OperationOPERATION_ID number(10) NOT NULL,
-      Prod_FamilyFAMILY_ID number(10) NOT NULL,
-      PRIMARY KEY (OPNUMBER, OperationOPERATION_ID, Prod_FamilyFAMILY_ID)
+        OPNUMBER number(10) NOT NULL,
+        OperationOPERATION_ID number(10) NOT NULL,
+        Prod_FamilyFAMILY_ID number(10) NOT NULL,
+        PRIMARY KEY (OPNUMBER, OperationOPERATION_ID, Prod_FamilyFAMILY_ID)
     );
     
     CREATE TABLE Component (
-      PartPARTNUMBER varchar2(255) NOT NULL,
-      STOCK number(38),
-      MIN_STOCK number(38) NOT NULL,
-      RESERVED number(38),
-      PRIMARY KEY (PartPARTNUMBER)
+        PartPARTNUMBER varchar2(255) NOT NULL,
+        STOCK number(38),
+        MIN_STOCK number(38) NOT NULL,
+        PRIMARY KEY (PartPARTNUMBER)
     );
     
     CREATE TABLE Costumer (
-      COSTUMER_ID number(10) NOT NULL,
-      VAT varchar2(100) NOT NULL,
-      NAME varchar2(255) NOT NULL,
-      ADDRESS varchar2(255) NOT NULL,
-      CITY varchar2(70) NOT NULL,
-      COUNTRY varchar2(70) NOT NULL,
-      ZIP varchar2(20) NOT NULL,
-      PHONE number(15) NOT NULL,
-      EMAIL varchar2(100) NOT NULL,
-      PRIMARY KEY (COSTUMER_ID)
+        COSTUMER_ID number(10) NOT NULL,
+        VAT varchar2(100) NOT NULL,
+        NAME varchar2(255) NOT NULL,
+        ADDRESS varchar2(255) NOT NULL,
+        CITY varchar2(70) NOT NULL,
+        COUNTRY varchar2(70) NOT NULL,
+        ZIP varchar2(20) NOT NULL,
+        PHONE number(15) NOT NULL,
+        EMAIL varchar2(100) NOT NULL,
+        PRIMARY KEY (COSTUMER_ID)
     );
     
     CREATE TABLE "Deactivated Costumers" (
-      CostumerCOSTUMER_ID number(10) NOT NULL,
-      PRIMARY KEY (CostumerCOSTUMER_ID)
+        CostumerCOSTUMER_ID number(10) NOT NULL,
+        PRIMARY KEY (CostumerCOSTUMER_ID)
     );
     
-    CREATE TABLE "Intermediate Product" (
-      PartPARTNUMBER varchar2(255) NOT NULL,
-      STOCK number(38),
-      MIN_STOCK number(38) NOT NULL,
-      RESERVED number(38),
-      PRIMARY KEY (PartPARTNUMBER)
+    CREATE TABLE Intermediate_Product (
+        PartPARTNUMBER varchar2(255) NOT NULL,
+        STOCK number(38),
+        MIN_STOCK number(38) NOT NULL,
+        PRIMARY KEY (PartPARTNUMBER)
     );
-    
     
     CREATE TABLE Operation (
-      OPERATION_ID number(10) NOT NULL,
-      DESCRIPTION varchar2(100) NOT NULL,
-      EXPECTEDTIME number(10),
-      Operation_TYPEOPTYPE_ID number(10) NOT NULL,
-      BOOProductProduct_ID varchar2(255) NOT NULL,
-      NEXTSTEP number(10),
-      PRIMARY KEY (OPERATION_ID)
+        OPERATION_ID number(10) NOT NULL,
+        DESCRIPTION varchar2(100) NOT NULL,
+        EXPECTEDTIME number(10),
+        Operation_TYPEOPTYPE_ID number(10) NOT NULL,
+        BOOProductProduct_ID varchar2(255) NOT NULL,
+        NEXTSTEP number(10),
+        PRIMARY KEY (OPERATION_ID)
     );
     
     CREATE TABLE Operation_TYPE (
-      OPTYPE_ID number(10) NOT NULL,
-      DESCRIPTION varchar2(255) NOT NULL,
-      PRIMARY KEY (OPTYPE_ID)
+        OPTYPE_ID number(10) NOT NULL,
+        DESCRIPTION varchar2(255) NOT NULL,
+        PRIMARY KEY (OPTYPE_ID)
     );
     
     CREATE TABLE "Order" (
-      ORDER_ID number(10) NOT NULL,
-      CostumerCOSTUMER_ID number(10) NOT NULL,
-      DELIVERY_DATE date NOT NULL,
-      ORDER_DATE date NOT NULL,
-      STATUS varchar2(255) NOT NULL,
-      PRIMARY KEY (ORDER_ID)
+        ORDER_ID number(10) NOT NULL,
+        CostumerCOSTUMER_ID number(10) NOT NULL,
+        DELIVERY_DATE date NOT NULL,
+        ORDER_DATE date NOT NULL,
+        STATUS varchar2(255) NOT NULL,
+        PRIMARY KEY (ORDER_ID)
     );
     
     CREATE TABLE Order_Products (
-      OrderORDER_ID number(10) NOT NULL,
-      ProductProduct_ID varchar2(255) NOT NULL,
-      AMOUNT_PRODUCT number(10) NOT NULL,
-      PRIMARY KEY (OrderORDER_ID, ProductProduct_ID)
+        OrderORDER_ID number(10) NOT NULL,
+        ProductProduct_ID varchar2(255) NOT NULL,
+        AMOUNT_PRODUCT number(10) NOT NULL,
+        PRIMARY KEY (OrderORDER_ID, ProductProduct_ID)
     );
     
     CREATE TABLE Part (
-      PARTNUMBER varchar2(255) NOT NULL,
-      DESCRIPTION varchar2(255) NOT NULL,
-      Part_TypePART_TYPE varchar2(50) NOT NULL,
-      PRIMARY KEY (PARTNUMBER)
+        PARTNUMBER varchar2(255) NOT NULL,
+        DESCRIPTION varchar2(255) NOT NULL,
+        Part_TypePART_TYPE varchar2(50) NOT NULL,
+        PRIMARY KEY (PARTNUMBER)
     );
     
     CREATE TABLE Part_Type (
-      PART_TYPE varchar2(50) NOT NULL,
-      PRIMARY KEY (PART_TYPE)
+        PART_TYPE varchar2(50) NOT NULL,
+        PRIMARY KEY (PART_TYPE)
     );
     
     CREATE TABLE Prod_Family (
-      FAMILY_ID number(10) NOT NULL,
-      NAME varchar2(100) NOT NULL,
-      PRIMARY KEY (FAMILY_ID)
+        FAMILY_ID number(10) NOT NULL,
+        NAME varchar2(100) NOT NULL,
+        PRIMARY KEY (FAMILY_ID)
     );
     
     CREATE TABLE Product (
-      Product_ID varchar2(255) NOT NULL,
-      Prod_FamilyFAMILY_ID number(10) NOT NULL,
-      NAME varchar2(30) NOT NULL,
-      DESCRIPTION varchar2(100) NOT NULL,
-      PRIMARY KEY (Product_ID)
+        Product_ID varchar2(255) NOT NULL,
+        Prod_FamilyFAMILY_ID number(10) NOT NULL,
+        NAME varchar2(30) NOT NULL,
+        DESCRIPTION varchar2(100) NOT NULL,
+        PRIMARY KEY (Product_ID)
     );
     
     CREATE TABLE Production_Order (
-      PO_ID number(10) NOT NULL,
-      Order_ProducstOrderORDER_ID number(10) NOT NULL,
-      Order_ProductsProductPRODUCT_ID varchar2(255) NOT NULL,
-      PRIMARY KEY (PO_ID)
+        PO_ID number(10) NOT NULL,
+        Order_ProducstOrderORDER_ID number(10) NOT NULL,
+        Order_ProductsProductPRODUCT_ID varchar2(255) NOT NULL,
+        PRIMARY KEY (PO_ID)
     );
     
     CREATE TABLE Production_Order_WorkStation (
-      Production_OrderPO_ID number(10) NOT NULL,
-      Work_StationWS_ID number(10) NOT NULL,
-      PRIMARY KEY (Production_OrderPO_ID, Work_StationWS_ID)
+        Production_OrderPO_ID number(10) NOT NULL,
+        Work_StationWS_ID number(10) NOT NULL,
+        PRIMARY KEY (Production_OrderPO_ID, Work_StationWS_ID)
     );
     
-    CREATE TABLE "Raw Material" (
-      PartPARTNUMBER varchar2(255) NOT NULL,
-      STOCK number(38),
-      MIN_STOCK number(38) NOT NULL,
-      RESERVED number(38),
-      PRIMARY KEY (PartPARTNUMBER)
+    CREATE TABLE Raw_Material (
+        PartPARTNUMBER varchar2(255) NOT NULL,
+        STOCK number(38),
+        MIN_STOCK number(38) NOT NULL,
+        PRIMARY KEY (PartPARTNUMBER)
     );
     
+    CREATE TABLE Reserved (
+        PartPARTNUMBER varchar2(255) NOT NULL,
+        RESERVED number(38),
+        PRIMARY KEY (PartPARTNUMBER)
+    );
     
     CREATE TABLE Supplier (
-      SupplierID number(10) NOT NULL,
-      START_DATE number(10) NOT NULL,
-      END_DATE number(10),
-      MIN_ORDER number(10) NOT NULL,
-      MIN_COST number(10) NOT NULL,
-      PRIMARY KEY (SupplierID)
+        SupplierID number(10) NOT NULL,
+        START_DATE number(10) NOT NULL,
+        END_DATE number(10),
+        MIN_ORDER number(10) NOT NULL,
+        MIN_COST number(10) NOT NULL,
+        PRIMARY KEY (SupplierID)
     );
     
     CREATE TABLE Supplier_Part (
-      SupplierSupplierID number(10) NOT NULL,
-      PartPARTNUMBER varchar2(255) NOT NULL,
-      PRIMARY KEY (SupplierSupplierID, PartPARTNUMBER)
+        SupplierSupplierID number(10) NOT NULL,
+        PartPARTNUMBER varchar2(255) NOT NULL,
+        PRIMARY KEY (SupplierSupplierID, PartPARTNUMBER)
     );
     
     CREATE TABLE Work_Station (
-      WS_ID number(10) NOT NULL,
-      Workstation_TypeWS_TYPE_ID varchar2(100) NOT NULL,
-      NAME varchar2(30) NOT NULL,
-      DESCRIPTION varchar2(255) NOT NULL,
-      PRIMARY KEY (WS_ID)
+        WS_ID number(10) NOT NULL,
+        Workstation_TypeWS_TYPE_ID varchar2(100) NOT NULL,
+        NAME varchar2(30) NOT NULL,
+        DESCRIPTION varchar2(255) NOT NULL,
+        PRIMARY KEY (WS_ID)
     );
     
     CREATE TABLE Workstation_Type (
-      WS_TYPE_ID varchar2(100) NOT NULL,
-      NAME varchar2(255) NOT NULL,
-      MAX_EXECUTIONTIME number(10) NOT NULL,
-      SETUP_TIME number(10),
-      PRIMARY KEY (WS_TYPE_ID)
+        WS_TYPE_ID varchar2(100) NOT NULL,
+        NAME varchar2(255) NOT NULL,
+        MAX_EXECUTIONTIME number(10) NOT NULL,
+        SETUP_TIME number(10),
+        PRIMARY KEY (WS_TYPE_ID)
     );
     
     CREATE TABLE Workstation_Type_Operation_TYPE (
-      Workstation_TypeWS_TYPE_ID varchar2(100) NOT NULL,
-      Operation_TYPEOPTYPE_ID number(10) NOT NULL,
-      PRIMARY KEY (Workstation_TypeWS_TYPE_ID, Operation_TYPEOPTYPE_ID)
+        Workstation_TypeWS_TYPE_ID varchar2(100) NOT NULL,
+        Operation_TYPEOPTYPE_ID number(10) NOT NULL,
+        PRIMARY KEY (Workstation_TypeWS_TYPE_ID, Operation_TYPEOPTYPE_ID)
     );
+        
+    
     
     ALTER TABLE "Order" ADD CONSTRAINT FKOrder227226 FOREIGN KEY (CostumerCOSTUMER_ID) REFERENCES Costumer (COSTUMER_ID);
     ALTER TABLE Order_Products ADD CONSTRAINT FKOrder_Prod1393 FOREIGN KEY (OrderORDER_ID) REFERENCES "Order" (ORDER_ID);
@@ -242,20 +247,21 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     ALTER TABLE Workstation_Type_Operation_TYPE ADD CONSTRAINT FKWorkstatio342495 FOREIGN KEY (Operation_TYPEOPTYPE_ID) REFERENCES Operation_TYPE (OPTYPE_ID);
     ALTER TABLE Operation ADD CONSTRAINT FKOperation169101 FOREIGN KEY (Operation_TYPEOPTYPE_ID) REFERENCES Operation_TYPE (OPTYPE_ID);
     ALTER TABLE "Deactivated Costumers" ADD CONSTRAINT FKDeactivate25273 FOREIGN KEY (CostumerCOSTUMER_ID) REFERENCES Costumer (COSTUMER_ID);
-    ALTER TABLE "Intermediate Product" ADD CONSTRAINT FKIntermedia303416 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
-    ALTER TABLE "Raw Material" ADD CONSTRAINT "FKRaw Materi920417" FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE Intermediate_Product ADD CONSTRAINT FKIntermedia303416 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+    ALTER TABLE Raw_Material ADD CONSTRAINT "FKRaw Materi920417" FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
     ALTER TABLE Component ADD CONSTRAINT FKComponent283794 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
     ALTER TABLE Product ADD CONSTRAINT FKProduct889007 FOREIGN KEY (Product_ID) REFERENCES Part (PARTNUMBER);
     ALTER TABLE BOO_OUTPUT ADD CONSTRAINT FKBOO_OUTPUT601930 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
     ALTER TABLE Supplier_Part ADD CONSTRAINT FKSupplier_P182195 FOREIGN KEY (SupplierSupplierID) REFERENCES Supplier (SupplierID);
     ALTER TABLE Supplier_Part ADD CONSTRAINT FKSupplier_P947172 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
     ALTER TABLE Part ADD CONSTRAINT FKPart81837 FOREIGN KEY (Part_TypePART_TYPE) REFERENCES Part_Type (PART_TYPE);
-    
-    
-    
-    
-    
-    
+    ALTER TABLE Reserved ADD CONSTRAINT FKReserved480771 FOREIGN KEY (PartPARTNUMBER) REFERENCES Part (PARTNUMBER);
+
+
+
+
+
+
     -- Costumer
     INSERT INTO Costumer (COSTUMER_ID, VAT, NAME, ADDRESS, CITY, COUNTRY, ZIP, PHONE, EMAIL)
     VALUES (456, 'PT501245987', 'Carvalho & Carvalho, Lda', 'Tv. Augusto Lessa 23', 'Porto', 'Portugal', '4200-047', 3518340500, 'idont@care.com');
@@ -282,8 +288,8 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     -- Part_Type
     INSERT INTO Part_Type (PART_TYPE) VALUES ('Component');
     INSERT INTO Part_Type (PART_TYPE) VALUES ('Product');
-    INSERT INTO Part_Type (PART_TYPE) VALUES ('Intermediate Product');
-    INSERT INTO Part_Type (PART_TYPE) VALUES ('Raw Material');
+    INSERT INTO Part_Type (PART_TYPE) VALUES ('Intermediate_Product');
+    INSERT INTO Part_Type (PART_TYPE) VALUES ('Raw_Material');
     
     
     -- Part
@@ -311,22 +317,22 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945S48', '17 cm stainless steel lid', 'Product');
     INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('AS12945G48', '17 cm glass lid', 'Product');
     -- Intermediate Product Parts
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A01', '250 mm 5 mm stainless steel disc', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A02', '220 mm pot base phase 1', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A03', '220 mm pot base phase 2', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A04', '220 mm pot base final', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A01', '250 mm 1 mm stainless steel disc', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A02', '220 mm lid pressed', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A03', '220 mm lid polished', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A04', '220 mm lid with handle', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A32', '200 mm pot base phase 1', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A33', '200 mm pot base phase 2', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A34', '200 mm pot base final', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A32', '200 mm lid pressed', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A33', '200 mm lid polished', 'Intermediate Product');
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A34', '200 mm lid with handle', 'Intermediate Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A01', '250 mm 5 mm stainless steel disc', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A02', '220 mm pot base phase 1', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A03', '220 mm pot base phase 2', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A04', '220 mm pot base final', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A01', '250 mm 1 mm stainless steel disc', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A02', '220 mm lid pressed', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A03', '220 mm lid polished', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A04', '220 mm lid with handle', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A32', '200 mm pot base phase 1', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A33', '200 mm pot base phase 2', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12945A34', '200 mm pot base final', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A32', '200 mm lid pressed', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A33', '200 mm lid polished', 'Intermediate_Product');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('IP12947A34', '200 mm lid with handle', 'Intermediate_Product');
     -- Raw Material Parts
-    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN94561L67', 'Coolube 2210XP', 'Raw Material');
+    INSERT INTO Part (PARTNUMBER, DESCRIPTION, Part_TypePART_TYPE) VALUES ('PN94561L67', 'Coolube 2210XP', 'Raw_Material');
     
     
     -- Product
@@ -521,151 +527,271 @@ You will be provided a spreadsheet with data from a legacy system, and you will 
     INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12945S22');
     INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12946S20');
     INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12947S20');
-    
+    INSERT INTO BOO (ProductPRODUCT_ID) VALUES ('AS12945S20');
     
     
     -- Component
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN12344A21', 50, 10, 5);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R50', 100, 20, 10);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R10', 30, 15, 0);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18544A21', 25, 10, 5);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18544C21', 40, 10, 0);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18324C54', 75, 15, 20);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R45', 60, 10, 10);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN52384R12', 20, 10, 0);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18324C91', 15, 5, 3);
-    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN18324C51', 90, 25, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN12344A21', 50, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN52384R50', 100, 20);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN52384R10', 30, 15);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN18544A21', 25, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN18544C21', 40, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN18324C54', 75, 15);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN52384R45', 60, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN52384R12', 20, 10);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN18324C91', 15, 5);
+    INSERT INTO Component (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN18324C51', 90, 25);
     
     -- Intermediate Products
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A01', 30, 10, 5);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A02', 45, 15, 10);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A03', 20, 5, 0);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A04', 25, 10, 5);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A01', 60, 15, 20);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A02', 50, 10, 15);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A03', 40, 10, 0);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A04', 35, 10, 5);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A32', 70, 20, 10);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A33', 80, 25, 15);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12945A34', 55, 10, 5);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A32', 65, 20, 5);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A33', 75, 25, 10);
-    INSERT INTO "Intermediate Product" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('IP12947A34', 50, 15, 15);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12945A01', 30, 10);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12945A02', 45, 15);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12945A03', 20, 5);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12945A04', 25, 10);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12947A01', 60, 15);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12947A02', 50, 10);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12947A03', 40, 10);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12947A04', 35, 10);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12945A32', 70, 20);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12945A33', 80, 25);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12945A34', 55, 10);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12947A32', 65, 20);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12947A33', 75, 25);
+    INSERT INTO Intermediate_Product (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('IP12947A34', 50, 15);
     
     -- Raw Materials
-    INSERT INTO "Raw Material" (PartPARTNUMBER, STOCK, MIN_STOCK, RESERVED) VALUES ('PN94561L67', 200, 50, 25);
+    INSERT INTO Raw_Material (PartPARTNUMBER, STOCK, MIN_STOCK) VALUES ('PN94561L67', 200, 50);
     
     
-    -- Operation
+    
+    -- Reserved
+    -- For Components
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN12344A21', 5);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN52384R50', 10);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN52384R10', 0);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN18544A21', 5);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN18544C21', 0);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN18324C54', 20);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN52384R45', 10);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN52384R12', 0);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN18324C91', 3);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN18324C51', 10);
+    
+    -- For Intermediate Products
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12945A01', 5);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12945A02', 10);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12945A03', 0);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12945A04', 5);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12947A01', 20);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12947A02', 15);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12947A03', 0);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12947A04', 5);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12945A32', 10);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12945A33', 15);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12945A34', 5);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12947A32', 5);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12947A33', 10);
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('IP12947A34', 15);
+    
+    -- For Raw Materials
+    INSERT INTO Reserved (PartPARTNUMBER, RESERVED) VALUES ('PN94561L67', 25);
+    
+    
+    
+    
+    
+    
+    
     -- AS12946S22
+    -- Operation 115: Operation 115 description
     INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (115, 'Pot handles riveting', 600, 'AS12946S22', 5659, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (114, 'Pot base finishing', 300, 'AS12946S22', 5653, 115);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (112, 'Final pot base pressing', 120, 'AS12946S22', 5651, 114);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (103, 'Initial pot base pressing', 90, 'AS12946S22', 5649, 112);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (100, 'Disc cutting', 120, 'AS12946S22', 5647, 103);
-    -- AS12947S22
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (124, 'Handle welding', 420, 'AS12947S22', 5665, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (123, 'Pot test and packaging', 240, 'AS12947S22', 5663, 124);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (122, 'Lid handle screw', 120, 'AS12947S22', 5661, 123);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (121, 'Lid finishing', 240, 'AS12947S22', 5657, 122);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (120, 'Lid pressing', 60, 'AS12947S22', 5655, 121);
-    -- AS12945S22
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (130, 'Pan test and packaging', 1500, 'AS12945S22', 5688, NULL);
-    -- AS12946S20
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (150, 'Teflon painting', 3200, 'AS12946S20', 5671, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (151, 'Pan base finishing', 180, 'AS12946S20', 5683, 150);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (152, 'Lid polishing', 1200, 'AS12946S20', 5667, 151);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (153, 'Handle gluing', 900, 'AS12946S20', 5685, 152);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (154, 'Final quality check and packaging', 240, 'AS12946S20', 5669, 153);
-    -- AS12947S20
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (160, 'Initial pan base pressing', 120, 'AS12947S20', 5681, NULL);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (161, 'Final pan base pressing', 160, 'AS12947S20', 5682, 160);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (162, 'Pot base polishing', 1800, 'AS12947S20', 5669, 161);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (163, 'Pot handles riveting', 600, 'AS12947S20', 5659, 162);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (164, 'Pot test and packaging', 240, 'AS12947S20', 5663, 163);
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (170, 'Teflon painting', 3200, 'AS12947S20', 5671, NULL);
+    VALUES (115, 'Operation 115 description', 600, 'AS12946S22', 5659, NULL);
     
-    -- BOO_INPUT
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (100, 'PN52384R50', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (103, 'IP12945A01', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (103, 'PN94561L67', 5, 'ml');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (115, 'IP12945A04', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (115, 'PN18544A21', 4, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (115, 'PN18544C21', 2, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (115, 'AS12946S22', 1, 'unit');
+    
+    -- Operation 114: Operation 114 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (114, 'Operation 114 description', 300, 'AS12946S22', 5653, 115);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (114, 'IP12945A03', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (114, 'IP12945A04', 1, 'unit');
+    
+    -- Operation 112: Operation 112 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (112, 'Operation 112 description', 120, 'AS12946S22', 5651, 114);
+    
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (112, 'IP12945A02', 1, 'unit');
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (112, 'PN94561L67', 5, 'ml');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (114, 'IP12945A03', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (115, 'IP12945A04', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (115, 'PN18544C21', 2, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (120, 'PN52384R10', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (121, 'IP12947A01', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (121, 'PN94561L67', 5, 'ml');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (122, 'IP12947A02', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (112, 'IP12945A03', 1, 'unit');
+    
+    -- Operation 103: Operation 103 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (103, 'Operation 103 description', 90, 'AS12946S22', 5649, 112);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (103, 'IP12945A01', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (103, 'PN94561L67', 5, 'ml');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (103, 'IP12945A02', 1, 'unit');
+    
+    -- Operation 100: Operation 100 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (100, 'Operation 100 description', 120, 'AS12946S22', 5647, 103);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (100, 'PN52384R50', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (100, 'IP12945A01', 1, 'unit');
+    
+    
+    
+    
+    -- AS12947S22
+    -- Operation 124: Operation 124 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (124, 'Operation 124 description', 1200, 'AS12947S22', 5667, NULL);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (124, 'IP12947A04', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (124, 'AS12947S22', 1, 'unit');
+    
+    -- Operation 123: Operation 123 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (123, 'Operation 123 description', 150, 'AS12947S22', 5661, 124);
+    
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (123, 'IP12947A03', 1, 'unit');
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (123, 'PN18324C54', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (124, 'IP12947A04', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (130, 'AS12946S22', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (123, 'PN12344A21', 3, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (123, 'IP12947A04', 1, 'unit');
+    
+    -- Operation 122: Operation 122 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (122, 'Operation 122 description', 240, 'AS12947S22', 5657, 123);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (122, 'IP12947A02', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (122, 'IP12947A03', 1, 'unit');
+    
+    -- Operation 121: Operation 121 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (121, 'Operation 121 description', 60, 'AS12947S22', 5655, 122);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (121, 'IP12947A01', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (121, 'PN94561L67', 5, 'ml');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (121, 'IP12947A02', 1, 'unit');
+    
+    -- Operation 120: Operation 120 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (120, 'Operation 120 description', 105, 'AS12947S22', 5647, 121);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (120, 'PN52384R10', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (120, 'IP12947A01', 1, 'unit');
+    
+    
+    
+    
+    
+    -- AS12945S22
+    -- Operation 130: Operation 130 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (130, 'Operation 130 description', 240, 'AS12945S22', 5663, NULL);
+    
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (130, 'AS12947S22', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (150, 'PN52384R50', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (151, 'IP12945A01', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (151, 'PN94561L67', 5, 'ml');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (152, 'IP12945A32', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (152, 'PN94561L67', 5, 'ml');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (153, 'IP12945A33', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (130, 'AS12946S22', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (130, 'AS12945S22', 1, 'unit');
+    
+    
+    
+    
+    -- AS12946S20
+    -- Operation 154: Operation 154 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (154, 'Operation 154 description', 600, 'AS12946S20', 5659, NULL);
+    
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (154, 'IP12945A34', 1, 'unit');
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (154, 'PN18544C21', 2, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (160, 'PN52384R10', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (154, 'PN18544A21', 4, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (154, 'AS12946S20', 1, 'unit');
+    
+    -- Operation 153: Operation 153 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (153, 'Operation 153 description', 320, 'AS12946S20', 5653, 154);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (153, 'IP12945A33', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (153, 'IP12945A34', 1, 'unit');
+    
+    -- Operation 152: Operation 152 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (152, 'Operation 152 description', 120, 'AS12946S20', 5651, 153);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (152, 'IP12945A32', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (152, 'PN94561L67', 5, 'ml');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (152, 'IP12945A33', 1, 'unit');
+    
+    -- Operation 151: Operation 151 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (151, 'Operation 151 description', 90, 'AS12946S20', 5649, 152);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (151, 'IP12945A01', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (151, 'PN94561L67', 5, 'ml');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (151, 'IP12945A32', 1, 'unit');
+    
+    -- Operation 150: Operation 150 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (150, 'Operation 150 description', 120, 'AS12946S20', 5647, 151);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (150, 'PN52384R50', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (150, 'IP12945A01', 1, 'unit');
+    
+    
+    
+    
+    -- AS12947S20
+    -- Operation 164: Operation 164 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (164, 'Operation 164 description', 1200, 'AS12947S20', 5667, NULL);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (164, 'IP12947A34', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (164, 'AS12947S20', 1, 'unit');
+    
+    -- Operation 163: Operation 163 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (163, 'Operation 163 description', 150, 'AS12947S20', 5661, 164);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'IP12947A33', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'PN18324C54', 1, 'unit');
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'PN12344A21', 3, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'IP12947A34', 1, 'unit');
+    
+    -- Operation 162: Operation 162 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (162, 'Operation 162 description', 240, 'AS12947S20', 5657, 163);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (162, 'IP12947A32', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (162, 'IP12947A33', 1, 'unit');
+    
+    -- Operation 161: Operation 161 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (161, 'Operation 161 description', 60, 'AS12947S20', 5655, 162);
+    
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (161, 'IP12947A01', 1, 'unit');
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (161, 'PN94561L67', 5, 'ml');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (162, 'IP12947A32', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'IP12947A33', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'PN18324C51', 1, 'unit');
-    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (164, 'IP12947A34', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (161, 'IP12947A32', 1, 'unit');
+    
+    -- Operation 160: Operation 160 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (160, 'Operation 160 description', 90, 'AS12947S20', 5647, 161);
+    
+    INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (160, 'PN52384R10', 1, 'unit');
+    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (160, 'IP12947A01', 1, 'unit');
+    
+    
+    
+    -- AS12945S20
+    -- Operation 170: Operation 170 description
+    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
+    VALUES (170, 'Operation 170 description', 240, 'AS12945S20', 5663, NULL);
+    
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (170, 'AS12946S20', 1, 'unit');
     INSERT INTO BOO_INPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (170, 'AS12947S20', 1, 'unit');
-    
-    -- BOO_OUTPUT
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (100, 'IP12945A01', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (103, 'IP12945A02', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (112, 'IP12945A03', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (114, 'IP12945A04', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (115, 'AS12946S22', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (120, 'IP12947A01', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (121, 'IP12947A02', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (122, 'IP12947A03', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (123, 'IP12947A04', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (124, 'AS12947S22', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (130, 'AS12945S22', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (150, 'IP12945A01', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (151, 'IP12945A32', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (152, 'IP12945A33', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (153, 'IP12945A34', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (154, 'AS12946S20', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (160, 'IP12947A01', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (161, 'IP12947A32', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (162, 'IP12947A33', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (163, 'IP12947A34', 1, 'unit');
-    INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (164, 'AS12947S20', 1, 'unit');
     INSERT INTO BOO_OUTPUT (OperationOPERATION_ID, PartPARTNUMBER, QUANTITY, UNIT) VALUES (170, 'AS12945S20', 1, 'unit');
+    
     
     
     

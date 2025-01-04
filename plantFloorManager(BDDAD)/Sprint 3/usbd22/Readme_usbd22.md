@@ -9,9 +9,8 @@
 >**AC1:** Minimum expected requirement: demonstrated with data imported from the
 legacy system.
 > 
->**AC2:** A function should return a cursor with all the product
-parts and their quantity. The individual components should be included when a
-part is a subproduct made at the factory
+>**AC2:** The Product Owner will supply some testing data. Other may
+have to be created by the team.
 
 >This script defines a PL/SQL function called list_parts_used_product, which returns a cursor containing a list of parts used by a specific product, along with their quantities. The function accepts a product_id as input and opens a SYS_REFCURSOR to retrieve the relevant data.
 >

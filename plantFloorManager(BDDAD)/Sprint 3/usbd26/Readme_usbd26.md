@@ -9,73 +9,130 @@
 ### 2. Resolution
 >**AC1:** Minimum expected requirement: demonstrated with data imported from the
 legacy system.
-> 
->**AC2:** A function should return a cursor with all the product
-parts and their quantity. The individual components should be included when a
-part is a subproduct made at the factory
 
->This script defines a PL/SQL function called list_parts_used_product, which returns a cursor containing a list of parts used by a specific product, along with their quantities. The function accepts a product_id as input and opens a SYS_REFCURSOR to retrieve the relevant data.
+>The GetProductParts function retrieves all parts and their required quantities for a given operation, filtering out any items classified as products. It returns a cursor with the part numbers and their respective quantities. The CheckStock function checks whether the stock for a specific part is sufficient to meet the required quantity. It dynamically constructs and executes a query to ensure that the stock, after subtracting reserved quantities and considering the required amount, still exceeds the minimum stock level. If the stock is insufficient, the function returns false; otherwise, it returns true. Any exceptions, such as missing data, are handled with meaningful error messages.
 >
->The first part of the query selects parts directly associated with the product by joining the BOO_INPUT and Operation tables. It sums the quantities for each part number and groups the results by part number.
+>The anonymous block orchestrates the entire process. It begins by fetching all related product IDs for a given product, navigating its BOO hierarchy. For each product, it retrieves the associated operations. For every operation, it calls GetProductParts to fetch the list of required parts and their quantities. Using the CheckStock function, it verifies if the stock levels are sufficient for each part. If any part fails the check, it exits the process and marks the order as unfulfillable.
 >
->The second part of the query handles parts related to the product indirectly. It selects parts from the BOO_OUTPUT table, ensuring that parts are not linked directly to the product but are part of a more complex relationship. The query joins BOO_OUTPUT and BOO_INPUT and filters based on a subquery that identifies parts associated with the subproducts through specific operations. This query also sums the quantities and groups them by part number.
+>At the end of the process, the block determines whether all checks passed. If any stock shortage was detected, it outputs a message indicating that the order cannot be fulfilled. Otherwise, it confirms that the stock is sufficient to proceed.
 
-    CREATE OR REPLACE FUNCTION list_parts_used_product(
-        product_id IN Operation.BOOProductProduct_ID%TYPE
-    )
+    CREATE OR REPLACE FUNCTION GetProductParts (p_operation_id IN Operation.OPERATION_ID%TYPE)
     RETURN SYS_REFCURSOR
     IS
-        list_parts_cursor SYS_REFCURSOR;
+        result_cursor SYS_REFCURSOR;
     BEGIN
-        OPEN list_parts_cursor FOR
-            -- Base case: Select parts directly associated with the product
-            SELECT BI.PartPARTNUMBER, SUM(BI.QUANTITY) AS QUANTITY
+        OPEN result_cursor FOR
+            SELECT BI.PartPARTNUMBER, BI.QUANTITY
             FROM BOO_INPUT BI
-            JOIN Operation O ON BI.OperationOPERATION_ID = O.OPERATION_ID
-            WHERE O.BOOProductProduct_ID = product_id
-            GROUP BY BI.PartPARTNUMBER
+            JOIN Part p on BI.PartPARTNUMBER = p.PARTNUMBER
+            WHERE BI.OperationOPERATION_ID = p_operation_id
+            AND p.Part_TypePART_TYPE NOT LIKE 'Product';
+        RETURN result_cursor;
+    END;
+    /
     
-            UNION ALL
+    CREATE OR REPLACE FUNCTION CheckStock (
+        p_PartPARTNUMBER IN Part.PARTNUMBER%TYPE,
+        QUANTITY IN NUMBER
+    )
+    RETURN BOOLEAN
+    IS
+        v_exists NUMBER;
+        part_type Part.Part_TypePART_TYPE%TYPE;
+        sql_query VARCHAR2(4000);
+        resrv NUMBER;
+    BEGIN
+        SELECT Part_TypePART_TYPE
+        INTO part_type
+        FROM Part
+        WHERE PARTNUMBER = p_PartPARTNUMBER;
+        
+        SELECT RESERVED INTO resrv
+        FROM Reserved
+        WHERE PartPARTNUMBER = p_PartPARTNUMBER;
     
-            SELECT BO.PartPARTNUMBER, SUM(BO.QUANTITY) AS QUANTITY
-            FROM BOO_OUTPUT BO
-            JOIN Operation O ON BO.OperationOPERATION_ID = O.OPERATION_ID
-            JOIN BOO_INPUT BI ON BI.OperationOPERATION_ID = BO.OperationOPERATION_ID
-            WHERE BO.PartPARTNUMBER NOT LIKE O.BOOProductProduct_ID
-                AND O.BOOProductProduct_ID IN (
-                    SELECT BI.PartPARTNUMBER
-                    FROM BOO_INPUT BI
-                    JOIN Part P ON BI.PartPARTNUMBER = P.PARTNUMBER
-                    JOIN Operation O ON BI.OperationOPERATION_ID = O.OPERATION_ID
-                    WHERE O.BOOProductProduct_ID = product_id and P.TYPE LIKE 'Product'
-                    GROUP BY BI.PartPARTNUMBER
-                ) 
-            GROUP BY BO.PartPARTNUMBER;
+        sql_query := 'SELECT COUNT(*) FROM ' || part_type || ' WHERE PartPARTNUMBER = :1 AND (STOCK - :2) > (MIN_STOCK + :3)';
     
-        RETURN list_parts_cursor;
+        EXECUTE IMMEDIATE sql_query INTO v_exists USING p_PartPARTNUMBER, QUANTITY, resrv;
+    
+        IF v_exists > 0 THEN
+            RETURN TRUE;
+        ELSE
+            RETURN FALSE;
+        END IF;
+    
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20001, 'NO DATA FOUND' || SQLERRM);
+                RETURN FALSE;
+            WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20001, SQLERRM);
+                RETURN FALSE;
+    END;
+    /
+    
+    
+    DECLARE
+        ops SYS_REFCURSOR;
+        part_stock SYS_REFCURSOR;
+        prod_ids SYS_REFCURSOR;
+        op_id  BOO_INPUT.OperationOPERATION_ID%TYPE;
+        p_id Product.Product_ID%TYPE;
+        part_id Part.PARTNUMBER%TYPE;
+        Quantity number;
+        
+        v_not_exists number;
+    BEGIN
+        --AS12945S22, AS12946S20
+        prod_ids := GetProductIDs('AS12946S20');
+    
+        LOOP
+            FETCH prod_ids INTO p_id ;
+            EXIT WHEN prod_ids%NOTFOUND;
+    
+            ops := GetProductOperationIDs(p_id);
+    
+            LOOP
+                FETCH ops INTO op_id ;
+                EXIT WHEN ops%NOTFOUND;
+    
+                part_stock := GetProductParts(op_id);
+    
+                LOOP
+                    FETCH part_stock INTO part_id, Quantity ;
+                    EXIT WHEN part_stock%NOTFOUND;
+    
+                    IF NOT CheckStock(part_id, Quantity) THEN
+                        v_not_exists := 1;
+                    END IF;
+    
+                    IF v_not_exists = 1 THEN
+                        EXIT;
+                    END IF;
+    
+                END LOOP;
+                CLOSE part_stock;
+                IF v_not_exists = 1 THEN
+                    EXIT;
+                END IF;
+    
+            END LOOP;
+            CLOSE ops;
+            IF v_not_exists = 1 THEN
+                EXIT;
+            END IF;
+    
+        END LOOP;
+        CLOSE prod_ids;
+    
+        IF v_not_exists != 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Cannot fulfill the order' );
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Can fulfill the order' );
+        END IF;
     END;
     /
 
-    DECLARE
-        parts_cursor	SYS_REFCURSOR;
-        part_number	BOO_INPUT.PartPARTNUMBER%TYPE;
-        quantity	BOO_INPUT.QUANTITY%TYPE;
-    BEGIN
-        -- Call the function with product 'AS12945S22'
-        parts_cursor := list_parts_used_product('AS12945S22');
-    
-        -- Loop through the result set and display parts and quantities
-        LOOP
-            FETCH parts_cursor INTO part_number, quantity;
-            EXIT WHEN parts_cursor%NOTFOUND;
-            
-            DBMS_OUTPUT.PUT_LINE('Part Number: ' || part_number || ', Quantity: ' || quantity);
-        END LOOP;
-        
-        -- Close the cursor after processing
-        CLOSE parts_cursor;
-    END;
-    /
 
 
 ### 3. Resolution
