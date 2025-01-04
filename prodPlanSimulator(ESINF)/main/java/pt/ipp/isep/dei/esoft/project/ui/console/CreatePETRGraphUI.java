@@ -120,7 +120,7 @@ public class CreatePETRGraphUI implements Runnable {
     private boolean checkInputID(String inputID) {
         char reference = inputID.charAt(0);
         reference = Character.toUpperCase(reference);
-        return inputID.length() > 1 && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
+        return inputID.length() > 2 && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
     /**
