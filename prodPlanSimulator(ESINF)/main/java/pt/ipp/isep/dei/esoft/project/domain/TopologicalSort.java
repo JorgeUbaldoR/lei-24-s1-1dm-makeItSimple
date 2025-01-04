@@ -1,4 +1,6 @@
 package pt.ipp.isep.dei.esoft.project.domain;
+import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
+
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -66,5 +68,42 @@ public class TopologicalSort {
         }
     }
 
+    public List<String> performTopologicalSort(MapGraph<Activity, Double> map) {
+        List<String> sortedOrder = new ArrayList<>();
+        try {
 
+            Map<String, List<String>> adjacencyList = convertMapGraphToAdjacencyList(map);
+
+            for (Map.Entry<String, List<String>> entry : adjacencyList.entrySet()) {
+                String from = entry.getKey();
+                List<String> toList = entry.getValue();
+
+                for (String to : toList) {
+                    this.addEdge(from, to);
+                }
+            }
+
+            sortedOrder = topologicalSort();
+            System.out.println("Topological Sorted Order: " + String.join(" -> ", sortedOrder));
+            return sortedOrder;
+        } catch (Exception e) {
+            System.out.println("\n" + ANSI_BRIGHT_RED + "File not read" + ANSI_RESET);
+            return sortedOrder;
+        }
+    }
+
+    private Map<String, List<String>> convertMapGraphToAdjacencyList(MapGraph<Activity, Double> mapGraph) {
+
+        Map<String, List<String>> adjacencyList = new HashMap<>();
+
+        for (Activity activity : mapGraph.vertices()) {
+            adjacencyList.putIfAbsent(activity.getId().toString(), new ArrayList<>());
+
+            for (Activity neighbor : mapGraph.adjVertices(activity)) {
+                adjacencyList.get(activity.getId().toString()).add(neighbor.getId().toString());
+            }
+        }
+
+        return adjacencyList;
+    }
 }

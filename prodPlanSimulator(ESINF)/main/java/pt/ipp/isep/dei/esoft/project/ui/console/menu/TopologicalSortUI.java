@@ -37,7 +37,7 @@ public class TopologicalSortUI implements Runnable {
 
     private void confirmFileSubmission() {
 
-        List<String> list = performTopologicalSort(graphID);
+        List<String> list = topologicalSort.performTopologicalSort(getTopologicalController().getGraph(graphID));
 
         boolean confirmation = confirmSubmission(list);
 
@@ -124,59 +124,4 @@ public class TopologicalSortUI implements Runnable {
         return reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
-
-    /**
-     * Performs topological sort by creating a new Map based on the file read, converts it to an adjacency
-     * list representation, and performs a topological sort to determine a valid linear ordering of its vertices.
-     *
-     * @param path of the file to be used
-     */
-    private List<String> performTopologicalSort(ID graphID) {
-        List<String> sortedOrder = new ArrayList<>();
-        try {
-
-            MapGraph<Activity, Double> createdMap = getTopologicalController().getGraph(graphID);
-
-            Map<String, List<String>> adjacencyList = convertMapGraphToAdjacencyList(createdMap);
-
-            for (Map.Entry<String, List<String>> entry : adjacencyList.entrySet()) {
-                String from = entry.getKey();
-                List<String> toList = entry.getValue();
-
-                for (String to : toList) {
-                    topologicalSort.addEdge(from, to);
-                }
-            }
-
-
-            sortedOrder = topologicalSort.topologicalSort();
-            System.out.println("Topological Sorted Order: " + String.join(" -> ", sortedOrder));
-            return sortedOrder;
-        } catch (Exception e) {
-            System.out.println("\n" + ANSI_BRIGHT_RED + "File not read" + ANSI_RESET);
-            return sortedOrder;
-        }
-    }
-
-    /**
-     * Converts a MapGraph into an adjacencyList
-     *
-     * @param mapGraph that has all the information of the file read in a graph form
-     *
-     * @return an adjacencyList of the MapGraph
-     */
-    private Map<String, List<String>> convertMapGraphToAdjacencyList(MapGraph<Activity, Double> mapGraph) {
-
-        Map<String, List<String>> adjacencyList = new HashMap<>();
-
-        for (Activity activity : mapGraph.vertices()) {
-            adjacencyList.putIfAbsent(activity.getId().toString(), new ArrayList<>());
-
-            for (Activity neighbor : mapGraph.adjVertices(activity)) {
-                adjacencyList.get(activity.getId().toString()).add(neighbor.getId().toString());
-            }
-        }
-
-        return adjacencyList;
-    }
 }
