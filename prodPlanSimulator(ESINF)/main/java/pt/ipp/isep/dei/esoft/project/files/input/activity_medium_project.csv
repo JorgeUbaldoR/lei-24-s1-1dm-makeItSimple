@@ -1,26 +1,26 @@
 ActivKey,descr,duration,duration-unit,tot-cost,predecessors
-A1,High level analysis,1,week,30,
-A2,Order Hardware platform,4,week,2500,
-A3,Installation and commissioning of hardware,2,week,1250,A2
-A4,Detailed analysis of core modules,3,week,30,A1
-A5,Detailed analysis of supporting modules,2,week,30,A4
-A6,Programming of core modules,4,week,20,"A3,A4"
-A7,Programming of supporting modules,3,week,20,"A5,A6"
-A8,Quality assurance of core modules,2,week,30,A6
-A9,Quality assurance of supporting modules,1,week,30,A7
-A10,Application Manual,1,week,550,A7
-A11,User Manual,1,week,750,A7
-A12,Core and supporting module training,2,week,1500,"A8,A9,A11"
-A13,Performance testing,3,week,100,A8
-A14,Integration testing,4,week,200,"A8,A9"
-A15,End-to-end testing,3,week,300,A14
-A16,Deployment preparation,2,week,400,A15
-A17,Initial Deployment,2,week,700,A16
-A18,Post-deployment training,2,week,400,A17
-A19,System documentation,3,week,600,A17
-A20,Project closeout meeting,1,week,100,A18
-A21,Backup configuration,2,week,300,A3
-A22,Disaster recovery planning,3,week,500,A21
-A23,Advanced system configuration,3,week,700,"A6,A7"
-A24,Final system stability testing,3,week,800,"A22,A15"
-A25,Customer webinar,1,week,200,A24
+A1,Project kickoff,1,week,500,
+A2,Requirement gathering,2,week,1000,A1
+A3,Technical feasibility analysis,2,week,800,A2
+A4,Budget approval,1,week,200,A3
+A5,Hardware acquisition,3,week,2500,A4
+A6,Infrastructure setup,3,week,1200,A5
+A7,Initial system design,2,week,700,A3
+A8,Core module development,4,week,1500,"A6,A7"
+A9,Support module development,3,week,1200,A8
+A10,Integration testing,2,week,1000,"A8,A9"
+A11,Security audit,2,week,800,A6
+A12,Performance testing,3,week,700,"A10,A11"
+A13,User interface design,2,week,600,A7
+A14,User training material preparation,2,week,500,A13
+A15,User acceptance testing,2,week,900,"A12,A14"
+A16,Marketing strategy planning,3,week,1200,A1
+A17,Release preparation,1,week,300,A15
+A18,Final system deployment,2,week,1000,A17
+A19,Customer feedback collection,3,week,400,A18
+A20,Post-launch monitoring setup,2,week,600,A18
+A21,Data migration,2,week,1000,A5
+A22,Backup and recovery configuration,3,week,500,A21
+A23,System optimization,2,week,700,"A20,A22"
+A24,Project documentation,3,week,400,A23
+A25,Final project review,1,week,200,A24

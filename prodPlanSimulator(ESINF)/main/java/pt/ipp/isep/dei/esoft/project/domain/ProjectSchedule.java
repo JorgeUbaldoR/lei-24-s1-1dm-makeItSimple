@@ -17,8 +17,9 @@ public class ProjectSchedule {
 
     private LinkedList<Activity> verticesList;
     private final MapGraph<Activity, Double> projectGraph;
-    private final PETRGraphRepository mapGraphRepository;
+    private PETRGraphRepository mapGraphRepository;
     private final ID graphID;
+    private PrintWriter writer;
 
     private static final String FILE_PATH = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/output/";
     private static final Pair<String, Integer> START_PAIR = new Pair<>("Start", 7777);
@@ -39,7 +40,7 @@ public class ProjectSchedule {
         return Repositories.getInstance();
     }
 
-    private void generateVerticesListBFS() {
+    protected void generateVerticesListBFS() {
         verticesList.clear();
         verticesList = Algorithms.getTopologicalOrder(projectGraph);
 
@@ -50,7 +51,16 @@ public class ProjectSchedule {
         return verticesList;
     }
 
-    private void calculateScheduleAnalysis() {
+    public void setMapGraphRepository(PETRGraphRepository mapGraphRepository) {
+        this.mapGraphRepository = mapGraphRepository;
+    }
+
+    public void setPrintWriter(PrintWriter printWriter) {
+        this.writer = printWriter;
+    }
+
+
+    protected void calculateScheduleAnalysis() {
         generateVerticesListBFS();
 
         for (Activity a : verticesList) {
@@ -111,7 +121,7 @@ public class ProjectSchedule {
         return hasValidPredecessor ? max : 0;
     }
 
-    private double getMinLatestStart(List<ID> successors) {
+    protected double getMinLatestStart(List<ID> successors) {
         double min = Double.MAX_VALUE;
         boolean hasValidSuccessor = false;
 
@@ -129,7 +139,7 @@ public class ProjectSchedule {
     public void sendProjectScheduleToFile(String fileName) {
         calculateScheduleAnalysis();
         try {
-            PrintWriter writer = new PrintWriter(FILE_PATH + fileName + ".csv");
+           writer = new PrintWriter(FILE_PATH + fileName + ".csv");
             writer.println("act_id;cost;duration;es;ls;ef;lf;prev_act_ids...");
             for (Activity a : verticesList) {
                 if (a.getId().getSerial() != START_PAIR.getSecond() && a.getId().getSerial() != FINISH_PAIR.getSecond()) {
