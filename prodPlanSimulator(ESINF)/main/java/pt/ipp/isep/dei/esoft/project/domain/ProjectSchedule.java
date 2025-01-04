@@ -79,7 +79,6 @@ public class ProjectSchedule {
             double latestFinish;
             if (a.getSuccessors().contains(FINISH_ID) && a.getSuccessors().size() == 1) {
                 latestFinish = a.getEarliestFinish();
-                System.out.println(a.getId() + " -> " + latestFinish);
             } else {
                 latestFinish = getMinLatestStart(a.getSuccessors());
             }

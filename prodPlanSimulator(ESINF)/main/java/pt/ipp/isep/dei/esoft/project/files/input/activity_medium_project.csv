@@ -1,101 +1,26 @@
 ActivKey,descr,duration,duration-unit,tot-cost,predecessors
 A1,High level analysis,1,week,30,
-B2,Order Hardware platform,4,week,2500,
-C3,Installation and commissioning of hardware,2,week,1250,B2
-D4,Detailed analysis of core modules,3,week,30,A1
-E5,Detailed analysis of supporting modules,2,week,30,D4
-F6,Programming of core modules,4,week,20,"C3,D4"
-G7,Programming of supporting modules,3,week,20,"E5,F6"
-H8,Quality assurance of core modules,2,week,30,F6
-I9,Quality assurance of supporting modules,1,week,30,G7
-J10,Application Manual,1,week,550,G7
-K11,User Manual,1,week,750,G7
-L12,Core and supporting module training,2,week,1500,"H8,I9,K11"
-M13,Performance testing of core modules,3,week,100,H8
-N14,Integration of core and supporting modules,4,week,200,"H8,I9"
-O15,End-to-end testing,3,week,300,N14
-P16,Feedback analysis,1,week,50,O15
-Q17,Deployment preparation,2,week,400,P16
-R18,Initial Deployment,2,week,700,Q17
-S19,Final User Acceptance Test,2,week,500,R18
-T20,System Handover,1,week,300,S19
-U21,Database setup,2,week,800,B2
-V22,Network configuration,1,week,500,B2
-W23,Security setup,3,week,1200,"U21,V22"
-X24,Load testing,2,week,400,W23
-Y25,Data migration,4,week,600,"U21,V22"
-Z26,Environment validation,2,week,300,Y25
-A27,Report generation,3,week,200,Z26
-B28,Stakeholder review,1,week,50,A27
-C29,Procurement of additional tools,2,week,100,B28
-D30,Review and approval process,2,week,70,C29
-E31,Implementation planning,3,week,150,D30
-F32,Backup configuration,2,week,300,W23
-G33,Disaster recovery planning,3,week,500,F32
-H34,Post-deployment training,2,week,400,R18
-I35,Final system documentation,3,week,600,S19
-J36,Project closeout meeting,1,week,100,T20
-K37,Archiving project documents,2,week,200,J36
-L38,Employee handoff,1,week,150,K37
-M39,Process improvement analysis,3,week,500,R18
-N40,Future feature planning,2,week,300,M39
-O41,Training material creation,2,week,400,H34
-P42,New hire onboarding,1,week,300,O41
-Q43,Customer feedback collection,3,week,200,P16
-R44,Service-level agreement (SLA) creation,2,week,500,Q43
-S45,Operational monitoring setup,4,week,600,"F6,G7"
-T46,Third-party integrations,3,week,1000,S19
-U47,Resource optimization,2,week,250,T46
-V48,System performance tuning,3,week,300,S45
-W49,Advanced analytics setup,2,week,700,V48
-X50,Industry compliance checks,4,week,900,S19
-Y51,Legal audit,1,week,400,X50
-Z52,Client-side system verification,3,week,500,Y51
-A53,Final client approval,2,week,600,Z52
-B54,Operational handoff,2,week,300,A53
-C55,Continuous improvement planning,3,week,400,B54
-D56,Feature backlog prioritization,2,week,200,C55
-E57,System upgrade roadmap,2,week,300,D56
-F58,Post-launch monitoring,3,week,200,T46
-G59,Internal audit,2,week,400,F58
-H60,Customer satisfaction survey,2,week,100,G59
-I61,Cost optimization review,3,week,500,F32
-J62,System usage training,2,week,200,H34
-K63,Partnership development,4,week,800,H60
-L64,Marketing strategy update,3,week,600,H60
-M65,Support system setup,2,week,400,L64
-N66,Advanced system configuration,3,week,700,"F6,G7"
-O67,Performance review,2,week,100,R18
-P68,Data analytics enhancement,3,week,800,Y25
-Q69,Regulatory compliance updates,4,week,1000,Y51
-R70,Final system audit,3,week,400,"Y51,Z52"
-S71,Knowledge base creation,2,week,300,H34
-T72,Client workshop,1,week,500,S71
-U73,Helpdesk training,2,week,300,S71
-V74,End-of-life planning,3,week,500,"S19,T20"
-W75,System downtime preparation,4,week,600,"U73,V74"
-X76,Backup testing,2,week,200,W75
-Y77,System redundancy checks,3,week,700,X76
-Z78,Final system stability testing,3,week,800,"Y77,R70"
-A79,Release notes publication,2,week,100,S19
-B80,Customer webinar,1,week,200,A79
-C81,Internal knowledge transfer,2,week,300,T20
-D82,Partner collaboration setup,3,week,500,T46
-E83,API standardization,2,week,700,D82
-F84,Codebase cleanup,3,week,300,T46
-G85,System simulation testing,4,week,600,R70
-H86,Dashboard creation,2,week,400,F58
-I87,Data visualization,3,week,500,H86
-J88,Prototype development,3,week,800,G85
-K89,Market feasibility study,4,week,600,J88
-L90,Innovation workshop,2,week,300,K89
-M91,Release readiness assessment,3,week,400,Z78
-N92,Incident management setup,2,week,300,Z78
-O93,Live environment deployment,2,week,800,N92
-P94,Customer journey analysis,3,week,400,P68
-Q95,Workflow automation design,3,week,600,F84
-R96,Business impact analysis,3,week,500,Q95
-S97,Stakeholder sign-off,2,week,300,R96
-T98,System decommissioning,4,week,700,V74
-U99,Resource reallocation,2,week,400,T98
-Z100,Final project retrospective,2,week,300,U99
+A2,Order Hardware platform,4,week,2500,
+A3,Installation and commissioning of hardware,2,week,1250,A2
+A4,Detailed analysis of core modules,3,week,30,A1
+A5,Detailed analysis of supporting modules,2,week,30,A4
+A6,Programming of core modules,4,week,20,"A3,A4"
+A7,Programming of supporting modules,3,week,20,"A5,A6"
+A8,Quality assurance of core modules,2,week,30,A6
+A9,Quality assurance of supporting modules,1,week,30,A7
+A10,Application Manual,1,week,550,A7
+A11,User Manual,1,week,750,A7
+A12,Core and supporting module training,2,week,1500,"A8,A9,A11"
+A13,Performance testing,3,week,100,A8
+A14,Integration testing,4,week,200,"A8,A9"
+A15,End-to-end testing,3,week,300,A14
+A16,Deployment preparation,2,week,400,A15
+A17,Initial Deployment,2,week,700,A16
+A18,Post-deployment training,2,week,400,A17
+A19,System documentation,3,week,600,A17
+A20,Project closeout meeting,1,week,100,A18
+A21,Backup configuration,2,week,300,A3
+A22,Disaster recovery planning,3,week,500,A21
+A23,Advanced system configuration,3,week,700,"A6,A7"
+A24,Final system stability testing,3,week,800,"A22,A15"
+A25,Customer webinar,1,week,200,A24
