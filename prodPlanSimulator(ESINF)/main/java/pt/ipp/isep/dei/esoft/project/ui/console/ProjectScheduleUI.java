@@ -137,7 +137,7 @@ public class ProjectScheduleUI implements Runnable {
     private boolean checkIDInput(String inputID) {
         char reference = inputID.charAt(0);
         reference = Character.toUpperCase(reference);
-        return reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
+        return inputID.length() > 1 && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
     }

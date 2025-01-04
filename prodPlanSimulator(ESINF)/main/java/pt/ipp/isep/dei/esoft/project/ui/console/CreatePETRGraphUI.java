@@ -88,6 +88,15 @@ public class CreatePETRGraphUI implements Runnable {
             do {
                 System.out.print("Enter an ID (follow the example): ");
                 inputID = scanner.nextLine();
+                System.out.println();
+                System.out.println("██████╗ ██╗   ██╗ ██████╗ ███╗   ██╗ ██████╗     ██╗  ██╗██╗   ██╗");
+                System.out.println("██╔══██╗╚██╗ ██╔╝██╔═══██╗████╗  ██║██╔════╝     ╚██╗██╔╝██║   ██║");
+                System.out.println("██████╔╝ ╚████╔╝ ██║   ██║██╔██╗ ██║██║  ███╗     ╚███╔╝ ██║   ██║");
+                System.out.println("██╔═══╝   ╚██╔╝  ██║   ██║██║╚██╗██║██║   ██║     ██╔██╗ ██║   ██║");
+                System.out.println("██║        ██║   ╚██████╔╝██║ ╚████║╚██████╔╝    ██╔╝ ██╗╚██████╔╝");
+                System.out.println("╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝     ╚═╝  ╚═╝ ╚═════╝ ");
+                System.out.println("                                                                   ");
+
             } while (!checkInputID(inputID));
         }
         char type = inputID.charAt(0);
@@ -111,7 +120,7 @@ public class CreatePETRGraphUI implements Runnable {
     private boolean checkInputID(String inputID) {
         char reference = inputID.charAt(0);
         reference = Character.toUpperCase(reference);
-        return reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
+        return inputID.length() > 1 && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
     /**
