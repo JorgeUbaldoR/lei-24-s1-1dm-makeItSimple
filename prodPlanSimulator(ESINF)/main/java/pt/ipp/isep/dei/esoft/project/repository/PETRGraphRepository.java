@@ -66,5 +66,8 @@ public class PETRGraphRepository {
         return Optional.of(new Pair<>(fileName, graphID));
     }
 
-
+    public MapGraph<Activity, Double> getMapGraph(ID graphID) {
+        MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);
+        return graph;
+    }
 }
