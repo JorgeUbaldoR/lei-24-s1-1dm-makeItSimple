@@ -54,6 +54,9 @@ public class ProjectSchedule {
         generateVerticesListBFS();
 
         for (Activity a : verticesList) {
+            if (a.equals(START_ACTIVITY) || a.equals(FINISH_ACTIVITY)) {
+                continue;
+            }
             double earliestStart;
             if (a.getPredecessors().contains(START_ACTIVITY.getId()) && a.getPredecessors().size() == 1) {
                 earliestStart = 0;
@@ -69,10 +72,14 @@ public class ProjectSchedule {
         ListIterator<Activity> iterator = verticesList.listIterator(verticesList.size());
         while (iterator.hasPrevious()) {
             Activity a = iterator.previous();
+            if (a.equals(START_ACTIVITY) || a.equals(FINISH_ACTIVITY)) {
+                continue;
+            }
 
             double latestFinish;
-            if (a.getSuccessors().contains(FINISH_ACTIVITY.getId()) && a.getSuccessors().size() == 1) {
+            if (a.getSuccessors().contains(FINISH_ID) && a.getSuccessors().size() == 1) {
                 latestFinish = a.getEarliestFinish();
+                System.out.println(a.getId() + " -> " + latestFinish);
             } else {
                 latestFinish = getMinLatestStart(a.getSuccessors());
             }
@@ -109,8 +116,8 @@ public class ProjectSchedule {
         double min = Double.MAX_VALUE;
         boolean hasValidSuccessor = false;
 
-        for (ID succ : successors) {
-            Activity ac = mapGraphRepository.getActivityByID(graphID, succ);
+        for (ID suc : successors) {
+            Activity ac = mapGraphRepository.getActivityByID(graphID, suc);
             if (ac != null) {
                 hasValidSuccessor = true;
                 min = Math.min(min, ac.getLatestStart());
@@ -118,41 +125,6 @@ public class ProjectSchedule {
         }
 
         return hasValidSuccessor ? min : Double.MAX_VALUE;
-    }
-
-    private List<Activity> getTopologicalOrder() {
-        List<Activity> topologicalOrder = new ArrayList<>();
-        Map<Activity, Integer> inDegree = new HashMap<>();
-
-        for (Activity vertex : projectGraph.vertices()) {
-            inDegree.put(vertex, vertex.getPredecessors().size());
-        }
-
-        Queue<Activity> queue = new LinkedList<>();
-
-        for (Activity vertex : inDegree.keySet()) {
-            if (inDegree.get(vertex) == 0) {
-                queue.add(vertex);
-            }
-        }
-
-        while (!queue.isEmpty()) {
-            Activity current = queue.poll();
-            topologicalOrder.add(current);
-
-            for (ID successorId : current.getSuccessors()) {
-                Activity successor = mapGraphRepository.getActivityByID(graphID, successorId);
-                if (successor != null) {
-                    int updatedDegree = inDegree.get(successor) - 1;
-                    inDegree.put(successor, updatedDegree);
-                    if (updatedDegree == 0) {
-                        queue.add(successor);
-                    }
-                }
-            }
-        }
-
-        return topologicalOrder;
     }
 
     public void sendProjectScheduleToFile(String fileName) {
