@@ -179,65 +179,6 @@ public class Algorithms {
 
 
     /**
-     * Helper function for finding all paths between two vertices in a graph.
-     *
-     * @param <V>    the type of vertices in the graph
-     * @param <E>    the type of edges in the graph
-     * @param g      the graph instance
-     * @param vOrig  the current vertex being explored
-     * @param vDest  the destination vertex
-     * @param visited a boolean array tracking visited vertices
-     * @param path   a LinkedList containing the current path (in reverse order)
-     * @param paths  an ArrayList containing all discovered paths
-     */
-    private static <V, E> void allPaths(Graph<V, E> g, V vOrig, V vDest, boolean[] visited,
-                                        LinkedList<V> path, ArrayList<LinkedList<V>> paths) {
-
-        path.add(vOrig);
-        visited[g.key(vOrig)] = true;
-
-        if (vOrig.equals(vDest)) {
-            paths.add(new LinkedList<>(path));
-        } else {
-            for (V adjVert : g.adjVertices(vOrig)) {
-                if (!visited[g.key(adjVert)]) {
-                    allPaths(g, adjVert, vDest, visited, path, paths);
-                }
-            }
-        }
-
-        path.removeLast();
-        visited[g.key(vDest)] = false;
-    }
-
-    /**
-     * Finds all paths between two vertices in a graph.
-     *
-     * @param <V> the type of vertices in the graph
-     * @param <E> the type of edges in the graph
-     * @param g   the graph instance
-     * @param vOrig the starting vertex
-     * @param vDest the ending vertex
-     * @return an ArrayList containing all paths from vOrig to vDest, or null if vertices are invalid
-     *
-     * Big O Complexity: O(V!), where V is the number of vertices.
-     * This is due to the combinatorial nature of generating all possible paths.
-     */
-    public static <V, E> ArrayList<LinkedList<V>> allPaths(Graph<V, E> g, V vOrig, V vDest) {
-        if (!g.validVertex(vOrig) || !g.validVertex(vDest)) {
-            return null;
-        }
-
-        boolean[] visited = new boolean[g.numVertices()];
-        ArrayList<LinkedList<V>> paths = new ArrayList<>();
-        LinkedList<V> path = new LinkedList<>();
-
-        allPaths(g, vOrig, vDest, visited, path, paths);
-        return paths;
-    }
-
-
-    /**
      * Calculates the minimum distance graph using Floyd-Warshall
      *
      * @param g   initial graph
