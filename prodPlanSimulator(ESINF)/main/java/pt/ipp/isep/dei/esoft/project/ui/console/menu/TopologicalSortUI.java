@@ -1,9 +1,6 @@
 package pt.ipp.isep.dei.esoft.project.ui.console.menu;
 
 import pt.ipp.isep.dei.esoft.project.application.controller.TopologicalController;
-import pt.ipp.isep.dei.esoft.project.domain.Activity;
-import pt.ipp.isep.dei.esoft.project.domain.Graph.Pair;
-import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.domain.ID;
 import pt.ipp.isep.dei.esoft.project.domain.TopologicalSort;
 import pt.ipp.isep.dei.esoft.project.domain.enumclasses.TypeID;
