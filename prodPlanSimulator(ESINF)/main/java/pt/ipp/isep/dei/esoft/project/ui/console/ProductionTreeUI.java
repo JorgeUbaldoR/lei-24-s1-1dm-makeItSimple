@@ -106,6 +106,12 @@ public class ProductionTreeUI implements Runnable {
 
     }
 
+    public void showTreeNew(ProductionTree productionTree, String name) {
+        System.out.printf("══════════|PRODUCTION TREE: %s%s%s|══════════%n%n",ANSI_BRIGHT_WHITE,name,ANSI_RESET);
+        printNode(productionTree.getNodesOfTree().get(0), 0, "");  // Inicia a árvore com o primeiro nó, nível 1, e indentação vazia
+
+    }
+
     /**
      * Recursively prints the nodes and their dependencies in a structured format.
      * @param node The current node.
@@ -192,6 +198,22 @@ public class ProductionTreeUI implements Runnable {
         }else{
             System.out.println("\n"+ANSI_BRIGHT_RED + "Operation canceled." + ANSI_RESET);
         }
+
+    }
+
+    public void ordersBOOProduction(String name, String path) {
+            getProductionTreeController().setName(name);
+            try{
+                if(getProductionTreeController().getInformations(path)){
+                    showTreeNew(getProductionTreeController().getProductionTree(),name);
+                    System.out.println("\n"+ANSI_BRIGHT_BLACK + "Production Tree successfully generated!" + ANSI_RESET+"\n");
+                }else{
+                    System.out.println("\n"+ANSI_BRIGHT_RED + "Operation canceled - File doesn't have information to be read" + ANSI_RESET);
+                }
+
+            } catch (Exception e) {
+                System.out.println("\n"+ANSI_BRIGHT_RED +e.getMessage()+ ANSI_RESET);
+            }
 
     }
 

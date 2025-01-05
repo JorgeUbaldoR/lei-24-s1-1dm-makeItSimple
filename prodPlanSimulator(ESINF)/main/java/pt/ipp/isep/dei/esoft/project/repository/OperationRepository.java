@@ -190,4 +190,14 @@ public class OperationRepository {
     public Map<ID, Operation> getIdToOperation() {
         return idToOperation;
     }
+
+
+    public Operation getOperationByName(String name) {
+        for (Operation operation : operations) {
+            if (operation.getOperationName().equals(name)) {
+                return operation;
+            }
+        }
+        return null;
+    }
 }

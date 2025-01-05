@@ -39,9 +39,9 @@ public class Order implements Comparable<Order> {
 
     @Override
     public String toString() {
-        return String.format("[%sOrder ID = %s%s] : Item = %s%-10s%s | Priority = %s%-10s%s | Quantity = %s%.2f%s",
+        return String.format("[%sOrder ID = %s%s] : Item = %s%s%s (%-24s) | Priority = %s%-10s%s | Quantity = %s%.2f%s",
                 ANSI_BRIGHT_BLACK,ANSI_RESET,orderID,
-                ANSI_BRIGHT_WHITE,item.getItemID(),ANSI_RESET,
+                ANSI_BRIGHT_WHITE,item.getItemID(),ANSI_RESET,item.getName(),
                 ANSI_BRIGHT_WHITE,priority,ANSI_RESET,
                 ANSI_BRIGHT_WHITE,quantity,ANSI_RESET);
     }

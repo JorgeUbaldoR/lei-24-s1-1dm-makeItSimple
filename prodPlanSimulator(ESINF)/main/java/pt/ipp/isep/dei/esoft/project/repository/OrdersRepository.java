@@ -26,6 +26,6 @@ public class OrdersRepository {
     }
 
     public PriorityQueue<Order> getOrdersList() {
-        return ordersList;
+        return new PriorityQueue<>(ordersList);
     }
 }
