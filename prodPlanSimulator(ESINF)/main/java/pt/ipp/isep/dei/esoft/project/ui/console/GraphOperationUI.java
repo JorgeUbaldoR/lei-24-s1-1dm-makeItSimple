@@ -6,6 +6,7 @@ import pt.ipp.isep.dei.esoft.project.domain.Activity;
 import pt.ipp.isep.dei.esoft.project.domain.Delay;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.domain.ID;
+import pt.ipp.isep.dei.esoft.project.domain.ProjectSchedule;
 import pt.ipp.isep.dei.esoft.project.domain.enumclasses.TypeID;
 import pt.ipp.isep.dei.esoft.project.ui.console.ShowGraphCriticalPathUI;
 
@@ -104,10 +105,11 @@ public class GraphOperationUI implements Runnable {
 
         Delay delay = new Delay();
         ShowGraphCriticalPathUI showGraphCriticalPathUI = new ShowGraphCriticalPathUI();
+        ProjectSchedule projectSchedule = new ProjectSchedule(createdMap,graphID);
 
         createdMap = delay.removeActivities(createdMap);
 
-        Map<String, Object> criticalPathOriginal = delay.calculateOriginalCriticalPath(createdMap);
+        Map<String, Object> criticalPathOriginal = delay.calculateCriticalPath(createdMap);
         System.out.println("\n\n══════════════════════════════════════════");
         System.out.println(ANSI_BRIGHT_WHITE + "             Original Critical Path                 " + ANSI_RESET + "\n");
         showGraphCriticalPathUI.printCriticalPath(criticalPathOriginal);
@@ -132,10 +134,15 @@ public class GraphOperationUI implements Runnable {
                 try {
                     delay.updateActivityDuration(selectedActivity, delayDuration);
 
-                    Map<String, Object> criticalPathDelayed = delay.calculateDelayedCriticalPath(createdMap);
+                    Map<String, Object> criticalPathDelayed = delay.calculateCriticalPath(createdMap);
                     System.out.println("\n\n══════════════════════════════════════════");
                     System.out.println(ANSI_BRIGHT_WHITE + "             Delayed Critical Path                 " + ANSI_RESET + "\n");
                     showGraphCriticalPathUI.printCriticalPath(criticalPathDelayed);
+
+                    System.out.println("\n\n══════════════════════════════════════════");
+                    System.out.println(ANSI_BRIGHT_WHITE + "             Slack Time                 " + ANSI_RESET + "\n");
+                    projectSchedule.simulateScheduleAnalysis(selectedActivity, delayDuration + selectedActivity.getDuration());
+
                 } catch (IllegalArgumentException e) {
                     System.out.println(ANSI_BRIGHT_RED + e.getMessage() + ANSI_RESET);
                 }
