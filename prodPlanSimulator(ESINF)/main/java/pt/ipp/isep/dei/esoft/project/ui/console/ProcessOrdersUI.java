@@ -46,8 +46,10 @@ public class ProcessOrdersUI implements Runnable {
                         );
             }
 
-            System.out.printf("%n%sREGISTERING PRODUCTION TREES...%s%n", ANSI_BRIGHT_GREEN, ANSI_RESET);
+            System.out.printf("%n%sREGISTERING PRODUCTION TREES AND NEW QUANTITIES...%s%n", ANSI_BRIGHT_GREEN, ANSI_RESET);
             controller.createProductionTree();
+
+
 
         } catch (Exception e) {
             System.out.println(ANSI_BRIGHT_RED + "Error reading orders.csv: " + e.getMessage() + ANSI_RESET);

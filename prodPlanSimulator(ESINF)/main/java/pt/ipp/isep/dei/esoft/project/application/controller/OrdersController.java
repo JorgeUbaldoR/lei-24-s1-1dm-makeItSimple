@@ -24,7 +24,6 @@ public class OrdersController {
     private ItemRepository itemRepository;
     private MachineRepository machineRepository;
     private OperationRepository operationRepository;
-    private ProductionTreeController controller;
     private ProductionTreeUI productionTreeUI;
 
     public OrdersController() {
@@ -126,6 +125,8 @@ public class OrdersController {
             writeBooForID(itemID.getSerial());
 
             productionTreeUI.ordersBOOProduction("Order ("+order.getOrderID()+")",PATH_BOO_RESULT);
+            productionTreeUI.auxilaryOrder(itemID,(float)order.getQuantity(),PATH_BOO_RESULT);
+            ProductionTree pdTree = productionTreeUI.getProductionTreeController().getProductionTree();
 
         }
 

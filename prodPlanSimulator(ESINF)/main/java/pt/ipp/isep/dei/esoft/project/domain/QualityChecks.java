@@ -52,6 +52,32 @@ public class QualityChecks {
         return priorityQueue;
     }
 
+
+    public PriorityQueue<Map<Integer, List<ID>>> fillOperationsPriorityQueueOrders(String path) {
+        ProductionTree pdt = new ProductionTree();
+        pdt.getInformations(path);
+        Map<Integer, List<Node>> heightMap = pdt.getHeightMap();
+
+
+        for (Map.Entry<Integer, List<Node>> entry : heightMap.entrySet()) {
+            int height = entry.getKey();
+            List<Node> nodesAtHeight = entry.getValue();
+
+            Map<Integer, List<ID>> pqNode = new HashMap<>();
+            List<ID> operations = new ArrayList<>();
+
+            for (Node node : nodesAtHeight) {
+                operations.add(node.getOperationID());
+            }
+
+            pqNode.put(height, operations);
+
+            priorityQueue.add(pqNode);
+        }
+
+        return priorityQueue;
+    }
+
     /**
      * Prepares a map for quality checks, initially marking all operations as unchecked.
      *
