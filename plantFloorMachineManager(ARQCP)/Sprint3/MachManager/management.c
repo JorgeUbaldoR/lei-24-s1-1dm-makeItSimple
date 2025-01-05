@@ -326,13 +326,13 @@ int perform_instructions_file(Machine* machines) {
                         printf("%s\n", cmd);
                         send_data(cmd);
                         temperature_and_humidity_readings(current_machine, current_operation);
-                        usleep(1400000);
-            
+                        usleep(1600000);
+
                     } else {
                         printf("\n%s already working!\n", current_machine->name);
                         printf("Next instruction...\n");
                     }
-             
+
             } else {
                 printf("\n%s does not support operation %hhd!\n", current_machine->name, operation_id);
                 printf("Next instruction...\n");
@@ -359,7 +359,7 @@ void fill_machines_operations(Machine* machines) {
     }
 
     char line[300];
-    
+
 
      if (fgets(line, sizeof(line), file) == NULL) {
         printf("Operations file is empty or only contains header!\n");
@@ -369,7 +369,7 @@ void fill_machines_operations(Machine* machines) {
     }
 
     while (fgets(line, sizeof(line), file) != NULL) {
-       
+
         char* split_token = strtok(line, ",");
         char f_op_designation[100];
         strncpy(f_op_designation, split_token, sizeof(f_op_designation) - 1);
@@ -379,7 +379,7 @@ void fill_machines_operations(Machine* machines) {
         char f_op_number = (char)atoi(split_token);
         extend_operation_ids_container();
         ALL_OPERATION_IDS[NUMBER_OF_OPERATIONS] = f_op_number;
-        
+
 
         split_token = strtok(NULL, ",");
         short m_id = (short)atoi(split_token);
@@ -396,19 +396,19 @@ void fill_machines_operations(Machine* machines) {
                 new_operation->op_designation[sizeof(new_operation->op_designation) - 1] = '\0';
 
                 new_operation->op_number = f_op_number;
-                new_operation->reading_values.beginning = 0; 
-                new_operation->reading_values.temperature = 0; 
-                new_operation->reading_values.humidity = 0; 
+                new_operation->reading_values.beginning = 0;
+                new_operation->reading_values.temperature = 0;
+                new_operation->reading_values.humidity = 0;
                 strncpy(new_operation->reading_values.state, state.unavailable, sizeof(new_operation->reading_values.state));
 
-        
+
                 m->n_operations++;
             }
         }
 
         NUMBER_OF_OPERATIONS++;
-        
-        
+
+
     }
     fclose(file);
 
@@ -426,25 +426,25 @@ int add_operation_manually(Machine* machines, short machine_id, char designation
 
     for (Machine* m = machines; m < machines + NUMBER_OF_MACHINES; m++) {
         if (m->identifier == machine_id) {
-            extend_operations(m); 
+            extend_operations(m);
 
-            Operation* op = &m->operations[m->n_operations]; 
+            Operation* op = &m->operations[m->n_operations];
 
             strncpy(op->op_designation, designation, sizeof(op->op_designation) - 1);
-            op->op_designation[sizeof(op->op_designation) - 1] = '\0'; 
+            op->op_designation[sizeof(op->op_designation) - 1] = '\0';
             op->op_number = op_number;
             op->reading_values.beginning = 0;
             op->reading_values.temperature = 0;
             op->reading_values.humidity = 0;
             strncpy(op->reading_values.state, state.unavailable, sizeof(op->reading_values.state) - 1);
 
-            m->n_operations++; 
+            m->n_operations++;
             NUMBER_OF_OPERATIONS++;
             ALL_OPERATION_IDS[NUMBER_OF_OPERATIONS] = op_number;
-            return 1; 
+            return 1;
         }
     }
-    return 0; 
+    return 0;
 }
 
 int write_machine_operations_file(Machine* machine) {
@@ -453,7 +453,7 @@ int write_machine_operations_file(Machine* machine) {
     FILE* file = fopen("MachManager/files/machine_operations.csv", "w");
     if (file == NULL) {
         printf("Error: Could not open file for writing.\n");
-        return 0; 
+        return 0;
     }
     if(machine->n_operations_performed > 0) {
         flag = 1;
@@ -468,9 +468,9 @@ int write_machine_operations_file(Machine* machine) {
     }
 
 
-    
 
-    
+
+
     if(!flag) {
         fprintf(file, "No operations were performed!\n");
     }
@@ -488,7 +488,7 @@ void extend_operations(Machine* m) {
       exit(1);
     }
     m->operations = temp;
-    
+
 }
 
 void extend_machine_ids_container(void) {
@@ -500,7 +500,7 @@ void extend_machine_ids_container(void) {
         exit(1);
     }
     ALL_MACHINE_IDS = temp;
-    
+
 }
 
 void extend_operation_ids_container(void) {
@@ -512,7 +512,7 @@ void extend_operation_ids_container(void) {
         exit(1);
     }
     ALL_OPERATION_IDS = temp;
-    
+
 }
 
 int machine_container_has_id(short machine_id) {
@@ -525,7 +525,7 @@ int machine_container_has_id(short machine_id) {
 }
 
 void extend_machines(Machine** m) {
-    Machine* temp = realloc(*m, (NUMBER_OF_MACHINES + 1) * sizeof(Machine)); 
+    Machine* temp = realloc(*m, (NUMBER_OF_MACHINES + 1) * sizeof(Machine));
     if (temp == NULL) {
         printf("Error allocationg memory!\n");
         free(*m);
@@ -533,7 +533,7 @@ void extend_machines(Machine** m) {
     }
     *m = temp;
     NUMBER_OF_MACHINES++;
-    
+
 }
 
 void extend_operation_sequence(Machine* selected_machine, char** operation_sequence) {
@@ -550,7 +550,7 @@ void extend_operation_sequence(Machine* selected_machine, char** operation_seque
 void compress_machines(Machine** machines) {
     if (NUMBER_OF_MACHINES == 0) {
         free(*machines);
-        *machines = NULL; 
+        *machines = NULL;
         return;
     }
 
@@ -579,7 +579,7 @@ void init_states(State* state) {
 
     strncpy(state->available, "ON", sizeof(state->available) - 1);
     state->available[sizeof(state->available) - 1] = '\0';
-    
+
     strncpy(state->unavailable, "OFF", sizeof(state->unavailable) - 1);
     state->unavailable[sizeof(state->unavailable) - 1] = '\0';
 }
@@ -590,6 +590,7 @@ Machine* get_machine_by_id(Machine* machines, short machine_id) {
             return m;
         }
     }
+
 }
 
 Operation* get_operation_by_id(Machine* machines, char operation_id) {

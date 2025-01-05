@@ -65,7 +65,7 @@ void remove_machine_ui(Machine* machines) {
    
     short identifier;
     char name[31];
-    unsigned char min_temp, max_temp, min_hum, max_hum;
+    char min_temp, max_temp, min_hum, max_hum;
     int buffer_length, median_window;
 
     printf("Machine addition: \n");
@@ -89,34 +89,86 @@ void remove_machine_ui(Machine* machines) {
     }
 
     printf("Enter maximum temperature: ");
-    if (scanf("%hhd", &max_temp) != 1) {
-        printf("Error reading maximum temperature.\n");
-        return 0;
-    }
+    do {
+        if (scanf("%hhd", &max_temp) != 1) {
+            printf("Error reading maximum temperature.\n");
+            return 0;
+        }
+        if (max_temp <= min_temp) {
+            printf("\n-------------------------------------------------------------------");
+            printf("\nMaximum temperature must be greatter than minimum temperature!\n");
+            printf("Minimum temperature inserted: %hhd\n", min_temp);
+            printf("-------------------------------------------------------------------\n");
+            printf("Enter maximum temperature: ");
+        }
+    } while (max_temp <= min_temp);
 
     printf("Enter minimum humidity: ");
-    if (scanf("%hhd", &min_hum) != 1) {
-        printf("Error reading minimum humidity.\n");
-        return 0;
-    }
+    do {
+        if (scanf("%hhd", &min_hum) != 1) {
+            printf("Error reading minimum humidity.\n");
+            return 0;
+        }
+        if (min_hum < 0 || min_hum > 100) {
+            printf("\n-------------------------------------------------------------------");
+            printf("\nHumidity levels must be between 0 and 100!\n");
+            printf("Minimum humidity inserted %hhd\n", min_hum);
+            printf("-------------------------------------------------------------------\n");
+            printf("Enter minimum humidity: ");
+        }
+    } while (min_hum < 0 || min_hum > 100);
 
     printf("Enter maximum humidity: ");
-    if (scanf("%hhd", &max_hum) != 1) {
-        printf("Error reading maximum humidity.\n");
-        return 0;
-    }
+    do {
+        if (scanf("%hhd", &max_hum) != 1) {
+            printf("Error reading maximum humidity.\n");
+            return 0;
+        }
+         if (max_hum <= min_hum) {
+            printf("\n-------------------------------------------------------------------");
+            printf("\nMaximum humidity must be greatter than minimum humidity!\n");
+            printf("Minimum humidity inserted: %hhd\n", min_hum);
+            printf("-------------------------------------------------------------------\n");
+            printf("Enter maximum humidity: ");
+
+        } else if ((max_hum < 0 || max_hum > 100)) {
+            printf("\n-------------------------------------------------------------------");
+            printf("\nHumidity levels must be between 0 and 100 (included)!\n");
+            printf("Maximum humidity inserted %hhd\n", max_hum);
+            printf("-------------------------------------------------------------------\n");
+            printf("Enter maximum humidity: ");
+        }
+    } while (max_hum < 0 || max_hum > 100 || max_hum <= min_hum);
 
     printf("Enter the buffer length: ");
-    if (scanf("%d", &buffer_length) != 1) {
-        printf("Error reading buffer length.\n");
-        return 0;
-    }
+    do {
+        if (scanf("%d", &buffer_length) != 1) {
+            printf("Error reading buffer length.\n");
+            return 0;
+        }
+        if (buffer_length <= 0) {
+            printf("\n-------------------------------------------------------------------");
+            printf("\nBuffer length must be gretter than 0!\n");
+            printf("Buffer length inserted %hhd\n", buffer_length);
+            printf("-------------------------------------------------------------------\n");
+            printf("Enter the buffer length: ");
+        }
+    } while (buffer_length <= 0);
 
     printf("Enter the median window: ");
-    if (scanf("%d", &median_window) != 1) {
-        printf("Error reading median window.\n");
-        return 0;
-    }
+    do {
+        if (scanf("%d", &median_window) != 1) {
+            printf("Error reading median window.\n");
+            return 0;
+        }
+        if (median_window > buffer_length) {
+            printf("\n-------------------------------------------------------------------");
+            printf("\nMedian window must be smaller or equal to buffer length!\n");
+            printf("Buffer length inserted %hhd\n", buffer_length);
+            printf("-------------------------------------------------------------------\n");
+            printf("Enter the median window: ");
+        }
+    } while (median_window > buffer_length);
 
     int res = add_machine_manually(machines, identifier, name, min_temp, max_temp, min_hum, max_hum, buffer_length, median_window);
     if (res) {

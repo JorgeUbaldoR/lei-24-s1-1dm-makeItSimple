@@ -157,7 +157,7 @@ int main() {
                     char op_id = show_and_select_in_operation_operation(machines, machine_id);
                     int out = alter_in_operation_state(machines, machine_id, op_id);
                     Machine* selected_machine = get_machine_by_id(machines, machine_id);
-                    Operation* selected_operation = get_operation_by_id(machines, op_id);
+                    Operation* selected_operation = get_operation_by_id(selected_machine, op_id);
 
                     if (out) {
                         char* cmd = command_from_mach_manager(state.available, op_id);
@@ -165,7 +165,7 @@ int main() {
                         printf("%s\n", cmd);
                         send_data(cmd);
                         temperature_and_humidity_readings(selected_machine, selected_operation);
-                        
+
                     } else {
                         printf("Unable to remove operation %hhd from plant floor!\n", op_id);
                     }
@@ -182,7 +182,7 @@ int main() {
                     Machine* selected_machine = get_machine_by_id(machines, machine_id);
                     char operation_option = show_and_select_operation(machines, machine_id);
                     char op_id = get_operation_id_by_option(selected_machine, operation_option);
-                    Operation* selected_operation = get_operation_by_id(machines, op_id);
+                    Operation* selected_operation = get_operation_by_id(selected_machine, op_id);
 
                     if (strncmp(selected_operation->reading_values.state, state.unavailable, sizeof(selected_operation->reading_values.state)) != 0) {
                         char* cmd = command_from_mach_manager(selected_operation->reading_values.state, op_id);
