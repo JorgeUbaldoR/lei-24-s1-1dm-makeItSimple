@@ -89,14 +89,6 @@ public class CreatePETRGraphUI implements Runnable {
                 System.out.print("Enter an ID (follow the example): ");
                 inputID = scanner.nextLine();
                 System.out.println();
-                System.out.println("██████╗ ██╗   ██╗ ██████╗ ███╗   ██╗ ██████╗     ██╗  ██╗██╗   ██╗");
-                System.out.println("██╔══██╗╚██╗ ██╔╝██╔═══██╗████╗  ██║██╔════╝     ╚██╗██╔╝██║   ██║");
-                System.out.println("██████╔╝ ╚████╔╝ ██║   ██║██╔██╗ ██║██║  ███╗     ╚███╔╝ ██║   ██║");
-                System.out.println("██╔═══╝   ╚██╔╝  ██║   ██║██║╚██╗██║██║   ██║     ██╔██╗ ██║   ██║");
-                System.out.println("██║        ██║   ╚██████╔╝██║ ╚████║╚██████╔╝    ██╔╝ ██╗╚██████╔╝");
-                System.out.println("╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝     ╚═╝  ╚═╝ ╚═════╝ ");
-                System.out.println("                                                                   ");
-
             } while (!checkInputID(inputID));
         }
         char type = inputID.charAt(0);
