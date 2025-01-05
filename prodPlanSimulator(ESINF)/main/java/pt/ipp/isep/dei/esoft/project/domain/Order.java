@@ -4,6 +4,8 @@ import pt.ipp.isep.dei.esoft.project.domain.enumclasses.Priority;
 
 import java.util.Objects;
 
+import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.*;
+
 public class Order implements Comparable<Order> {
 
 
@@ -37,8 +39,11 @@ public class Order implements Comparable<Order> {
 
     @Override
     public String toString() {
-        return String.format("Order[ID=%s, Item=%s, Priority=%s, Quantity=%.2f]",
-                orderID, item.getName(), priority, quantity);
+        return String.format("[%sOrder ID = %s%s] : Item = %s%-10s%s | Priority = %s%-10s%s | Quantity = %s%.2f%s",
+                ANSI_BRIGHT_BLACK,ANSI_RESET,orderID,
+                ANSI_BRIGHT_WHITE,item.getItemID(),ANSI_RESET,
+                ANSI_BRIGHT_WHITE,priority,ANSI_RESET,
+                ANSI_BRIGHT_WHITE,quantity,ANSI_RESET);
     }
 
     @Override

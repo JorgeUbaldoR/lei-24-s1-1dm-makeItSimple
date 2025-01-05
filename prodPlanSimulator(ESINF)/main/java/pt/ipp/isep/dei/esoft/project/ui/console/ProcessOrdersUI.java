@@ -7,8 +7,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 
-import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.ANSI_BRIGHT_WHITE;
-import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.ANSI_RESET;
+import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.*;
 
 public class ProcessOrdersUI implements Runnable {
     private OrdersController controller;
@@ -28,8 +27,15 @@ public class ProcessOrdersUI implements Runnable {
 
         try {
             PriorityQueue<Order> list = controller.readOrderCSV(path);
+            int size = list.size();
+            System.out.printf("%n%sREGISTERED ORDERS...%s%n",ANSI_BRIGHT_GREEN,ANSI_RESET);
+
+            for (int i = 0; i < size; i++) {
+                System.out.println(list.poll());
+            }
+
         }catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(ANSI_BRIGHT_RED + "Error reading orders.csv: " + e.getMessage() + ANSI_RESET);
         }
 
     }
