@@ -43,47 +43,25 @@ public class GraphOperationUI implements Runnable {
 
     private void confirmFileSubmission() {
 
-        boolean confirmation = confirmSubmission();
+        boolean confirm = fileNameSubmission();
 
         MapGraph<Activity, Double> createdMap = getGraphOperationController().getGraph(graphID);
 
         simulateDelay(createdMap);
-
-        if (confirmation) {
-            System.out.println(ANSI_BRIGHT_GREEN + "File successfully created!" + ANSI_RESET);
-        } else {
-            System.out.println(ANSI_BRIGHT_RED + "File not created - cancelled!" + ANSI_RESET);
-        }
     }
 
-    private boolean confirmSubmission() {
-        boolean fileSubmission = fileNameSubmission();
-        if (fileSubmission) {
-            //topologicalSort.write(list, fileName);
-            return true;
-        }
-        return false;
-    }
 
     private boolean fileNameSubmission() {
         String confirmation;
         do {
-            fileName = requestFileName();
             graphID = getInputID();
-            displayTypedInfo(fileName, graphID);
+            displayTypedInfo(graphID);
 
             System.out.print("Do you wish to continue? (y/n): ");
             confirmation = yesNoConfirmation();
         } while (!confirmation.equalsIgnoreCase("y") && !confirmation.equalsIgnoreCase("n"));
 
         return confirmation.equalsIgnoreCase("y");
-    }
-
-    String requestFileName() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter file name: ");
-        fileName = scanner.nextLine();
-        return fileName;
     }
 
     private ID getInputID() {
@@ -109,8 +87,7 @@ public class GraphOperationUI implements Runnable {
         }
     }
 
-    private void displayTypedInfo(String fileName, ID inputID) {
-        System.out.printf("%nChosen file name -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]", fileName);
+    private void displayTypedInfo(ID inputID) {
         System.out.printf("%nChosen ID -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]%n", inputID);
     }
 
@@ -145,6 +122,8 @@ public class GraphOperationUI implements Runnable {
 
         CriticalPath criticalPath = new CriticalPath();
 
+        ProjectSchedule projectSchedule = new ProjectSchedule(createdMap, graphID);
+
         createdMap = removeActivities(createdMap);
 
         Map<String, Object> criticalPathOriginal = criticalPath.calculateCriticalPath(createdMap);
@@ -153,12 +132,12 @@ public class GraphOperationUI implements Runnable {
         showGraphCriticalPathUI.printCriticalPath(criticalPathOriginal);
 
         do {
-            System.out.println("\nChoose the activity to delay (or type 0 to exit):");
+            System.out.println("\nChoose the activity to delay:");
 
             for (int i = 0; i < createdMap.vertices().size() - 1; i++) {
                 System.out.println((i + 1) + "-> " + createdMap.vertices().get(i).getId());
             }
-
+            System.out.println("0-> Exit");
             System.out.print("Your choice: ");
             option = in.nextInt();
 
@@ -178,15 +157,13 @@ public class GraphOperationUI implements Runnable {
                     System.out.println("\n\n══════════════════════════════════════════");
                     System.out.println(ANSI_BRIGHT_WHITE + "             Delayed Critical Path                 " + ANSI_RESET + "\n");
                     showGraphCriticalPathUI.printCriticalPath(criticalPathDelayed);
+                    projectSchedule.calculateScheduleAnalysis(false, duration);
                 } else {
                     System.out.println(ANSI_BRIGHT_RED + "Duration cannot be negative" + ANSI_RESET);
                 }
             }
         } while (option != 0);
 
-        ProjectSchedule projectSchedule = new ProjectSchedule(createdMap, graphID);
-        //double slackTime = projectSchedule.calculateScheduleAnalysis();
-        //System.out.println("Slack Time: \n" + slackTime);
     }
 
     public MapGraph<Activity, Double> removeActivities(MapGraph<Activity, Double> createdMap) {
