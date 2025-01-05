@@ -109,6 +109,7 @@ public class ProjectSchedule {
     }
 
     public void simulateScheduleAnalysis(Activity selectedActivity, double duration) {
+        generateVerticesListBFS();
 
         for (Activity a : verticesList) {
             double earliestStart;

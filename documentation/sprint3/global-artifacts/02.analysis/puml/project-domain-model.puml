@@ -39,7 +39,8 @@ class ProductFamily {
 
 class Part {
     Part_ID
-    Type
+    DESCRIPTION
+    Part_Type
 }
 
 class "Intermediate Material" {
@@ -57,15 +58,33 @@ class Component {
     Description
 }
 
+class Reserved {
+    Part_ID
+    Reserved
+}
 
 class BOM_Template {
    BOM_ID
     Product_ID
     Quantity
 }
+
+class Supplier {
+    Part_ID
+    START_DATE
+    END_DATE
+    MIN_ORDER
+    MIN_COST
+}
+
+class Part_Type {
+    Part_Type
+}
+
 class Operation {
     Operation_ID
     Description
+    Expectedtime
     OPTYPE_ID
     Product_ID
     NextStep
@@ -120,16 +139,18 @@ class Operation_Type{
 class Workstation_Type{
     WS_TYPE_ID
     Name
+    Max_exectiontime
+    Setup_time
 }
 
 Company "1" - "1..*" Factory : posses >
 Factory "1" - "1..*" Sector: has >
 Sector "1" - "1..*" Workstation: includes >
 Product "1" -- "1" BOO: has >
-Product "1" ------ "1" ProductFamily : belongs to >
+Product "1" ---- "1" ProductFamily : belongs to >
 Product "1" -- "1..*" Part : are >
 
-ListOfProduct "1" - "1..*" Product : contains >
+ListOfProduct "1" -- "1..*" Product : contains >
 ProductionOrder "1" - "1" ListOfProduct : contains >
 Workstation "1" -- "*" ProductionOrder: has >
 
@@ -137,16 +158,19 @@ Workstation "1" -- "1..*" Workstation_Type: has >
 Workstation_Type "1" - "1..*" Operation_Type: has >
 Operation_Type "1" -- "1..*" Operation: belong >
 
-Part "1" -- "1..*" Component : contains >
+Part "1" - "1..*" Component : contains >
 Part "1" --- "1..*" "Raw Material" : contains >
 Part "1" --- "1..*" "Intermediate Material" : contains >
+Part "1" --- "1" Part_Type : possesses >
+Part "1..*" --- "1..*" Supplier : has >
+Part "1..*" --- "1..*" Reserved : has >
 
-Operation "1..*" --- "1" BOO: has <
-Operation "1" -- "1..*" BOO_Input: has >
-Operation "1" -- "1..*" BOO_Output: has >
+Operation "1..*" ---- "1" BOO: has <
+Operation "1" --- "1..*" BOO_Input: has >
+Operation "1" --- "1..*" BOO_Output: has >
 
 BOO_Input "1" ---- "1" Part: receive >
 BOO_Output "1" ---- "1" Part: output >
 
-BOM_Template "1" --- "1" ProductFamily : has <
+BOM_Template "1" -- "1" ProductFamily : has <
 @enduml

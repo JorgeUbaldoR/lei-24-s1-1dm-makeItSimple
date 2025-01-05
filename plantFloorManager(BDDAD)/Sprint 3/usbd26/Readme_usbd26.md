@@ -80,17 +80,27 @@ legacy system.
         p_id Product.Product_ID%TYPE;
         part_id Part.PARTNUMBER%TYPE;
         Quantity number;
-        
+    
         v_not_exists number;
+        is_empty BOOLEAN := FALSE;
+        flag BOOLEAN := FALSE;
     BEGIN
         --AS12945S22, AS12946S20
         prod_ids := GetProductIDs('AS12946S20');
     
         LOOP
             FETCH prod_ids INTO p_id ;
-            EXIT WHEN prod_ids%NOTFOUND;
     
+            IF prod_ids%NOTFOUND AND flag = FALSE THEN
+                is_empty := TRUE;
+                v_not_exists := 1;
+            END IF;
+    
+            EXIT WHEN prod_ids%NOTFOUND;
+            
             ops := GetProductOperationIDs(p_id);
+    
+            flag := TRUE;
     
             LOOP
                 FETCH ops INTO op_id ;
@@ -129,6 +139,10 @@ legacy system.
             DBMS_OUTPUT.PUT_LINE('Cannot fulfill the order' );
         ELSE
             DBMS_OUTPUT.PUT_LINE('Can fulfill the order' );
+        END IF;
+    
+        IF is_empty = TRUE THEN
+            DBMS_OUTPUT.PUT_LINE('Product not found' );
         END IF;
     END;
     /

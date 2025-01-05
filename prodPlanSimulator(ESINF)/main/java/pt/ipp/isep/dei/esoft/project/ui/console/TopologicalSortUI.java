@@ -34,24 +34,19 @@ public class TopologicalSortUI implements Runnable {
 
     private void confirmFileSubmission() {
 
+        boolean confirmation = fileNameSubmission();
+
+        if (!confirmation) return;
+
         List<String> list = topologicalSort.performTopologicalSort(getTopologicalController().getGraph(graphID));
 
-        boolean confirmation = confirmSubmission(list);
+        boolean success = topologicalSort.write(list, fileName);
 
-        if (confirmation) {
+        if (success) {
             System.out.println(ANSI_BRIGHT_GREEN + "File successfully created!" + ANSI_RESET);
         } else {
             System.out.println(ANSI_BRIGHT_RED + "File not created - cancelled!" + ANSI_RESET);
         }
-    }
-
-    private boolean confirmSubmission(List<String> list) {
-        boolean fileSubmission = fileNameSubmission();
-        if (fileSubmission) {
-            topologicalSort.write(list, fileName);
-            return true;
-        }
-        return false;
     }
 
     private boolean fileNameSubmission() {
