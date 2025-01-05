@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
+import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.ANSI_RESET;
+import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.ANSI_YELLOW;
+
 public class ExportTimes {
     private static final String DB_URL = "jdbc:oracle:thin:@localhost:1521:XE";
     private static final String USER = "C##manager";
@@ -22,7 +25,7 @@ public class ExportTimes {
             // Execute the update query
             int rowsAffected = preparedStatement.executeUpdate();
 
-            System.out.println("\nUpdate completed successfully! Rows affected: " + rowsAffected);
+            System.out.printf("%n%sUpdate completed successfully!%s%n   • Rows affected: %s%n   • Operation ID : %s%n   • Time : %s%n",ANSI_YELLOW,ANSI_RESET,rowsAffected,id,value);
 
         } catch (SQLException e) {
             System.err.println("\nError during update execution: " + e.getMessage());

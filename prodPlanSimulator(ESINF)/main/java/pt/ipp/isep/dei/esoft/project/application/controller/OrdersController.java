@@ -131,8 +131,8 @@ public class OrdersController {
             productionTreeUI.auxilaryOrder(itemID,(float)order.getQuantity(),PATH_BOO_RESULT);
 
             Map<ID,Float> list = simulatorController.startSimulationOrders();
+            System.out.println();
             for (Map.Entry<ID,Float> entry : list.entrySet()) {
-                System.out.println(entry.getValue().toString());
                 ExportTimes.updateReservedTable(entry.getValue(),entry.getKey().getSerial());
             }
         }
