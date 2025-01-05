@@ -47,9 +47,20 @@ public class ShowBottlenecksUI implements Runnable {
         if ((result.get("topBottlenecks") != Collections.emptyList())) {
             Map<Activity, Integer> topBottlenecks = (Map<Activity, Integer>) result.get("topBottlenecks");
 
-            System.out.println("Top 5 Bottleneck Activities:");
+            System.out.println();
+            System.out.println("🏆 Top 5 Bottleneck Activities:");
+
+            int rank = 1;
             for (Activity activity : topBottlenecks.keySet()) {
-                System.out.println(activity.getId() + " - Dependencies: " + topBottlenecks.get(activity));
+                String medal = switch (rank) {
+                    case 1 -> "🥇";
+                    case 2 -> "🥈";
+                    case 3 -> "🥉";
+                    default -> "🎖️";
+                };
+
+                System.out.println(medal + " " + activity.getId() + " - Dependencies: " + topBottlenecks.get(activity));
+                rank++;
             }
         }
 
@@ -64,7 +75,7 @@ public class ShowBottlenecksUI implements Runnable {
 
         if (!checkIDInput(inputID)) {
             do {
-                System.out.print(" NOT FOUND! Enter an ID (follow the example): ");
+                System.out.print("NOT FOUND! Enter an ID (follow the example): ");
                 inputID = scanner.nextLine();
             } while (!checkIDInput(inputID));
         }

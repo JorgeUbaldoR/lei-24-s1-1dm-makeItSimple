@@ -76,31 +76,35 @@ public class ShowGraphCriticalPathUI implements Runnable {
         List<Activity> criticalPath = (List<Activity>) result.get("criticalPath");
         double totalDuration = (double) result.get("totalDuration");
 
-        System.out.print("Critical Path: ");
+        System.out.println("\nCritical Path Activities:");
+        System.out.println("ID\t|\tES\t|\tEF\t|\tLS\t|\tLF\t|\tSL\t|\tDuration");
+        for (Activity activity : criticalPath) {
+            System.out.printf("%s\t|\t%3.0f\t|\t%3.0f\t|\t%3.0f\t|\t%3.0f\t|\t%3.0f\t|\t%.0f%n",
+                    activity.getId(),
+                    activity.getEarliestStart(),
+                    activity.getEarliestFinish(),
+                    activity.getLatestStart(),
+                    activity.getLatestFinish(),
+                    activity.getSlack(),
+                    activity.getDuration());
+
+        }
+
+        System.out.println();
+
         for (int i = 0; i < criticalPath.size(); i++) {
             if (i > 0) {
                 System.out.print(" → ");
             }
             System.out.print(criticalPath.get(i).getId());
         }
+
         System.out.println("\nTotal Duration: " + totalDuration + " units");
     }
 
 
-//        // Print critical path activities
-//        System.out.println("\nCritical Path Activities:");
-//        System.out.println("ID\t|\tES\t|\tEF\t|\tLS\t|\tLF\t|\tSL\t|\tDuration");
-//        for (Activity activity : criticalPath) {
-//            System.out.printf("%s\t|\t%2.0f\t|\t%2.0f\t|\t%2.0f\t|\t%2.0f\t|\t%2.0f\t|\t%.0f%n",
-//                    activity.getId(),
-//                    activity.getEarliestStart(),
-//                    activity.getEarliestFinish(),
-//                    activity.getLatestStart(),
-//                    activity.getLatestFinish(),
-//                    activity.getSlack(),
-//                    activity.getDuration());
-//
-//        }
+        // Print critical path activities
+
 
 }
 

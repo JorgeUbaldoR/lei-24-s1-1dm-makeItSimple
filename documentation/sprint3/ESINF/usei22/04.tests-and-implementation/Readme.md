@@ -40,32 +40,62 @@ public Map<String, Object> calculateCriticalPath(MapGraph<Activity, Double> grap
             }
         }
 
-        // Identificar caminho crítico
+        // Identificar nós de início
+        List<Activity> startNodes = new ArrayList<>();
         for (Activity activity : filteredActivities) {
-            if (activity.getSlack() == 0 && !activity.getPredecessors().isEmpty()) { // Atividades válidas
-                List<Activity> path = new ArrayList<>();
-                double pathDuration = 0;
+            boolean isStartNode = false;
+            for (ID id : activity.getPredecessors()) {
+                if (id.toString().equals("A-7777")) {
+                    isStartNode = true;
+                    break;
+                }
+            }
+            if (isStartNode) {
+                startNodes.add(activity);
+            }
+        }
 
-                Activity current = activity;
-                while (current != null) {
-                    path.add(current);
-                    pathDuration += current.getDuration(); // Soma a duração
+        // Explorar todos os caminhos começando dos nós iniciais
+        Deque<Activity> stack = new ArrayDeque<>();
+        Deque<Double> durationStack = new ArrayDeque<>();
+        Deque<List<Activity>> pathStack = new ArrayDeque<>();
 
-                    // Encontra o próximo na sequência simplificado sem stream
-                    Activity next = null;
-                    for (Activity a : filteredActivities) {
-                        if (a.getSlack() == 0 && a.getPredecessors().contains(current.getId())) {
-                            next = a;
-                            break;
-                        }
+        for (Activity start : startNodes) {
+            stack.push(start);
+            durationStack.push(0.0);
+            pathStack.push(new ArrayList<>());
+
+            while (!stack.isEmpty()) {
+                Activity current = stack.pop();
+                double pathDuration = durationStack.pop();
+                List<Activity> currentPath = new ArrayList<>(pathStack.pop());
+
+                currentPath.add(current);
+                pathDuration += current.getDuration();
+
+                // Verifica se é um nó final
+                boolean isEndNode = true;
+                for (ID id : current.getSuccessors()) {
+                    if (!id.toString().equals("A-7778")) {
+                        isEndNode = false;
+                        break;
                     }
-                    current = next;
                 }
 
-                // Se a duração do caminho for a mais longa até agora
-                if (pathDuration > totalDuration) {
-                    criticalPath = path; // Mantém apenas o caminho mais longo
-                    totalDuration = pathDuration;
+                if (isEndNode) {
+                    if (pathDuration > totalDuration) {
+                        criticalPath = new ArrayList<>(currentPath);
+                        totalDuration = pathDuration;
+                    }
+                } else {
+                    // Explorar sucessores válidos com slack = 0
+                    for (Activity successor : filteredActivities) {
+                        if (successor.getSlack() == 0 && current.getSuccessors().contains(successor.getId())) {
+                            stack.push(successor);
+                            durationStack.push(pathDuration);
+                            pathStack.push(new ArrayList<>(currentPath));
+                        }
+                    }
                 }
             }
         }
@@ -103,7 +133,7 @@ void calculateCriticalPath() {
     assertEquals(16.0, totalDuration, 0.01); // Total esperado: 16 semanas
 
     // Verificar atividades específicas no caminho crítico
-    List<String> expectedPath = List.of("A-2", "A-3", "A-6", "A-7", "A-9", "A-12");
+    List<String> expectedPath = List.of("A-2", "A-3", "A-6", "A-7", "A-11", "A-12");
     List<String> actualPath = new ArrayList<>();
     for (Activity activity : criticalPathResult) {
         actualPath.add(activity.getId().toString());
