@@ -9,23 +9,23 @@ public class ExportTimes {
     private static final String USER = "C##manager";
     private static final String PASSWORD = "manager123";
 
-    public static void updateReservedTable(String value, String id) {
+    public static void updateReservedTable(float value, int id) {
         String updateQuery = "UPDATE Operation SET EXPECTEDTIME = ? WHERE OPERATION_ID = ?";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
              PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
             // Set the values for the placeholders
-            preparedStatement.setInt(1, Integer.parseInt(value));
-            preparedStatement.setInt(2, Integer.parseInt(id));
+            preparedStatement.setInt(1, (int) value);
+            preparedStatement.setInt(2, id);
 
             // Execute the update query
             int rowsAffected = preparedStatement.executeUpdate();
 
-            System.out.println("Update completed successfully! Rows affected: " + rowsAffected);
+            System.out.println("\nUpdate completed successfully! Rows affected: " + rowsAffected);
 
         } catch (SQLException e) {
-            System.err.println("%nError during update execution: " + e.getMessage());
+            System.err.println("\nError during update execution: " + e.getMessage());
         }
     }
 

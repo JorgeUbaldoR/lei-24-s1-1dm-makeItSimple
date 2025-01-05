@@ -132,7 +132,8 @@ public class OrdersController {
 
             Map<ID,Float> list = simulatorController.startSimulationOrders();
             for (Map.Entry<ID,Float> entry : list.entrySet()) {
-                ExportTimes.updateReservedTable(entry.getValue().toString(),entry.getKey().toString());
+                System.out.println(entry.getValue().toString());
+                ExportTimes.updateReservedTable(entry.getValue(),entry.getKey().getSerial());
             }
         }
 
