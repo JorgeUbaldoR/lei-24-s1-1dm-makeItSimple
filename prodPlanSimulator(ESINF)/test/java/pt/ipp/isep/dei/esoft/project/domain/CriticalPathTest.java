@@ -37,10 +37,10 @@ class CriticalPathTest {
 
         assertNotNull(criticalPathResult);
         assertFalse(criticalPathResult.isEmpty());
-        assertEquals(16.0, totalDuration, 0.01); // Total esperado: 17 semanas
+        assertEquals(16.0, totalDuration, 0.01); // Total esperado: 16 semanas
 
         // Verificar atividades específicas no caminho crítico
-        List<String> expectedPath = List.of("A-2", "A-3", "A-6", "A-7", "A-9", "A-12");
+        List<String> expectedPath = List.of("A-2", "A-3", "A-6", "A-7", "A-11", "A-12");
         List<String> actualPath = new ArrayList<>();
         for (Activity activity : criticalPathResult) {
             actualPath.add(activity.getId().toString());
