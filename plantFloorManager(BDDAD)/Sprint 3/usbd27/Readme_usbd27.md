@@ -137,7 +137,7 @@ The reservation should be created only if the whole order can be fulfilled.
     BEGIN
         EXECUTE IMMEDIATE 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE';
     
-        order_product_ids := GetOrderProducts(9);
+        order_product_ids := GetOrderProducts(5);
     
         LOOP 
             FETCH order_product_ids INTO o_p_id ;
