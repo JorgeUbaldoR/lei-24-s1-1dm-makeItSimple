@@ -102,9 +102,31 @@ public class ShowGraphCriticalPathUI implements Runnable {
         System.out.println("\nTotal Duration: " + totalDuration + " units");
     }
 
+    public void printCriticalPathDelay(Map<String, Object> result) {
+        @SuppressWarnings("unchecked")
+        List<Activity> criticalPath = (List<Activity>) result.get("criticalPath");
+        double totalDuration = (double) result.get("totalDuration");
 
-        // Print critical path activities
+        System.out.println("\nCritical Path Activities:");
+        System.out.println("ID\t|\tDuration");
+        for (Activity activity : criticalPath) {
+            System.out.printf("%s\t|\t%.0f%n",
+                    activity.getId(),
+                    activity.getDuration());
 
+        }
+
+        System.out.println();
+
+        for (int i = 0; i < criticalPath.size(); i++) {
+            if (i > 0) {
+                System.out.print(" → ");
+            }
+            System.out.print(criticalPath.get(i).getId());
+        }
+
+        System.out.println("\nTotal Duration: " + totalDuration + " units");
+    }
 
 }
 
