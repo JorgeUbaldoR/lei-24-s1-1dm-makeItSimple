@@ -92,7 +92,7 @@ public class SimulatorController {
 
     }
 
-    public void startSimulationOrders() {
+    public Map<ID, Float> startSimulationOrders() {
         long startTime = System.nanoTime(); // Ou System.currentTimeMillis()
         try {
             simulator = new Simulator(getMachinesMap(), getTreeOrders(), getOperationList(), (ArrayList<Machine>) getMachineList(), false);
@@ -104,7 +104,7 @@ public class SimulatorController {
         } catch (IllegalArgumentException e) {
             System.out.printf("%n%s%s%s%s", ANSI_BRIGHT_RED, e.getMessage(), " End of simulation...", ANSI_RESET);
         }
-
+        return simulator.getAvgTimesOp();
     }
 
     /**

@@ -7,6 +7,7 @@ import pt.ipp.isep.dei.esoft.project.domain.TreeClasses.Node;
 import pt.ipp.isep.dei.esoft.project.domain.TreeClasses.ProductionTree;
 import pt.ipp.isep.dei.esoft.project.domain.data.ReadOrders;
 import pt.ipp.isep.dei.esoft.project.domain.enumclasses.TypeID;
+import pt.ipp.isep.dei.esoft.project.files.ExportTimes;
 import pt.ipp.isep.dei.esoft.project.repository.*;
 import pt.ipp.isep.dei.esoft.project.ui.console.ProductionTreeUI;
 
@@ -128,9 +129,11 @@ public class OrdersController {
 
             productionTreeUI.ordersBOOProduction("Order ("+order.getOrderID()+")",PATH_BOO_RESULT);
             productionTreeUI.auxilaryOrder(itemID,(float)order.getQuantity(),PATH_BOO_RESULT);
-            ProductionTree pdTree = productionTreeUI.getProductionTreeController().getProductionTree();
 
-            simulatorController.startSimulationOrders();
+            Map<ID,Float> list = simulatorController.startSimulationOrders();
+            for (Map.Entry<ID,Float> entry : list.entrySet()) {
+                ExportTimes.updateReservedTable(entry.getValue().toString(),entry.getKey().toString());
+            }
         }
 
     }

@@ -112,7 +112,7 @@ public class GraphOperationUI implements Runnable {
         Map<String, Object> criticalPathOriginal = delay.calculateCriticalPath(createdMap);
         System.out.println("\n\n══════════════════════════════════════════");
         System.out.println(ANSI_BRIGHT_WHITE + "             Original Critical Path                 " + ANSI_RESET + "\n");
-        showGraphCriticalPathUI.printCriticalPath(criticalPathOriginal);
+        showGraphCriticalPathUI.printCriticalPathDelay(criticalPathOriginal);
 
         int option;
         do {
@@ -137,7 +137,7 @@ public class GraphOperationUI implements Runnable {
                     Map<String, Object> criticalPathDelayed = delay.calculateCriticalPath(createdMap);
                     System.out.println("\n\n══════════════════════════════════════════");
                     System.out.println(ANSI_BRIGHT_WHITE + "             Delayed Critical Path                 " + ANSI_RESET + "\n");
-                    showGraphCriticalPathUI.printCriticalPath(criticalPathDelayed);
+                    showGraphCriticalPathUI.printCriticalPathDelay(criticalPathDelayed);
 
                     System.out.println("\n\n══════════════════════════════════════════");
                     System.out.println(ANSI_BRIGHT_WHITE + "             Slack Time                 " + ANSI_RESET + "\n");

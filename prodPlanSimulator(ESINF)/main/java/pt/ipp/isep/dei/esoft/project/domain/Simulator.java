@@ -25,7 +25,7 @@ public class Simulator {
     private boolean wasActivated = false;
 
 
-
+    private final Map<ID, Float> timesPerOperation = new HashMap<>();
     private final Map<Operation, Float> operationTime;
     private final Map<Item, Float> waitingTime;
     private final Map<Operation, Float> avgExecutionTime;
@@ -645,11 +645,15 @@ public class Simulator {
                     ANSI_BRIGHT_BLACK, "||", ANSI_RESET,
                     entry.getKey().getOperationName(),
                     entry.getValue());
+            timesPerOperation.put(entry.getKey().getOperationId(), entry.getValue());
         }
 
         System.out.printf("%s===============================================%s%n", ANSI_BRIGHT_BLACK, ANSI_RESET);
     }
 
+    public Map<ID,Float> getAvgTimesOp(){
+        return timesPerOperation;
+    }
     /**
      * Fills the waitingTime map with the waiting time of each item in the operation queue list.
      * If an item is already present, increments its waiting time by 1 second.

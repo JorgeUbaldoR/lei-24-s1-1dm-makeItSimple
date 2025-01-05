@@ -154,9 +154,9 @@ public class ProjectSchedule {
                 latestFinish = a.getEarliestFinish();
             }
             if (!a.equals(selectedActivity)) {
-                latestStart = latestFinish - a.getDuration();
+                latestStart = a.getDuration() - latestFinish;
             } else {
-                latestStart = latestFinish - duration;
+                latestStart = duration - latestFinish;
             }
 
             slack = latestFinish - a.getEarliestFinish();
