@@ -1,10 +1,6 @@
 package pt.ipp.isep.dei.esoft.project.ui.console.menu;
 
-import pt.ipp.isep.dei.esoft.project.domain.TopologicalSort;
-import pt.ipp.isep.dei.esoft.project.ui.console.CreatePETRGraphUI;
-import pt.ipp.isep.dei.esoft.project.ui.console.ProjectScheduleUI;
-import pt.ipp.isep.dei.esoft.project.ui.console.ShowBottlenecksUI;
-import pt.ipp.isep.dei.esoft.project.ui.console.ShowGraphCriticalPathUI;
+import pt.ipp.isep.dei.esoft.project.ui.console.*;
 import pt.ipp.isep.dei.esoft.project.ui.console.utils.Utils;
 
 import java.util.ArrayList;
