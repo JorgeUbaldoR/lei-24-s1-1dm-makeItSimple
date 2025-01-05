@@ -2,36 +2,26 @@ package pt.ipp.isep.dei.esoft.project.ui.console;
 
 import pt.ipp.isep.dei.esoft.project.application.controller.GraphOperationController;
 import pt.ipp.isep.dei.esoft.project.application.controller.PETRGraphController;
-import pt.ipp.isep.dei.esoft.project.application.controller.TopologicalController;
 import pt.ipp.isep.dei.esoft.project.domain.Activity;
-import pt.ipp.isep.dei.esoft.project.domain.Graph.CriticalPath;
+import pt.ipp.isep.dei.esoft.project.domain.Delay;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.domain.ID;
-import pt.ipp.isep.dei.esoft.project.domain.ProjectSchedule;
 import pt.ipp.isep.dei.esoft.project.domain.enumclasses.TypeID;
+import pt.ipp.isep.dei.esoft.project.ui.console.ShowGraphCriticalPathUI;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Scanner;
 
 import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.*;
-import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.ANSI_RESET;
 
 public class GraphOperationUI implements Runnable {
+
     private ID graphID;
-    private String fileName;
     private final GraphOperationController graphOperationController;
-    private final PETRGraphController controller;
     private final Scanner in = new Scanner(System.in);
 
     public GraphOperationUI() {
         graphOperationController = new GraphOperationController();
-        controller = new PETRGraphController();
-    }
-
-    private PETRGraphController getController() {
-        return this.controller;
-    }
-    private GraphOperationController getGraphOperationController(){
-        return this.graphOperationController;
     }
 
     @Override
@@ -42,14 +32,12 @@ public class GraphOperationUI implements Runnable {
     }
 
     private void confirmFileSubmission() {
-
         boolean confirm = fileNameSubmission();
+        if (!confirm) return;
 
-        MapGraph<Activity, Double> createdMap = getGraphOperationController().getGraph(graphID);
-
+        MapGraph<Activity, Double> createdMap = graphOperationController.getGraph(graphID);
         simulateDelay(createdMap);
     }
-
 
     private boolean fileNameSubmission() {
         String confirmation;
@@ -92,48 +80,41 @@ public class GraphOperationUI implements Runnable {
     }
 
     private String yesNoConfirmation() {
-        Scanner scanner = new Scanner(System.in);
-        String answer = scanner.nextLine().toLowerCase();
+        String answer = in.nextLine().toLowerCase();
 
         while (!answer.equals("y") && !answer.equals("n")) {
             System.out.print("Please enter 'y' or 'n': ");
-            answer = scanner.nextLine().toLowerCase();
+            answer = in.nextLine().toLowerCase();
         }
 
         return answer;
     }
 
     private boolean checkIDInput(String inputID) {
-        char reference = inputID.charAt(0);
-        reference = Character.toUpperCase(reference);
+        char reference = Character.toUpperCase(inputID.charAt(0));
         return inputID.length() > 2 && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
-    public void simulateDelay(MapGraph<Activity, Double> createdMap) {
+    private void simulateDelay(MapGraph<Activity, Double> createdMap) {
 
-        int option = -1;
-
-        if (createdMap.numVertices() == 0) {
+        if (createdMap == null) {
             System.out.println(ANSI_BRIGHT_RED + "No activities available to delay." + ANSI_RESET);
             return;
         }
 
+        Delay delay = new Delay();
         ShowGraphCriticalPathUI showGraphCriticalPathUI = new ShowGraphCriticalPathUI();
 
-        CriticalPath criticalPath = new CriticalPath();
+        createdMap = delay.removeActivities(createdMap);
 
-        ProjectSchedule projectSchedule = new ProjectSchedule(createdMap, graphID);
-
-        createdMap = removeActivities(createdMap);
-
-        Map<String, Object> criticalPathOriginal = criticalPath.calculateCriticalPath(createdMap);
+        Map<String, Object> criticalPathOriginal = delay.calculateOriginalCriticalPath(createdMap);
         System.out.println("\n\n══════════════════════════════════════════");
         System.out.println(ANSI_BRIGHT_WHITE + "             Original Critical Path                 " + ANSI_RESET + "\n");
         showGraphCriticalPathUI.printCriticalPath(criticalPathOriginal);
 
+        int option;
         do {
             System.out.println("\nChoose the activity to delay:");
-
             for (int i = 0; i < createdMap.vertices().size() - 1; i++) {
                 System.out.println((i + 1) + "-> " + createdMap.vertices().get(i).getId());
             }
@@ -141,43 +122,26 @@ public class GraphOperationUI implements Runnable {
             System.out.print("Your choice: ");
             option = in.nextInt();
 
-            if (option < 0 || option > createdMap.vertices().size() - 1) {
-                System.out.println(ANSI_BRIGHT_RED + "Invalid choice. Please try again." + ANSI_RESET);
-            } else if (option > 0) {
+            if (option > 0 && option <= createdMap.vertices().size() - 1) {
                 Activity selectedActivity = createdMap.vertices().get(option - 1);
 
                 System.out.println("You selected: " + selectedActivity);
                 System.out.print("Enter the delay duration: ");
-                double delay = in.nextDouble();
-                double duration = selectedActivity.getDuration() + delay;
-                if (duration >= 0) {
-                    selectedActivity.setDuration(selectedActivity.getDuration() + delay);
+                double delayDuration = in.nextDouble();
 
-                    Map<String, Object> criticalPathDelayed = criticalPath.calculateCriticalPath(createdMap);
+                try {
+                    delay.updateActivityDuration(selectedActivity, delayDuration);
+
+                    Map<String, Object> criticalPathDelayed = delay.calculateDelayedCriticalPath(createdMap);
                     System.out.println("\n\n══════════════════════════════════════════");
                     System.out.println(ANSI_BRIGHT_WHITE + "             Delayed Critical Path                 " + ANSI_RESET + "\n");
                     showGraphCriticalPathUI.printCriticalPath(criticalPathDelayed);
-                    projectSchedule.calculateScheduleAnalysis(false, duration);
-                } else {
-                    System.out.println(ANSI_BRIGHT_RED + "Duration cannot be negative" + ANSI_RESET);
+                } catch (IllegalArgumentException e) {
+                    System.out.println(ANSI_BRIGHT_RED + e.getMessage() + ANSI_RESET);
                 }
+            } else if (option != 0) {
+                System.out.println(ANSI_BRIGHT_RED + "Invalid choice. Please try again." + ANSI_RESET);
             }
         } while (option != 0);
-
-    }
-
-    public MapGraph<Activity, Double> removeActivities(MapGraph<Activity, Double> createdMap) {
-        Iterator<Activity> iterator = createdMap.vertices().iterator();
-        ID start = new ID(7777, TypeID.ACTIVITY);
-        ID finish = new ID(7778, TypeID.ACTIVITY);
-        while (iterator.hasNext()) {
-            Activity activity = iterator.next();
-            ID activityId = activity.getId();
-
-            if (start.equals(activityId) || finish.equals(activityId)) {
-                createdMap.removeVertex(activity);
-            }
-        }
-        return createdMap;
     }
 }
