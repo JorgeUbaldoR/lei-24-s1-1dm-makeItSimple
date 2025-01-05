@@ -1,0 +1,139 @@
+#include <MQSpaceData.h>
+#include <DHT.h>
+#include <math.h>
+
+#define ADC_BIT_RESU  (10)
+#define ANALOG_PIN    (A0)
+#define RL_VALUE      20.0
+#define RO_CLEAN_AIR  107.08
+#define RED_1_VENT_FAN 0
+#define YELLOW_EXA_FAN 6
+#define DHT_PIN 28
+#define DHT_TYPE DHT11
+
+DHT dht(DHT_PIN, DHT_TYPE);
+
+MQSpaceData MQ(ADC_BIT_RESU, ANALOG_PIN);
+
+float initialRsRo = 0.0;
+bool lightsOn = false;
+float initialHumidity = 0.0;
+bool humidityTriggered = false;
+float initialTemperature = 0.0;
+bool temperatureTriggered = false;
+
+void setup() {
+    Serial.begin(115200);
+
+    pinMode(RED_1_VENT_FAN, OUTPUT);
+    pinMode(YELLOW_EXA_FAN, OUTPUT);
+    digitalWrite(RED_1_VENT_FAN, LOW);
+    digitalWrite(YELLOW_EXA_FAN, LOW);
+
+    MQ.begin();
+    dht.begin();
+    Serial.println("Aquecendo o sensor MQ-135 e DHT...");
+    delay(5000);
+
+    initialHumidity = dht.readHumidity();
+    initialTemperature = dht.readTemperature();
+    Serial.print("Umidade inicial: ");
+    Serial.println(initialHumidity);
+    Serial.print("Temperatura inicial: ");
+    Serial.println(initialTemperature);
+    Serial.println("Sensor pronto para medir álcool etílico e umidade/temperatura!");
+}
+
+void loop() {
+    float sensorValue = analogRead(ANALOG_PIN);
+
+    float voltage = (sensorValue / 1023.0) * 5.0;
+
+    float Rs = (5.0 - voltage) / voltage * RL_VALUE;
+
+    float RsRo = Rs / RO_CLEAN_AIR;
+
+    float ethanolConcentration = 10 * pow(RsRo, -2.1);
+
+    static float smoothedConcentration = ethanolConcentration;
+    smoothedConcentration = 0.9 * smoothedConcentration + 0.1 * ethanolConcentration;
+
+    Serial.print("Rs/Ro: ");
+    Serial.print(RsRo, 2);
+    Serial.print(" | Concentração de Álcool Etílico (ppm): ");
+    Serial.println(smoothedConcentration, 2);
+
+    // Leitura da umidade atual
+    float currentHumidity = dht.readHumidity();
+    if (isnan(currentHumidity)) {
+        Serial.println("Falha ao ler a umidade!");
+        return;
+    }
+
+    Serial.print("Umidade atual: ");
+    Serial.println(currentHumidity);
+
+    if (initialHumidity == 0.0) {
+        initialHumidity = currentHumidity;
+    } else {
+        float humidityVariation = (currentHumidity - initialHumidity) / initialHumidity * 100.0;
+
+        if (humidityVariation >= 10.0 && !humidityTriggered) {
+            digitalWrite(RED_1_VENT_FAN, HIGH);
+            delay(10000);
+            digitalWrite(RED_1_VENT_FAN, LOW);
+
+            digitalWrite(YELLOW_EXA_FAN, HIGH);
+            delay(10000);
+            digitalWrite(YELLOW_EXA_FAN, LOW);
+
+            humidityTriggered = true;
+        }
+    }
+
+    float currentTemperature = dht.readTemperature();
+    if (isnan(currentTemperature)) {
+        Serial.println("Falha ao ler a temperatura!");
+        return;
+    }
+
+    Serial.print("Temperatura atual: ");
+    Serial.println(currentTemperature);
+
+    if (initialTemperature == 0.0) {
+        initialTemperature = currentTemperature;
+    } else {
+        float temperatureVariation = currentTemperature - initialTemperature;
+
+        if (temperatureVariation >= 5.0 && !temperatureTriggered) {
+            digitalWrite(YELLOW_EXA_FAN, HIGH);
+            delay(5000);
+            digitalWrite(YELLOW_EXA_FAN, LOW);
+
+            digitalWrite(RED_1_VENT_FAN, HIGH);
+            delay(5000);
+            digitalWrite(RED_1_VENT_FAN, LOW);
+
+            temperatureTriggered = true;
+        }
+    }
+
+    if (initialRsRo == 0.0) {
+        initialRsRo = RsRo;
+    } else {
+        float variation = abs(RsRo - initialRsRo) / initialRsRo * 100.0;
+
+        if (variation >= 10.0 && !lightsOn) {
+            digitalWrite(RED_1_VENT_FAN, HIGH);
+            digitalWrite(YELLOW_EXA_FAN, HIGH);
+            lightsOn = true;
+
+            delay(10000);
+
+            digitalWrite(RED_1_VENT_FAN, LOW);
+            digitalWrite(YELLOW_EXA_FAN, LOW);
+        }
+    }
+
+    delay(1000);
+}
