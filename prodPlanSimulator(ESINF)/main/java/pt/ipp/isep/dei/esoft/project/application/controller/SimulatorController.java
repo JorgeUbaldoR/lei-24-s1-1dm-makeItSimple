@@ -92,6 +92,21 @@ public class SimulatorController {
 
     }
 
+    public void startSimulationOrders() {
+        long startTime = System.nanoTime(); // Ou System.currentTimeMillis()
+        try {
+            simulator = new Simulator(getMachinesMap(), getTreeOrders(), getOperationList(), (ArrayList<Machine>) getMachineList(), false);
+            simulator.startSimulation();
+
+            long endTime = System.nanoTime(); // Ou System.currentTimeMillis()
+            double durationInSeconds = (endTime - startTime) / 1_000_000_000.0;
+            System.out.printf("Execution time: %.3f seconds", durationInSeconds);
+        } catch (IllegalArgumentException e) {
+            System.out.printf("%n%s%s%s%s", ANSI_BRIGHT_RED, e.getMessage(), " End of simulation...", ANSI_RESET);
+        }
+
+    }
+
     /**
      * Starts the simulation considering priority in the operation queues.
      */
@@ -139,7 +154,12 @@ public class SimulatorController {
     }
 
     public TreeMap<Integer, Queue<Map<Item, Float>>> getTree() {
-        this.boo = new ItemLevelProcessor();
+        this.boo = new ItemLevelProcessor(false, "");
+        return boo.getTree();
+    }
+
+    public TreeMap<Integer, Queue<Map<Item, Float>>> getTreeOrders() {
+        this.boo = new ItemLevelProcessor(true, "PUT_PATH_JORGITOOOOO");
         return boo.getTree();
     }
 

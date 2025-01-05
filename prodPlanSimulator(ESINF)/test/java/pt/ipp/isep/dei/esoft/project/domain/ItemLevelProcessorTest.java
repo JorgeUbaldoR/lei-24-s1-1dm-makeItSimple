@@ -15,7 +15,7 @@ class ItemLevelProcessorTest {
 
     @BeforeEach
     void setUp() {
-        itemLevelProcessor = new ItemLevelProcessor();
+        itemLevelProcessor = new ItemLevelProcessor(false, "");
     }
 
 
