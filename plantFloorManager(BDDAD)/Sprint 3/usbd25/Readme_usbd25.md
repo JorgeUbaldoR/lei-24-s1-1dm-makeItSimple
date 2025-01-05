@@ -132,7 +132,11 @@ should be included.
 
 ### 3. Resolution
 
->![Results](img/USBD25.png)
+>![Results](img/USBD25 p1.png)
+>
+>![Results](img/USBD25 p2.png)
+>
+>![Results](img/USBD25 p3.png)
 
 >[See results in a CSV file](csv_result/USBD25.csv)
 

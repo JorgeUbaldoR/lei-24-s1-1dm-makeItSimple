@@ -2,51 +2,122 @@
 
 ### 1. User Story Description
 
->  As a Production Manager, I want to make sure that the expected execution time of an operation is not greater than the maximum execution time of every workstation type where it may be run. A trigger should be developed to avoid this issue in both insert and update operations.
+>   As a Production Manager, I want to make sure that the expected execution time of an operation is not greater than the maximum execution time of
+every workstation type where it may be run. A trigger should be developed to
+avoid this issue in both insert and update operations.
+
 
 
 ### 2. Resolution
 >**AC1:** Minimum expected requirement: demonstrated with data imported from the
 legacy system.
-> 
->**AC2:** A trigger should be developed to
-avoid this issue in both insert and update operations.
 
+    --USBD27
+    UPDATE Reserved
+    SET RESERVED = 15
+    WHERE PartPARTNUMBER = 'PN18544A21';
 
->This trigger is designed to ensure that the EXPECTEDTIME for an operation in the Operation table doesn't pass the MAX_EXECUTIONTIME that workstation_type has defined.
->
->When an operation is being added or updated, the trigger calculates the maximum allowed execution time for the operation's type. It does this by querying the Workstation_Type and Workstation_Type_Operation_TYPE tables, which define the relationship between workstation types and operation types, and retrieves the MAX_EXECUTIONTIME associated with the operation type in question.
->
->The trigger then compares the provided EXPECTEDTIME in the operation (:NEW.EXPECTEDTIME) to the retrieved maximum execution time. If the expected time exceeds the allowed maximum, the trigger raises an application error with a specific message, stopping the database from completing the insert or update.
-
-    CREATE OR REPLACE TRIGGER validate_expected_time
-    BEFORE INSERT OR UPDATE ON Operation
-    FOR EACH ROW
     DECLARE
-    max_time NUMBER;
-    BEGIN
-    SELECT MAX_EXECUTIONTIME
-    INTO max_time
-    FROM Workstation_Type Wt
-    JOIN Workstation_Type_Operation_TYPE WtOt ON WtOt.Workstation_TypeWS_TYPE_ID = Wt.WS_TYPE_ID
-    WHERE Operation_TYPEOPTYPE_ID = :NEW.Operation_TYPEOPTYPE_ID;
+        order_product_ids SYS_REFCURSOR;
+        operations SYS_REFCURSOR;
+        part_stock SYS_REFCURSOR;
+        products_ids SYS_REFCURSOR;
     
-        IF :NEW.EXPECTEDTIME > max_time THEN
-            RAISE_APPLICATION_ERROR(-20001,'Expected execution time exceeds the maximum execution time for the operation type.');
+        o_p_id Product.Product_ID%TYPE;
+        op_id  BOO_INPUT.OperationOPERATION_ID%TYPE;
+        p_id Product.Product_ID%TYPE;
+        part_id Part.PARTNUMBER%TYPE;
+        Quantity number(10);
+    
+        v_not_exists number;
+    BEGIN
+        EXECUTE IMMEDIATE 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE';
+    
+        order_product_ids := GetOrderProducts(5);
+        
+        LOOP
+            FETCH order_product_ids INTO o_p_id ;
+            EXIT WHEN order_product_ids%NOTFOUND;
+    
+            products_ids := GetProductIDs(o_p_id);
+        
+            LOOP
+                FETCH products_ids INTO p_id ;
+                EXIT WHEN products_ids%NOTFOUND;
+        
+                operations := GetProductOperationIDs(p_id);
+        
+                LOOP
+                    FETCH operations INTO op_id ;
+                    EXIT WHEN operations%NOTFOUND;
+        
+                    part_stock := GetProductParts(op_id);
+        
+                    LOOP
+                        FETCH part_stock INTO part_id, Quantity ;
+                        EXIT WHEN part_stock%NOTFOUND;
+        
+                        IF NOT UpdateReserved(part_id, Quantity) THEN
+                            v_not_exists := 1;
+                        END IF;
+        
+                        IF v_not_exists = 1 THEN
+                            EXIT;
+                        END IF;
+        
+                    END LOOP;
+                    CLOSE part_stock;
+                    IF v_not_exists = 1 THEN
+                        EXIT;
+                    END IF;
+        
+                END LOOP;
+                CLOSE operations;
+                IF v_not_exists = 1 THEN
+                    EXIT;
+                END IF;
+            
+            END LOOP;
+            CLOSE products_ids;
+        END LOOP;
+        CLOSE order_product_ids;
+    
+        IF v_not_exists != 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Cannot fulfill the order' );
+            ROLLBACK;
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Can fulfill the order' );
+            COMMIT;
         END IF;
     END;
     /
-    
-    INSERT INTO Operation (OPERATION_ID, DESCRIPTION, EXPECTEDTIME, BOOProductPRODUCT_ID, Operation_TYPEOPTYPE_ID, NEXTSTEP)
-    VALUES (9999, 'Teflon painting', 3300, 'AS99999S99', 5671, NULL);
-    
 
+    --USBD30
+    DECLARE
+        result VARCHAR2(100);
+    BEGIN
+        --PN12344A21 50 10 5
+        result := update_stock('PN12344A21', 40);
+        DBMS_OUTPUT.PUT_LINE(result);
+    END;
+    /
 
+    DECLARE
+        result VARCHAR2(100);
+    BEGIN
+        --PN12344A21 50 10 5
+        result := update_stock('TESTE', 20);
+        DBMS_OUTPUT.PUT_LINE(result);
+    END;
+    /
 
-### 3. Resolution
-
->![Results](img/USBD23.png)
-
->[See results in a CSV file](csv_result/USBD23.csv)
+    DECLARE
+        result VARCHAR2(100);
+    BEGIN
+        --PN12344A21 50 10 5
+        result := update_stock('IP12945A34', 20);
+        DBMS_OUTPUT.PUT_LINE(result);
+    END;
+    /
 
 
