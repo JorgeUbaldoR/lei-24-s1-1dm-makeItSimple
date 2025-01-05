@@ -11,6 +11,139 @@ avoid this issue in both insert and update operations.
 ### 2. Resolution
 >**AC1:** Minimum expected requirement: demonstrated with data imported from the
 legacy system.
+    
+    --USBD25
+    DECLARE
+        operations SYS_REFCURSOR;
+        products_ids SYS_REFCURSOR;
+        op_id  Operation.OPERATION_ID%TYPE;
+        p_id Product.Product_ID%TYPE;
+    
+        oi_cursor SYS_REFCURSOR;
+        io_type VARCHAR2(255);  -- IO type (Input/Output)
+        part VARCHAR2(255);  -- Part number
+    
+        is_empty BOOLEAN := FALSE;
+        flag BOOLEAN := FALSE;
+    BEGIN
+        -- AS12945S22, AS12946S20
+        products_ids := GetProductIDs('Teste');
+    
+        LOOP
+            FETCH products_ids INTO p_id ;
+    
+            IF products_ids%NOTFOUND AND flag = FALSE THEN
+                is_empty := TRUE;
+            END IF;
+    
+            EXIT WHEN products_ids%NOTFOUND;
+    
+            operations := GetProductOperationIDs(p_id);
+    
+            flag := TRUE;
+    
+            LOOP
+                FETCH operations INTO op_id ;
+                EXIT WHEN operations%NOTFOUND;
+                
+                DBMS_OUTPUT.PUT_LINE('Operation ID: ' || op_id);
+    
+                oi_cursor := GetOperationInputOuput(op_id);
+    
+                LOOP
+                    FETCH oi_cursor INTO io_type, part;
+                    EXIT WHEN oi_cursor%NOTFOUND;
+                    
+                    DBMS_OUTPUT.PUT_LINE(io_type || ' - ' || part);
+                END LOOP;
+                CLOSE oi_cursor;
+                DBMS_OUTPUT.PUT_LINE(CHR(10));
+            END LOOP;
+            CLOSE operations;
+        END LOOP;
+        CLOSE products_ids;
+    
+        IF is_empty = TRUE THEN
+            DBMS_OUTPUT.PUT_LINE('Product not found' );
+        END IF;
+    END;
+    /
+
+    --USBD26
+    DECLARE
+        ops SYS_REFCURSOR;
+        part_stock SYS_REFCURSOR;
+        prod_ids SYS_REFCURSOR;
+        op_id  BOO_INPUT.OperationOPERATION_ID%TYPE;
+        p_id Product.Product_ID%TYPE;
+        part_id Part.PARTNUMBER%TYPE;
+        Quantity number;
+        
+        v_not_exists number;
+        is_empty BOOLEAN := FALSE;
+        flag BOOLEAN := FALSE;
+    BEGIN
+        --AS12945S22, AS12946S20
+        prod_ids := GetProductIDs('teste');
+    
+        LOOP
+            FETCH prod_ids INTO p_id ;
+    
+            IF prod_ids%NOTFOUND AND flag = FALSE THEN
+                is_empty := TRUE;
+                v_not_exists := 1;
+            END IF;
+    
+            EXIT WHEN prod_ids%NOTFOUND;
+            
+            ops := GetProductOperationIDs(p_id);
+    
+            flag := TRUE;
+    
+            LOOP
+                FETCH ops INTO op_id ;
+                EXIT WHEN ops%NOTFOUND;
+    
+                part_stock := GetProductParts(op_id);
+    
+                LOOP
+                    FETCH part_stock INTO part_id, Quantity ;
+                    EXIT WHEN part_stock%NOTFOUND;
+    
+                    IF NOT CheckStock(part_id, Quantity) THEN
+                        v_not_exists := 1;
+                    END IF;
+    
+                    IF v_not_exists = 1 THEN
+                        EXIT;
+                    END IF;
+    
+                END LOOP;
+                CLOSE part_stock;
+                IF v_not_exists = 1 THEN
+                    EXIT;
+                END IF;
+    
+            END LOOP;
+            CLOSE ops;
+            IF v_not_exists = 1 THEN
+                EXIT;
+            END IF;
+    
+        END LOOP;
+        CLOSE prod_ids;
+    
+        IF v_not_exists != 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Cannot fulfill the order' );
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Can fulfill the order' );
+        END IF;
+    
+        IF is_empty = TRUE THEN
+            DBMS_OUTPUT.PUT_LINE('Product not found' );
+        END IF;
+    END;
+    /
 
     --USBD27
     DECLARE
@@ -27,6 +160,7 @@ legacy system.
     
         v_not_exists number;
         is_empty_order BOOLEAN := FALSE;
+        flag BOOLEAN := FALSE;
     BEGIN
         EXECUTE IMMEDIATE 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE';
     
@@ -35,7 +169,7 @@ legacy system.
         LOOP 
             FETCH order_product_ids INTO o_p_id ;
     
-            IF order_product_ids%NOTFOUND THEN
+            IF order_product_ids%NOTFOUND AND flag = FALSE THEN
                 is_empty_order := TRUE;
                 v_not_exists := 1;
             END IF;
@@ -45,6 +179,8 @@ legacy system.
     
             products_ids := GetProductIDs(o_p_id);
             
+            flag := TRUE;
+    
             LOOP
                 FETCH products_ids INTO p_id ;
                 EXIT WHEN products_ids%NOTFOUND;
@@ -68,8 +204,6 @@ legacy system.
                         IF v_not_exists = 1 THEN
                             EXIT;
                         END IF;
-                        DBMS_OUTPUT.PUT_LINE('Inside2');
-            
                     END LOOP;
                     CLOSE part_stock;
                         
@@ -120,6 +254,7 @@ legacy system.
     
         v_not_exists number;
         is_empty_order BOOLEAN := FALSE;
+        flag BOOLEAN := FALSE;
     BEGIN
         EXECUTE IMMEDIATE 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE';
     
@@ -128,7 +263,7 @@ legacy system.
         LOOP 
             FETCH order_product_ids INTO o_p_id ;
     
-            IF order_product_ids%NOTFOUND THEN
+            IF order_product_ids%NOTFOUND AND flag = FALSE THEN
                 is_empty_order := TRUE;
                 v_not_exists := 1;
             END IF;
@@ -138,6 +273,8 @@ legacy system.
     
             products_ids := GetProductIDs(o_p_id);
             
+            flag := TRUE;
+    
             LOOP
                 FETCH products_ids INTO p_id ;
                 EXIT WHEN products_ids%NOTFOUND;
@@ -161,8 +298,6 @@ legacy system.
                         IF v_not_exists = 1 THEN
                             EXIT;
                         END IF;
-                        DBMS_OUTPUT.PUT_LINE('Inside2');
-            
                     END LOOP;
                     CLOSE part_stock;
                         
@@ -194,6 +329,7 @@ legacy system.
         END IF;
     END;
     /
+
 
     --USBD30
     DECLARE

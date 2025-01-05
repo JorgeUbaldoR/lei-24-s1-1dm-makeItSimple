@@ -134,6 +134,7 @@ The reservation should be created only if the whole order can be fulfilled.
     
         v_not_exists number;
         is_empty_order BOOLEAN := FALSE;
+        flag BOOLEAN := FALSE;
     BEGIN
         EXECUTE IMMEDIATE 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE';
     
@@ -142,16 +143,18 @@ The reservation should be created only if the whole order can be fulfilled.
         LOOP 
             FETCH order_product_ids INTO o_p_id ;
     
-            IF order_product_ids%NOTFOUND THEN
+            IF order_product_ids%NOTFOUND AND flag = FALSE THEN
                 is_empty_order := TRUE;
                 v_not_exists := 1;
             END IF;
-            
+    
             EXIT WHEN order_product_ids%NOTFOUND;
     
     
             products_ids := GetProductIDs(o_p_id);
             
+            flag := TRUE;
+    
             LOOP
                 FETCH products_ids INTO p_id ;
                 EXIT WHEN products_ids%NOTFOUND;
@@ -175,8 +178,6 @@ The reservation should be created only if the whole order can be fulfilled.
                         IF v_not_exists = 1 THEN
                             EXIT;
                         END IF;
-                        DBMS_OUTPUT.PUT_LINE('Inside2');
-            
                     END LOOP;
                     CLOSE part_stock;
                         
