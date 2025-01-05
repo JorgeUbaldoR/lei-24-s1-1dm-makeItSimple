@@ -1,4 +1,4 @@
-package java.pt.ipp.isep.dei.esoft.project.domain.Graph;
+package pt.ipp.isep.dei.esoft.project.domain;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package java.pt.ipp.isep.dei.esoft.project.domain.Graph;
+package pt.ipp.isep.dei.esoft.project.domain;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ class BottlenecksTest {
         // Testar gargalos
         Map<String, Object> bottlenecks = Bottlenecks.identifyBottlenecks(graph, criticalPathResult);
 
-        List<Activity> topBottlenecks = (List<Activity>) bottlenecks.get("topBottlenecks");
+        Map<Activity, Integer> topBottlenecks = (Map<Activity, Integer>) bottlenecks.get("topBottlenecks");
         List<Activity> allBottlenecks = (List<Activity>) bottlenecks.get("allBottlenecks");
 
         assertNotNull(topBottlenecks);
