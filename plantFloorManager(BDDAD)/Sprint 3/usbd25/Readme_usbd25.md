@@ -96,15 +96,25 @@ should be included.
         oi_cursor SYS_REFCURSOR;
         io_type VARCHAR2(255);  -- IO type (Input/Output)
         part VARCHAR2(255);  -- Part number
+    
+        is_empty BOOLEAN := FALSE;
+        flag BOOLEAN := FALSE;
     BEGIN
         -- AS12945S22, AS12946S20
-        products_ids := GetProductIDs('AS12945S22');
+        products_ids := GetProductIDs('AS12946S20');
     
         LOOP
             FETCH products_ids INTO p_id ;
+    
+            IF products_ids%NOTFOUND AND flag = FALSE THEN
+                is_empty := TRUE;
+            END IF;
+    
             EXIT WHEN products_ids%NOTFOUND;
     
             operations := GetProductOperationIDs(p_id);
+    
+            flag := TRUE;
     
             LOOP
                 FETCH operations INTO op_id ;
@@ -126,13 +136,21 @@ should be included.
             CLOSE operations;
         END LOOP;
         CLOSE products_ids;
+    
+        IF is_empty = TRUE THEN
+            DBMS_OUTPUT.PUT_LINE('Product not found' );
+        END IF;
     END;
     /
 
 
 ### 3. Resolution
 
->![Results](img/USBD25.png)
+>![Results](img/USBD25 p1.png)
+>
+>![Results](img/USBD25 p2.png)
+>
+>![Results](img/USBD25 p3.png)
 
 >[See results in a CSV file](csv_result/USBD25.csv)
 

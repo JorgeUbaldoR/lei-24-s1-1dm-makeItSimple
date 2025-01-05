@@ -22,7 +22,7 @@ public class ProductionTreeUI implements Runnable {
         controller = new ProductionTreeController();
     }
 
-    private ProductionTreeController getProductionTreeController() {
+    public ProductionTreeController getProductionTreeController() {
         return controller;
     }
 
@@ -41,6 +41,7 @@ public class ProductionTreeUI implements Runnable {
 
     /**
      * Executes actions based on the user's choice.
+     *
      * @param choice User's choice from the menu.
      */
     private void doChoice(int choice) {
@@ -48,19 +49,19 @@ public class ProductionTreeUI implements Runnable {
         String name;
         switch (choice) {
             case 1:
-                System.out.println(ANSI_BRIGHT_GREEN + "\n\n         GENERATING BOO | DEFAULT FILE" + ANSI_RESET+"\n");
+                System.out.println(ANSI_BRIGHT_GREEN + "\n\n         GENERATING BOO | DEFAULT FILE" + ANSI_RESET + "\n");
                 System.out.print("Enter a name to your production tree:");
                 name = in.nextLine();
-                confirmationData(name,DEFAULT_PATH);
+                confirmationData(name, DEFAULT_PATH);
                 break;
 
             case 2:
-                System.out.println(ANSI_BRIGHT_GREEN + "\n\n         GENERATING BOO | SPECIFIC FILE" + ANSI_RESET+"\n");
+                System.out.println(ANSI_BRIGHT_GREEN + "\n\n         GENERATING BOO | SPECIFIC FILE" + ANSI_RESET + "\n");
                 System.out.print("Enter a name to your production tree:");
                 name = in.nextLine();
                 System.out.print("Enter the path to the boo.csv:");
                 String path = in.nextLine();
-                confirmationData(name,path);
+                confirmationData(name, path);
                 break;
 
             default:
@@ -71,9 +72,10 @@ public class ProductionTreeUI implements Runnable {
 
     /**
      * Prompts the user to input their choice and validates it.
+     *
      * @return A valid choice between 0 and 2.
      */
-    private int getChoice () {
+    private int getChoice() {
         int choice = 0;
         boolean valid = false;
         do {
@@ -97,19 +99,32 @@ public class ProductionTreeUI implements Runnable {
 
     /**
      * Displays the production tree.
+     *
      * @param productionTree The tree to be displayed.
-     * @param name The name of the tree.
+     * @param name           The name of the tree.
      */
     public void showTree(ProductionTree productionTree, String name) {
-        System.out.printf("%n%n══════════|PRODUCTION TREE: %s%s%s|══════════%n%n",ANSI_BRIGHT_WHITE,name,ANSI_RESET);
+        System.out.printf("%n%n══════════|PRODUCTION TREE: %s%s%s|══════════%n%n", ANSI_BRIGHT_WHITE, name, ANSI_RESET);
         printNode(productionTree.getNodesOfTree().get(0), 0, "");  // Inicia a árvore com o primeiro nó, nível 1, e indentação vazia
 
     }
 
+    public void showTreeNew(ProductionTree productionTree, String name) {
+        System.out.printf("%n══════════|PRODUCTION TREE: %s%s%s|══════════%n", ANSI_BRIGHT_WHITE, name, ANSI_RESET);
+        printNode(productionTree.getNodesOfTree().get(0), 0, "");  // Inicia a árvore com o primeiro nó, nível 1, e indentação vazia
+
+    }
+
+    public void showTreeUpdatedMaterials(ProductionTree productionTree, String name) {
+        System.out.printf("%n%s══════════|%sPRODUCTION TREE: %s%s%s%s|══════════%s%n",ANSI_BRIGHT_YELLOW,ANSI_RESET, ANSI_BRIGHT_WHITE, name, ANSI_RESET,ANSI_BRIGHT_YELLOW,ANSI_RESET);
+        printNode(productionTree.getNodesOfTree().get(0), 0, "");  // Inicia a árvore com o primeiro nó, nível 1, e indentação vazia
+
+    }
     /**
      * Recursively prints the nodes and their dependencies in a structured format.
-     * @param node The current node.
-     * @param level The depth of the current node.
+     *
+     * @param node   The current node.
+     * @param level  The depth of the current node.
      * @param indent The indentation to display for the current node.
      */
     private void printNode(Node node, int level, String indent) {
@@ -154,45 +169,61 @@ public class ProductionTreeUI implements Runnable {
     }
 
 
-
-    private void displayOption(String name,int flag) {
+    private void displayOption(String name, int flag) {
         if (flag == 0) {
             System.out.printf("%nChosen Name -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]", name);
-        }else{
+        } else {
             System.out.printf("%nChosen Operation -> [" + ANSI_GREEN + "%s" + ANSI_RESET + "]", name);
         }
     }
 
     /**
      * Confirms and processes data for the production tree.
+     *
      * @param name The name of the tree.
      * @param path The path to the input file.
      */
     private void confirmationData(String name, String path) {
-        displayOption(name,0);
-        displayOption(path,1);
+        displayOption(name, 0);
+        displayOption(path, 1);
 
         System.out.print("\nDo you wish to save the operation? (y/n): ");
         String answer = yesNoConfirmation();
 
-        if(answer.equalsIgnoreCase("y")){
+        if (answer.equalsIgnoreCase("y")) {
             getProductionTreeController().setName(name);
-            try{
-                if(getProductionTreeController().getInformations(path)){
-                    showTree(getProductionTreeController().getProductionTree(),name);
-                    System.out.println("\n"+ANSI_BRIGHT_GREEN + "Production Tree successfully generated!" + ANSI_RESET);
-                }else{
-                    System.out.println("\n"+ANSI_BRIGHT_RED + "Operation canceled - File doesn't have information to be read" + ANSI_RESET);
+            try {
+                if (getProductionTreeController().getInformations(path)) {
+                    showTree(getProductionTreeController().getProductionTree(), name);
+                    System.out.println("\n" + ANSI_BRIGHT_GREEN + "Production Tree successfully generated!" + ANSI_RESET);
+                } else {
+                    System.out.println("\n" + ANSI_BRIGHT_RED + "Operation canceled - File doesn't have information to be read" + ANSI_RESET);
                 }
 
             } catch (Exception e) {
-                System.out.println("\n"+ANSI_BRIGHT_RED +e.getMessage()+ ANSI_RESET);
+                System.out.println("\n" + ANSI_BRIGHT_RED + e.getMessage() + ANSI_RESET);
             }
 
-        }else{
-            System.out.println("\n"+ANSI_BRIGHT_RED + "Operation canceled." + ANSI_RESET);
+        } else {
+            System.out.println("\n" + ANSI_BRIGHT_RED + "Operation canceled." + ANSI_RESET);
         }
 
+    }
+
+    public ProductionTree ordersBOOProduction(String name, String path) {
+        getProductionTreeController().setName(name);
+        try {
+            if (getProductionTreeController().getInformations(path)) {
+                showTreeNew(getProductionTreeController().getProductionTree(), name);
+                System.out.println("\n" + ANSI_BRIGHT_BLACK + "Production Tree successfully generated!" + ANSI_RESET + "\n");
+            } else {
+                System.out.println("\n" + ANSI_BRIGHT_RED + "Operation canceled - File doesn't have information to be read" + ANSI_RESET);
+            }
+
+        } catch (Exception e) {
+            System.out.println("\n" + ANSI_BRIGHT_RED + e.getMessage() + ANSI_RESET);
+        }
+        return getProductionTreeController().getProductionTree();
     }
 
 
@@ -215,8 +246,9 @@ public class ProductionTreeUI implements Runnable {
 
     /**
      * Updates the material quantity in the production tree.
+     *
      * @param materailID The ID of the material to update.
-     * @param quantity The new quantity.
+     * @param quantity   The new quantity.
      * @return The updated production tree.
      */
     public ProductionTree auxilary(ID materailID, float quantity) {
@@ -224,6 +256,14 @@ public class ProductionTreeUI implements Runnable {
         UpdateMaterial updateMaterial = new UpdateMaterial(getProductionTreeController().getProductionTree());
         updateMaterial.updateMaterial(materailID, quantity);
         showTree(getProductionTreeController().getProductionTree(), "Updated Materials");
+        return getProductionTreeController().getProductionTree();
+    }
+
+    public ProductionTree auxilaryOrder(ID materailID, float quantity,String path) {
+        getProductionTreeController().getInformations(path);
+        UpdateMaterial updateMaterial = new UpdateMaterial(getProductionTreeController().getProductionTree());
+        updateMaterial.updateMaterial(materailID, quantity);
+        showTreeUpdatedMaterials(getProductionTreeController().getProductionTree(), "Updated Materials");
         return getProductionTreeController().getProductionTree();
     }
 }

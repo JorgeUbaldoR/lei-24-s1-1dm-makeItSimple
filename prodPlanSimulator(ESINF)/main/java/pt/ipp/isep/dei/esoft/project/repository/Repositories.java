@@ -1,5 +1,7 @@
 package pt.ipp.isep.dei.esoft.project.repository;
 
+import pt.ipp.isep.dei.esoft.project.domain.Order;
+
 /**
  * Singleton class that manages multiple repositories used in the application.
  * This class provides access to different repository instances such as
@@ -15,6 +17,8 @@ public class Repositories {
     private final IDRepository idRepository;
     private final OperationRepository operationRepository;
     private final PETRGraphRepository petrGraphRepository;
+    private final OrdersRepository ordersRepository;
+
 
     /**
      * Private constructor for Repositories.
@@ -27,6 +31,7 @@ public class Repositories {
         idRepository = new IDRepository();
         operationRepository = new OperationRepository(itemRepository.getItemList());
         petrGraphRepository = new PETRGraphRepository();
+        ordersRepository = new OrdersRepository();
     }
 
     /**
@@ -97,5 +102,12 @@ public class Repositories {
         return petrGraphRepository;
     }
 
-
+    /**
+     * Gets the OrderRepository instance.
+     *
+     * @return the OrderRepository instance
+     */
+    public OrdersRepository getOrdersRepository() {
+        return ordersRepository;
+    }
 }

@@ -112,7 +112,7 @@ part is a subproduct made at the factory
         result VARCHAR2(100);
     BEGIN
         --PN12344A21 50 10 5
-        result := update_stock('PN12344A21', 40);
+        result := update_stock('PN12344A21', 20);
         DBMS_OUTPUT.PUT_LINE(result);
     END;
     /
@@ -121,7 +121,7 @@ part is a subproduct made at the factory
 
 ### 3. Resolution
 
->![Results](img/USBD30.png)
+>![Results](../usbd30/img/USBD30.png)
 
 >[See results in a CSV file](csv_result/USBD30.csv)
 
