@@ -60,7 +60,7 @@ public class ProjectSchedule {
     }
 
 
-    protected void calculateScheduleAnalysis(boolean modify) {
+    protected void calculateScheduleAnalysis() {
         generateVerticesListBFS();
 
         for (Activity a : verticesList) {
@@ -73,15 +73,11 @@ public class ProjectSchedule {
             } else {
                 earliestStart = getMaxEarliestFinish(a.getPredecessors());
             }
-            if (modify)
-                a.setEarliestStart(earliestStart);
+            a.setEarliestStart(earliestStart);
 
             double earliestFinish = earliestStart + a.getDuration();
-            if (modify)
-                a.setEarliestFinish(earliestFinish);
+            a.setEarliestFinish(earliestFinish);
 
-            if (!modify)
-                printEsEf(a, earliestStart, earliestFinish);
         }
 
         ListIterator<Activity> iterator = verticesList.listIterator(verticesList.size());
@@ -101,19 +97,70 @@ public class ProjectSchedule {
             if (latestFinish == Double.MAX_VALUE) {
                 latestFinish = a.getEarliestFinish();
             }
-            if(modify)
-                a.setLatestFinish(latestFinish);
+            a.setLatestFinish(latestFinish);
 
             double latestStart = latestFinish - a.getDuration();
-            if (modify)
-                a.setLatestStart(latestStart);
+            a.setLatestStart(latestStart);
 
             double slack = latestFinish - a.getEarliestFinish();
-            if (modify)
-                a.setSlack(slack);
+            a.setSlack(slack);
 
-            if(!modify)
-                printLsLfSlack(a, latestStart, latestFinish, slack);
+        }
+    }
+
+    public void simulateScheduleAnalysis(Activity selectedActivity, double duration) {
+
+        for (Activity a : verticesList) {
+            double earliestStart;
+            double earliestFinish;
+
+            if (a.equals(START_ACTIVITY) || a.equals(FINISH_ACTIVITY)) {
+                continue;
+            }
+            if (a.getPredecessors().contains(START_ACTIVITY.getId()) && a.getPredecessors().size() == 1) {
+                earliestStart = 0;
+            } else {
+                earliestStart = getMaxEarliestFinish(a.getPredecessors());
+            }
+
+            if (!a.equals(selectedActivity)) {
+                earliestFinish = earliestStart + a.getDuration();
+            } else {
+                earliestFinish = earliestStart + duration;
+            }
+
+            printEsEf(a, earliestStart, earliestFinish);
+        }
+
+        ListIterator<Activity> iterator = verticesList.listIterator(verticesList.size());
+        while (iterator.hasPrevious()) {
+            Activity a = iterator.previous();
+            if (a.equals(START_ACTIVITY) || a.equals(FINISH_ACTIVITY)) {
+                continue;
+            }
+
+            double latestFinish;
+            double latestStart;
+            double slack;
+
+            if (a.getSuccessors().contains(FINISH_ID) && a.getSuccessors().size() == 1) {
+                latestFinish = a.getEarliestFinish();
+            } else {
+                latestFinish = getMinLatestStart(a.getSuccessors());
+            }
+
+            if (latestFinish == Double.MAX_VALUE) {
+                latestFinish = a.getEarliestFinish();
+            }
+            if (!a.equals(selectedActivity)) {
+                latestStart = latestFinish - a.getDuration();
+            } else {
+                latestStart = latestFinish - duration;
+            }
+
+            slack = latestFinish - a.getEarliestFinish();
+
+            printLsLfSlack(a, latestStart, latestFinish, slack);
         }
     }
 
@@ -162,9 +209,9 @@ public class ProjectSchedule {
     }
 
     public void sendProjectScheduleToFile(String fileName) {
-        calculateScheduleAnalysis(true);
+        calculateScheduleAnalysis();
         try {
-           writer = new PrintWriter(FILE_PATH + fileName + ".csv");
+            writer = new PrintWriter(FILE_PATH + fileName + ".csv");
             writer.println("act_id;cost;duration;es;ls;ef;lf;prev_act_ids...");
             for (Activity a : verticesList) {
                 if (a.getId().getSerial() != START_PAIR.getSecond() && a.getId().getSerial() != FINISH_PAIR.getSecond()) {
