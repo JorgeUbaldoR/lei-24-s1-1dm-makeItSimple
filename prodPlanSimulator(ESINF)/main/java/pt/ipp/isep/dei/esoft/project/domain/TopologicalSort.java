@@ -34,7 +34,10 @@ public class TopologicalSort {
      * @param list sorted list to be written
      * @param fileName of the csv to be written
      */
-    public void write(List<String> list, String fileName) {
+    public boolean write(List<String> list, String fileName) {
+
+        if (list.isEmpty()) return false;
+
         try {
             PrintWriter writer = new PrintWriter(FILE_PATH + fileName + ".csv");
 
@@ -45,8 +48,10 @@ public class TopologicalSort {
             }
 
             writer.close();
+            return true;
         } catch (Exception e) {
             System.out.println(ANSI_BRIGHT_RED + "Error writing to file " + FILE_PATH + fileName + ANSI_RESET);
+            return false;
         }
     }
 
