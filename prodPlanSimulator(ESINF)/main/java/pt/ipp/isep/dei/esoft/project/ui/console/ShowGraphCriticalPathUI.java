@@ -71,7 +71,7 @@ public class ShowGraphCriticalPathUI implements Runnable {
         return inputID.length() > 2 && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
-    public static void printCriticalPath(Map<String, Object> result) {
+    public void printCriticalPath(Map<String, Object> result) {
         @SuppressWarnings("unchecked")
         List<Activity> criticalPath = (List<Activity>) result.get("criticalPath");
         double totalDuration = (double) result.get("totalDuration");
