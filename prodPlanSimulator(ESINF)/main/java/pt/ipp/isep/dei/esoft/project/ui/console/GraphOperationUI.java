@@ -7,6 +7,7 @@ import pt.ipp.isep.dei.esoft.project.domain.Activity;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.CriticalPath;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.domain.ID;
+import pt.ipp.isep.dei.esoft.project.domain.ProjectSchedule;
 import pt.ipp.isep.dei.esoft.project.domain.enumclasses.TypeID;
 
 import java.util.*;
@@ -136,41 +137,70 @@ public class GraphOperationUI implements Runnable {
         int option = -1;
 
         if (createdMap.numVertices() == 0) {
-            System.out.println("No activities available to delay.");
+            System.out.println(ANSI_BRIGHT_RED + "No activities available to delay." + ANSI_RESET);
             return;
         }
+
+        ShowGraphCriticalPathUI showGraphCriticalPathUI = new ShowGraphCriticalPathUI();
+
+        CriticalPath criticalPath = new CriticalPath();
+
+        createdMap = removeActivities(createdMap);
+
+        Map<String, Object> criticalPathOriginal = criticalPath.calculateCriticalPath(createdMap);
+        System.out.println("\n\n══════════════════════════════════════════");
+        System.out.println(ANSI_BRIGHT_WHITE + "             Original Critical Path                 " + ANSI_RESET + "\n");
+        showGraphCriticalPathUI.printCriticalPath(criticalPathOriginal);
 
         do {
             System.out.println("\nChoose the activity to delay (or type 0 to exit):");
 
-            for (int i = 0; i < createdMap.vertices().size(); i++) {
+            for (int i = 0; i < createdMap.vertices().size() - 1; i++) {
                 System.out.println((i + 1) + "-> " + createdMap.vertices().get(i).getId());
             }
 
             System.out.print("Your choice: ");
             option = in.nextInt();
 
-            if (option < 0 || option > createdMap.vertices().size()) {
-                System.out.println("Invalid choice. Please try again.");
+            if (option < 0 || option > createdMap.vertices().size() - 1) {
+                System.out.println(ANSI_BRIGHT_RED + "Invalid choice. Please try again." + ANSI_RESET);
             } else if (option > 0) {
                 Activity selectedActivity = createdMap.vertices().get(option - 1);
 
                 System.out.println("You selected: " + selectedActivity);
                 System.out.print("Enter the delay duration: ");
                 double delay = in.nextDouble();
+                double duration = selectedActivity.getDuration() + delay;
+                if (duration >= 0) {
+                    selectedActivity.setDuration(selectedActivity.getDuration() + delay);
 
-                selectedActivity.setDuration(selectedActivity.getDuration() + delay);
+                    Map<String, Object> criticalPathDelayed = criticalPath.calculateCriticalPath(createdMap);
+                    System.out.println("\n\n══════════════════════════════════════════");
+                    System.out.println(ANSI_BRIGHT_WHITE + "             Delayed Critical Path                 " + ANSI_RESET + "\n");
+                    showGraphCriticalPathUI.printCriticalPath(criticalPathDelayed);
+                } else {
+                    System.out.println(ANSI_BRIGHT_RED + "Duration cannot be negative" + ANSI_RESET);
+                }
             }
         } while (option != 0);
 
-        ShowGraphCriticalPathUI showGraphCriticalPathUI = new ShowGraphCriticalPathUI();
-
-        CriticalPath criticalPath = new CriticalPath();
-
-        Map<String, Object> critPath = criticalPath.calculateCriticalPath(createdMap);
-
-        showGraphCriticalPathUI.printCriticalPath(critPath);
-
+        ProjectSchedule projectSchedule = new ProjectSchedule(createdMap, graphID);
+        //double slackTime = projectSchedule.calculateScheduleAnalysis();
+        //System.out.println("Slack Time: \n" + slackTime);
     }
 
+    public MapGraph<Activity, Double> removeActivities(MapGraph<Activity, Double> createdMap) {
+        Iterator<Activity> iterator = createdMap.vertices().iterator();
+        ID start = new ID(7777, TypeID.ACTIVITY);
+        ID finish = new ID(7778, TypeID.ACTIVITY);
+        while (iterator.hasNext()) {
+            Activity activity = iterator.next();
+            ID activityId = activity.getId();
+
+            if (start.equals(activityId) || finish.equals(activityId)) {
+                createdMap.removeVertex(activity);
+            }
+        }
+        return createdMap;
+    }
 }
