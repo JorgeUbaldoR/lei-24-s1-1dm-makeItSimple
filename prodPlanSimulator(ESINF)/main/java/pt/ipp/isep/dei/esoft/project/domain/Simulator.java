@@ -1,6 +1,10 @@
 package pt.ipp.isep.dei.esoft.project.domain;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.*;
 
 import static pt.ipp.isep.dei.esoft.project.domain.more.ColorfulOutput.*;
@@ -34,20 +38,23 @@ public class Simulator {
     private final Map<Machine, Float> machineUsage;
     private final Map<Operation, Integer> executionPerOperation;
 
+    private final PrintWriter writer;
+    private final String PATH_PRODUCTION_PLANNER = "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/output/planner.csv";
+
     /**
      * Constructor for the Simulator class, which initializes various fields and sets up the simulation
      * environment. This includes the machine list, operation queue map, and item queues based on the provided
      * parameters. The constructor also calls the checkInformation method to ensure that all provided data is
      * valid before proceeding with the setup.
      *
-     * @param machines      A map of operations to queues of machines, representing which machines are
-     *                      available for each operation.
-     * @param items         A TreeMap containing items categorized by height. Each item is mapped to its
-     *                      associated float values in a queue.
-     * @param operations    A list of operations to be simulated.
-     * @param machList      A list of machines that will be used in the simulation.
-     * @param priorityFlag  A boolean flag indicating whether priority-based processing should be used in
-     *                      the simulation.
+     * @param machines     A map of operations to queues of machines, representing which machines are
+     *                     available for each operation.
+     * @param items        A TreeMap containing items categorized by height. Each item is mapped to its
+     *                     associated float values in a queue.
+     * @param operations   A list of operations to be simulated.
+     * @param machList     A list of machines that will be used in the simulation.
+     * @param priorityFlag A boolean flag indicating whether priority-based processing should be used in
+     *                     the simulation.
      */
     public Simulator(Map<Operation, Queue<Machine>> machines, TreeMap<Integer, Queue<Map<Item, Float>>> items, List<Operation> operations, ArrayList<Machine> machList, boolean priorityFlag) {
         checkInformation(machines, operations, items);
@@ -62,6 +69,11 @@ public class Simulator {
         this.avgExecutionTime = new HashMap<>();
         this.executionPerOperation = new HashMap<>();
         this.itemsByHeight = items;
+        try {
+            this.writer = new PrintWriter(new File(PATH_PRODUCTION_PLANNER));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         addOperationToQueue(operations, priorityFlag);
 
     }
@@ -81,6 +93,11 @@ public class Simulator {
         this.machineUsage = new HashMap<>();
         this.avgExecutionTime = new HashMap<>();
         this.executionPerOperation = new HashMap<>();
+        try {
+            this.writer = new PrintWriter(new File(PATH_PRODUCTION_PLANNER));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -139,6 +156,8 @@ public class Simulator {
     public void startSimulation() {
         int time = 0;
 
+        writer.println("state,machine_id,operation_id");
+
         for (Integer height : itemsByHeight.keySet()) {
             System.out.printf("Processing height: %d%n", height);
 
@@ -180,6 +199,7 @@ public class Simulator {
 
         System.out.printf("%s✅ All operations completed! %s%n", ANSI_GREEN, ANSI_RESET);
         printStatistics();
+        writer.close();
     }
 
     /**
@@ -234,6 +254,7 @@ public class Simulator {
                     for (Machine currentMachine : listMachineOp) {
                         if (currentMachine.isAvailable() && !operationQueue.isEmpty()) {
                             currentMachine.processItem(operationQueue.getNextItem());
+                            writer.println("OP,"+currentMachine.getId_machine().getSerial()+","+currentMachine.getOperation().getOperationId().getSerial());
                             fillExecutionPerOperation(currentMachine.getOperation());
                         }
                     }
@@ -256,6 +277,7 @@ public class Simulator {
             if (finished) {
                 Item currentItem = machine.getCurrentProcessingItem();
                 Operation nextOperation = currentItem.getNextOperation();
+                writer.println("ON,"+machine.getId_machine().getSerial()+","+machine.getOperation().getOperationId().getSerial());
                 extraMethods(currentItem, machine);
                 if (nextOperation != null) {
                     OperationQueue operationQueue = operationQueueMap.get(nextOperation);
@@ -651,9 +673,10 @@ public class Simulator {
         System.out.printf("%s===============================================%s%n", ANSI_BRIGHT_BLACK, ANSI_RESET);
     }
 
-    public Map<ID,Float> getAvgTimesOp(){
+    public Map<ID, Float> getAvgTimesOp() {
         return timesPerOperation;
     }
+
     /**
      * Fills the waitingTime map with the waiting time of each item in the operation queue list.
      * If an item is already present, increments its waiting time by 1 second.
@@ -766,7 +789,6 @@ public class Simulator {
     }
 
     /**
-     *
      * @return a boolean indicating if the simulator was activated
      */
     public boolean wasActivated() {
