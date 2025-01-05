@@ -25,6 +25,7 @@ public class OrdersController {
     private MachineRepository machineRepository;
     private OperationRepository operationRepository;
     private ProductionTreeUI productionTreeUI;
+    private SimulatorController simulatorController;
 
     public OrdersController() {
         ordersrepository = getOrdersRepository();
@@ -32,6 +33,7 @@ public class OrdersController {
         machineRepository = getMachineRepository();
         operationRepository = getOperationRepository();
         productionTreeUI = new ProductionTreeUI();
+        simulatorController = new SimulatorController();
     }
 
     private OperationRepository getOperationRepository() {
@@ -128,6 +130,7 @@ public class OrdersController {
             productionTreeUI.auxilaryOrder(itemID,(float)order.getQuantity(),PATH_BOO_RESULT);
             ProductionTree pdTree = productionTreeUI.getProductionTreeController().getProductionTree();
 
+            simulatorController.startSimulationOrders();
         }
 
     }

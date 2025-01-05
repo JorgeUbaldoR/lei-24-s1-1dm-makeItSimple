@@ -159,7 +159,7 @@ public class SimulatorController {
     }
 
     public TreeMap<Integer, Queue<Map<Item, Float>>> getTreeOrders() {
-        this.boo = new ItemLevelProcessor(true, "PUT_PATH_JORGITOOOOO");
+        this.boo = new ItemLevelProcessor(true, "prodPlanSimulator(ESINF)/main/java/pt/ipp/isep/dei/esoft/project/files/input/BooOrders.csv");
         return boo.getTree();
     }
 
