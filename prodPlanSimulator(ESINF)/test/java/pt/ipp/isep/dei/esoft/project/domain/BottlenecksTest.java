@@ -47,10 +47,23 @@ class BottlenecksTest {
         assertFalse(topBottlenecks.isEmpty());
         assertFalse(allBottlenecks.isEmpty());
 
-        // Verificar se as 5 atividades principais estão ordenadas corretamente
         assertTrue(topBottlenecks.size() <= 5);
         assertTrue(allBottlenecks.size() >= topBottlenecks.size());
+
+        // Validar se estão ordenados corretamente por grau de dependência
+        Activity prevActivity = null;
+        for (Activity activity : allBottlenecks) {
+            if (prevActivity != null) {
+                int prevCount = prevActivity.getPredecessors().size();
+                int currentCount = activity.getPredecessors().size();
+
+                // Verifica se o grau de dependência está em ordem decrescente
+                assertTrue(prevCount >= currentCount, "As atividades não estão ordenadas corretamente!");
+            }
+            prevActivity = activity;
+        }
     }
+
 
     @Test
     void testEmptyGraph() {
