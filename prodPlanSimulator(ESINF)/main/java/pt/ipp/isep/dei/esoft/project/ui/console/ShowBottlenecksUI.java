@@ -5,6 +5,7 @@ import pt.ipp.isep.dei.esoft.project.domain.Activity;
 import pt.ipp.isep.dei.esoft.project.domain.ID;
 import pt.ipp.isep.dei.esoft.project.domain.enumclasses.TypeID;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -42,13 +43,16 @@ public class ShowBottlenecksUI implements Runnable {
     }
 
     public static void printBottlenecks(Map<String, Object> result) {
-        @SuppressWarnings("unchecked")
-        Map<Activity, Integer> topBottlenecks = (Map<Activity, Integer>) result.get("topBottlenecks");
 
-        System.out.println("Top 5 Bottleneck Activities:");
-        for (Activity activity : topBottlenecks.keySet()) {
-            System.out.println(activity.getId() + " - Dependencies: " + topBottlenecks.get(activity));
+        if ((result.get("topBottlenecks") != Collections.emptyList())) {
+            Map<Activity, Integer> topBottlenecks = (Map<Activity, Integer>) result.get("topBottlenecks");
+
+            System.out.println("Top 5 Bottleneck Activities:");
+            for (Activity activity : topBottlenecks.keySet()) {
+                System.out.println(activity.getId() + " - Dependencies: " + topBottlenecks.get(activity));
+            }
         }
+
     }
 
     private ID getInputID() {
@@ -77,7 +81,7 @@ public class ShowBottlenecksUI implements Runnable {
     private boolean checkIDInput(String inputID) {
         char reference = inputID.charAt(0);
         reference = Character.toUpperCase(reference);
-        return reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
+        return inputID.length() > 2  && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
 

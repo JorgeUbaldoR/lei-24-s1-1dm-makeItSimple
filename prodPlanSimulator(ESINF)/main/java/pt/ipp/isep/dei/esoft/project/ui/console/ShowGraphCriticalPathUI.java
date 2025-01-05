@@ -68,7 +68,7 @@ public class ShowGraphCriticalPathUI implements Runnable {
     private boolean checkIDInput(String inputID) {
         char reference = inputID.charAt(0);
         reference = Character.toUpperCase(reference);
-        return reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
+        return inputID.length() > 2 && reference == 'G' && inputID.charAt(1) == '-' && Character.isDigit(inputID.charAt(2));
     }
 
     public static void printCriticalPath(Map<String, Object> result) {
