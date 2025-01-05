@@ -25,5 +25,8 @@ public enum TypeID {
         public String toString(){
             return "G";
         }
+    },
+    ORDER{
+        public String toString(){return "O";}
     }
 }

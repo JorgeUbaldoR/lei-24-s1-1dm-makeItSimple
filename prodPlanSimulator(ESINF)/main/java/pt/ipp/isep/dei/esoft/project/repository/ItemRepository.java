@@ -158,4 +158,8 @@ public class ItemRepository {
         return item.getName();
     }
 
+    public Item getItemNameById(ID id){
+        return getMapItemList().get(id);
+    }
+
 }
