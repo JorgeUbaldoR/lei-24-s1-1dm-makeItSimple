@@ -3,6 +3,8 @@ package pt.ipp.isep.dei.esoft.project.ui.console.menu;
 import pt.ipp.isep.dei.esoft.project.domain.TopologicalSort;
 import pt.ipp.isep.dei.esoft.project.ui.console.CreatePETRGraphUI;
 import pt.ipp.isep.dei.esoft.project.ui.console.ProjectScheduleUI;
+import pt.ipp.isep.dei.esoft.project.ui.console.ShowBottlenecksUI;
+import pt.ipp.isep.dei.esoft.project.ui.console.ShowGraphCriticalPathUI;
 import pt.ipp.isep.dei.esoft.project.ui.console.utils.Utils;
 
 import java.util.ArrayList;
@@ -21,9 +23,10 @@ public class PERTCPMUI implements Runnable {
         List<MenuItem> options = new ArrayList<MenuItem>();
         options.add(new MenuItem("Generate PETR-CPM Graph", new CreatePETRGraphUI()));
         options.add(new MenuItem("Generate Project Schedule", new ProjectScheduleUI()));
+        options.add(new MenuItem("Generate Critical Path", new ShowGraphCriticalPathUI()));
+        options.add(new MenuItem("Show Bottlenecks Activities", new ShowBottlenecksUI()));
         options.add(new MenuItem("Topological Sort Activities", new TopologicalSortUI()));
         options.add(new MenuItem("Simulate Delay", new GraphOperationUI()));
-
 
         int option = 0;
         do {

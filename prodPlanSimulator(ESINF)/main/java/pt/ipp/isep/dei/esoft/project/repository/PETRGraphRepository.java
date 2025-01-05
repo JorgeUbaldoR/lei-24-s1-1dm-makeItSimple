@@ -1,12 +1,15 @@
 package pt.ipp.isep.dei.esoft.project.repository;
 
 import pt.ipp.isep.dei.esoft.project.domain.Activity;
+import pt.ipp.isep.dei.esoft.project.domain.Bottlenecks;
+import pt.ipp.isep.dei.esoft.project.domain.Graph.CriticalPath;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.Pair;
 import pt.ipp.isep.dei.esoft.project.domain.Graph.map.MapGraph;
 import pt.ipp.isep.dei.esoft.project.domain.ID;
 import pt.ipp.isep.dei.esoft.project.domain.ProjectSchedule;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -69,5 +72,24 @@ public class PETRGraphRepository {
     public MapGraph<Activity, Double> getMapGraph(ID graphID) {
         MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);
         return graph;
+    }
+
+    public Map<String, Object> calculateCriticalPath (ID graphID) {
+
+        MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);
+        CriticalPath criticalPath = new CriticalPath();
+
+        return criticalPath.calculateCriticalPath(graph);
+    }
+
+    public Map<String, Object> identifyBottlenecks(ID graphID) {
+
+        MapGraph<Activity, Double> graph = this.getMapGraphByID(graphID);
+        Bottlenecks bottlenecks = new Bottlenecks();
+
+        Map<String, Object> rawCriticalPath = calculateCriticalPath(graphID);
+        List<Activity> criticalPath = (List<Activity>) rawCriticalPath.get("criticalPath");
+
+        return bottlenecks.identifyBottlenecks(graph, criticalPath);
     }
 }
