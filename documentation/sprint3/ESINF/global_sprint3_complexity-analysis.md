@@ -657,98 +657,6 @@ larger projects.
 
 ---
 
-# **USEI21 - Export Project Schedule: Complexity Analysis**
-
-## ProjectSchedule Class Complexity Analysis
-
----
-
-### **1. `sendProjectScheduleToFile`**
-
-The `sendProjectScheduleToFile` method is responsible for exporting the project schedule to a CSV file, including
-activity details and their dependencies. Let’s break down its complexity step by step.
-
-#### **Operations:**
-
-1. **Calculate Schedule Analysis**:
-    - The method calls `calculateScheduleAnalysis()`, which has been previously analyzed with a complexity
-      of `O(V + E)`.
-
-2. **File Writing with PrintWriter**:
-    - **File Creation**: The creation of a `PrintWriter` to write data to a CSV file is a constant-time
-      operation: `O(1)`.
-    - **Writing Header**: Writing the header line is a constant-time operation: `O(1)`.
-
-3. **Writing Activity Data**:
-    - The loop iterates over `verticesList` (activities), writing data for each activity. The size of `verticesList`
-      is `V` (the number of activities), so the loop will iterate `V` times.
-    - For each activity, several operations are performed:
-        - Writing activity details (ID, cost, duration, timings) is a constant-time operation for each activity: `O(1)`.
-        - Iterating through the activity's predecessors (`getPredecessors`) is done for each activity. In the worst
-          case, each activity can have up to `V` predecessors, leading to a time complexity of `O(V)` for the
-          predecessor iteration.
-    - Therefore, the time complexity for writing activity data for all activities becomes `O(V * p)`, where `p` is the
-      number of predecessors per activity. In the worst case, this becomes `O(V^2)`.
-
-4. **Writing Special Activities (Start and Finish)**:
-    - Writing the start and finish activities is a constant-time operation (`O(1)`), as they are handled separately from
-      the main loop.
-
-5. **Closing the PrintWriter**:
-    - Closing the `PrintWriter` is a constant-time operation: `O(1)`.
-
-#### **Complexity Analysis**:
-
-**Time Complexity**:
-
-- **File writing operations**: The loop over `verticesList` involves iterating over `V` activities and writing their
-  details. The worst-case time complexity for writing each activity involves iterating over all its predecessors, so the
-  time complexity is:
-    - `O(V + V * p)` or `O(V^2)` in the worst case.
-    - The calculation of schedule analysis is `O(V + E)`, but this has already been handled separately.
-
-Thus, the overall time complexity of the method is:
-
-- **Time Complexity**: `O(V^2)` (due to iterating over predecessors for each activity).
-
-**Space Complexity**:
-
-- The space complexity is determined by the storage of the activity data and the temporary storage used by
-  the `PrintWriter`.
-- Since the method only writes to a file and does not store additional large data structures beyond the existing project
-  schedule, the space complexity is:
-    - **Space Complexity**: `O(1)` (for file writing, as no additional large data structures are created during the
-      export).
-
----
-
-### **Final Complexity Table**
-
-| Method                      | Time Complexity | Space Complexity |
-|-----------------------------|-----------------|------------------|
-| `sendProjectScheduleToFile` | `O(V^2)`        | `O(1)`           |
-
----
-
-### **Conclusions**
-
-- **Efficiency**: The method is efficient in terms of space, but its time complexity can become quadratic (`O(V^2)`) in
-  the worst case due to the iteration over each activity's predecessors. However, for typical project schedules with
-  fewer dependencies, this should perform well.
-- **Scalability**: As the number of activities (`V`) increases, the method's time complexity grows quadratically, which
-  may impact performance for very large projects with numerous dependencies. Optimizing the handling of predecessors
-  could reduce this complexity in future improvements.
-- **Error Handling**: The method includes basic error handling for file writing issues, which improves its robustness.
-  However, further improvements in error reporting and logging could enhance its reliability in larger-scale or
-  production environments.
-
-In conclusion, while the `sendProjectScheduleToFile` method provides valuable functionality for exporting project
-schedules, attention should be paid to its scalability with large numbers of activities and dependencies.
-
----
-
----
-
 # **USEI21 - Export Project Schedule**
 
 ## **Complexity Analysis of the `sendProjectScheduleToFile` Method**
@@ -1031,6 +939,178 @@ nodes connected to a designated "Start" node and evaluates paths ending at nodes
 
 - The current error-handling mechanism is basic, relying on logging. Introducing structured logging or exception
   propagation could improve maintainability and debugging.
+
+---
+
+---
+
+# **USEI23 - Identify Bottleneck Activities**
+
+## **Implementation**
+
+### **Bottlenecks Class**
+
+The `Bottlenecks` class identifies bottleneck activities within a project schedule. Bottlenecks are defined as
+activities with the highest dependency counts or those that frequently appear in critical paths. This analysis enables
+project managers to address potential scheduling delays.
+
+---
+
+### **Method: `identifyBottlenecks`**
+
+The `identifyBottlenecks` method evaluates the project graph and critical paths to identify bottleneck activities. It
+ranks activities by dependency count and frequency in critical paths, returning the top 5 bottleneck activities and a
+complete list of bottlenecks.
+
+---
+
+## **Complexity Analysis**
+
+### **Step-by-Step Complexity Breakdown**
+
+#### **1. Input Validation**
+
+Checks for null or empty inputs to ensure valid graph and critical paths.
+
+- **Complexity**: **`O(1)`**
+
+---
+
+#### **2. Initialization of HashMaps**
+
+Creates hash maps to store dependency counts and critical path frequencies.
+
+- **Complexity**: **`O(1)`**
+
+---
+
+#### **3. Dependency Count and Frequency Calculation**
+
+Iterates through all activities in the graph to compute their dependency counts and initialize critical path
+frequencies.
+
+- **Operation**:
+    - Dependency count: `activity.getPredecessors().size()`.
+    - Initialize frequency to `0`.
+
+- **Complexity**: **`O(V)`**, where `V` is the number of vertices (activities) in the graph.
+
+---
+
+#### **4. Correct Dependency for First Elements**
+
+Adjusts the dependency count for activities whose predecessors include the "Start" node (`A-7777`).
+
+- **Operation**:
+    - Iterates through each activity's predecessors to check if the "Start" node exists.
+    - Sets the dependency count to `0` if the predecessor is "A-7777".
+
+- **Complexity**: **`O(V * P)`**, where `P` is the maximum number of predecessors per activity.
+
+---
+
+#### **5. Update Critical Path Frequency**
+
+Updates the frequency of each activity appearing in the critical paths.
+
+- **Operation**:
+    - Iterates through the `criticalPaths` list and increments the frequency count for each activity.
+
+- **Complexity**: **`O(C)`**, where `C` is the total number of activities in the critical paths.
+
+---
+
+#### **6. Sorting Activities by Dependency and Frequency**
+
+Sorts activities based on their dependency count (primary criterion) and critical path frequency (secondary criterion).
+
+- **Operation**:
+    - Uses Java's `sort` method to sort activities in descending order of dependency count. If two activities have the
+      same count, sorts by critical path frequency.
+
+- **Complexity**: **`O(V log V)`**, where `V` is the number of activities.
+
+---
+
+#### **7. Select Top 5 Activities**
+
+Selects the top 5 activities based on the sorted list.
+
+- **Operation**:
+    - Extracts the first 5 elements from the sorted list.
+
+- **Complexity**: **`O(1)`**
+
+---
+
+#### **8. Return Results**
+
+Returns the top 5 bottlenecks and the full bottleneck list.
+
+- **Complexity**: **`O(1)`**
+
+---
+
+## **Final Complexity Summary**
+
+| **Step**                              | **Time Complexity** | **Description**                                     |
+|---------------------------------------|---------------------|-----------------------------------------------------|
+| Input Validation                      | `O(1)`              | Checks for null/empty graph and critical paths.     |
+| Initialization of HashMaps            | `O(1)`              | Initializes dependency and frequency maps.          |
+| Dependency Count and Frequency        | `O(V)`              | Iterates through all activities.                    |
+| Correct Dependency for First Elements | `O(V * P)`          | Adjusts dependencies based on predecessors.         |
+| Update Critical Path Frequency        | `O(C)`              | Updates frequencies for critical path activities.   |
+| Sorting Activities                    | `O(V log V)`        | Sorts activities based on dependency and frequency. |
+| Select Top 5 Activities               | `O(1)`              | Extracts the top 5 bottleneck activities.           |
+| Return Results                        | `O(1)`              | Packs results into a map.                           |
+
+### **Overall Complexity**
+
+- **Time Complexity**: **`O(V * P + V log V)`**
+    - Dominated by dependency adjustments and sorting operations.
+- **Space Complexity**: **`O(V)`**
+    - Space used for hash maps and the sorted list.
+
+---
+
+## **Observations**
+
+### **Functionality and Importance**
+
+- The method identifies tasks that are potential bottlenecks, helping project managers prioritize resource allocation.
+- Combines dependency count and critical path frequency to rank activities effectively.
+
+### **Efficiency and Scalability**
+
+- **Strengths**:
+    - Efficient for moderately sized graphs with sparse dependencies.
+    - Scales linearly with the number of vertices for dependency and frequency calculations.
+- **Challenges**:
+    - Quadratic complexity (`O(V * P)`) for dense graphs with high predecessor counts.
+    - Sorting (`O(V log V)`) can become a bottleneck for very large datasets.
+
+### **Error Handling**
+
+- The method validates inputs and throws appropriate exceptions for null or empty inputs. This ensures robustness and
+  prevents runtime errors.
+
+### **Optimization Opportunities**
+
+1. **Optimize Dependency Adjustment**:
+    - Use adjacency lists or hash maps to streamline predecessor checks.
+2. **Improve Sorting Performance**:
+    - Apply custom priority queues for faster top-k extraction instead of sorting all activities.
+3. **Parallelize Critical Path Frequency Updates**:
+    - Use multi-threading to handle large critical path datasets.
+
+---
+
+## **Conclusion**
+
+The `identifyBottlenecks` method provides a robust mechanism for identifying critical tasks in project schedules. While
+efficient for most use cases, optimizing dependency checks and sorting mechanisms can improve its scalability for large
+and densely connected graphs.
+
 
 ---
 
