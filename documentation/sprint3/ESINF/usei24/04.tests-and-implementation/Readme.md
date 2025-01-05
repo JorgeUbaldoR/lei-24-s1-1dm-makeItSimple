@@ -2,106 +2,55 @@
 
 ## 4. Tests
 
-## Topological Sort Class
+## Delay Class
 
-### **Test : testAddEdge**
-
-```java
-@Test
-    void testAddEdge() {
-            TopologicalSort topologicalSort = new TopologicalSort();
-
-            topologicalSort.addEdge("A1", "A2");
-            topologicalSort.addEdge("A2", "A3");
-            topologicalSort.addEdge("A1", "A3");
-
-            Map<String, List<String>> expectedGraph = new HashMap<>();
-        expectedGraph.put("A1", Arrays.asList("A2", "A3"));
-        expectedGraph.put("A2", Arrays.asList("A3"));
-        expectedGraph.put("A3", new ArrayList<>());
-
-        Map<String, Integer> expectedInDegree = new HashMap<>();
-        expectedInDegree.put("A1", 0); // No incoming edges
-        expectedInDegree.put("A2", 1); // One incoming edge (A1 -> A2)
-        expectedInDegree.put("A3", 2); // Two incoming edges (A1 -> A3, A2 -> A3)
-
-        assertEquals(expectedGraph, topologicalSort.graph);
-
-        assertEquals(expectedInDegree, topologicalSort.inDegree);
-        }
-```
-
-**Objective:** To verify that edges are properly added
-
-**Expected Result:** The created graph does indeed have the added edges
-
-### **Test : testPerformTopologicalSortWithIDs**
+### **Test : testUpdateActivityDuration**
 
 ```java
 @Test
-    void testPerformTopologicalSortWithIDs() {
-            TopologicalSort topologicalSort = new TopologicalSort();
-            MapGraph<Activity, Double> mapGraph = new MapGraph<>(true);
+    void testUpdateActivityDuration() {
+            // Positive duration increment
+            delay.updateActivityDuration(activity1, 2.0);
+            assertEquals(7.0, activity1.getDuration(), "Duration should increase by 2.0");
 
-        Activity activityA1 = new Activity(new ID(1, TypeID.ACTIVITY), "Task A1");
-        Activity activityA2 = new Activity(new ID(2, TypeID.ACTIVITY), "Task A2");
-        Activity activityA3 = new Activity(new ID(3, TypeID.ACTIVITY), "Task A3");
-        Activity activityA4 = new Activity(new ID(4, TypeID.ACTIVITY), "Task A4");
+            // Negative duration increment
+            delay.updateActivityDuration(activity1, -3.0);
+            assertEquals(4.0, activity1.getDuration(), "Duration should decrease by 3.0");
 
-        mapGraph.addVertex(activityA1);
-        mapGraph.addVertex(activityA2);
-        mapGraph.addVertex(activityA3);
-        mapGraph.addVertex(activityA4);
-
-        mapGraph.addEdge(activityA1, activityA2, 1.0); // A1 -> A2
-        mapGraph.addEdge(activityA1, activityA3, 1.0); // A1 -> A3
-        mapGraph.addEdge(activityA2, activityA4, 1.0); // A2 -> A4
-        mapGraph.addEdge(activityA3, activityA4, 1.0); // A3 -> A4
-
-        List<String> sortedOrder = topologicalSort.performTopologicalSort(mapGraph);
-
-        List<String> expectedOrder = Arrays.asList("A-1", "A-2", "A-3", "A-4");
-
-        assertEquals(expectedOrder, sortedOrder);
+            // Negative duration resulting in invalid state
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        delay.updateActivityDuration(activity1, -10.0);
+        });
+        assertEquals("Duration cannot be negative", exception.getMessage());
         }
 ```
 
-**Objective:** To verify that the list is properly sorted
+**Objective:** To verify that the duration was successfully updated
 
-**Expected Result:** The created list does indeed have the right order
+**Expected Result:** It should update the duration and catch exception
 
-### **Test : testConvertMapGraphToAdjacencyListWithIDs**
+### **Test : testRemoveActivities**
 
 ```java
 @Test
-    void testConvertMapGraphToAdjacencyListWithIDs() {
-            TopologicalSort topologicalSort = new TopologicalSort();
-            MapGraph<Activity, Double> mapGraph = new MapGraph<>(true);
+    void testRemoveActivities() {
+            // Remove start and finish placeholders
+            MapGraph<Activity, Double> updatedMap = delay.removeActivities(createdMap);
 
-        Activity activityA1 = new Activity(new ID(1, TypeID.ACTIVITY), "Task A1");
-        Activity activityA2 = new Activity(new ID(2, TypeID.ACTIVITY), "Task A2");
-        Activity activityA3 = new Activity(new ID(3, TypeID.ACTIVITY), "Task A3");
+        // Ensure the placeholders are removed
+        List<Activity> vertices = updatedMap.vertices();
+        assertEquals(2, vertices.size(), "The updated map should only contain 2 activities");
+        assertFalse(vertices.contains(new Activity(new ID(7777, TypeID.ACTIVITY), "Start Placeholder", 0.0, "hours", 0.0, "USD", new ArrayList<>())), "Start placeholder should be removed");
+        assertFalse(vertices.contains(new Activity(new ID(7778, TypeID.ACTIVITY), "Finish Placeholder", 0.0, "hours", 0.0, "USD", new ArrayList<>())), "Finish placeholder should be removed");
 
-        mapGraph.addVertex(activityA1);
-        mapGraph.addVertex(activityA2);
-        mapGraph.addVertex(activityA3);
-
-        mapGraph.addEdge(activityA1, activityA2, 1.0); // A1 -> A2
-        mapGraph.addEdge(activityA2, activityA3, 1.0); // A2 -> A3
-
-        Map<String, List<String>> adjacencyList = topologicalSort.convertMapGraphToAdjacencyList(mapGraph);
-
-        Map<String, List<String>> expected = new HashMap<>();
-        expected.put("A-1", Arrays.asList("A-2"));
-        expected.put("A-2", Arrays.asList("A-3"));
-        expected.put("A-3", new ArrayList<>());
-
-        assertEquals(expected, adjacencyList);
+        // Ensure existing activities are still present
+        assertTrue(vertices.contains(activity1), "Activity 1 should remain in the map");
+        assertTrue(vertices.contains(activity2), "Activity 2 should remain in the map");
         }
 ```
 
-**Objective:** To verify that the adjacency list is created
+**Objective:** To verify that the activities with ID: A-7777 and A-7778 are removed
 
-**Expected Result:** The created adjacency list does indeed have the right elements
+**Expected Result:** A-7777 and A-7778 are removed
 
 ---
