@@ -744,3 +744,413 @@ Thus, the overall time complexity of the method is:
 
 In conclusion, while the `sendProjectScheduleToFile` method provides valuable functionality for exporting project
 schedules, attention should be paid to its scalability with large numbers of activities and dependencies.
+
+---
+
+---
+
+# **USEI21 - Export Project Schedule**
+
+## **Complexity Analysis of the `sendProjectScheduleToFile` Method**
+
+The `sendProjectScheduleToFile` method exports the project schedule to a CSV file, including activity details and their
+dependencies. Below is a detailed analysis of its time and space complexity.
+
+---
+
+### **Step-by-Step Complexity Breakdown**
+
+#### **1. Schedule Analysis Calculation**
+
+- **Operation**: Calls `calculateScheduleAnalysis()`.
+- **Complexity**: This method has been analyzed to have a time complexity of **`O(V + E)`**, where `V` is the number of
+  activities (vertices) and `E` is the number of dependencies (edges).
+- **Result**: **`O(V + E)`**.
+
+---
+
+#### **2. File Writing Operations**
+
+##### **File Creation**
+
+- **Operation**: Instantiates a `PrintWriter` for the output file.
+- **Complexity**: Constant time operation.
+- **Result**: **`O(1)`**.
+
+##### **Writing the Header**
+
+- **Operation**: Writes the CSV header line.
+- **Complexity**: Constant time operation.
+- **Result**: **`O(1)`**.
+
+---
+
+#### **3. Writing Activity Data**
+
+- **Operation**: Loops over `verticesList` (list of activities). For each activity, it writes details and iterates
+  through its predecessors.
+
+##### **Outer Loop**
+
+- **Description**: Iterates over all activities.
+- **Complexity**: **`O(V)`**, where `V` is the number of activities.
+
+##### **Inner Loop (Predecessors)**
+
+- **Description**: For each activity, iterates through its predecessors to write dependencies.
+- **Worst Case**: Each activity has up to `V` predecessors, resulting in **`O(V)`** complexity for the inner loop.
+
+- **Combined Complexity for All Activities**:  
+  Outer loop (`O(V)`) × Inner loop (`O(V)` for predecessors) = **`O(V^2)`**.
+
+---
+
+#### **4. Writing Special Activities (Start and Finish)**
+
+- **Operation**: Separately handles "Start" and "Finish" nodes.
+- **Complexity**: Constant time operation.
+- **Result**: **`O(1)`**.
+
+---
+
+#### **5. Closing the File**
+
+- **Operation**: Closes the `PrintWriter`.
+- **Complexity**: Constant time operation.
+- **Result**: **`O(1)`**.
+
+---
+
+### **Final Complexity Analysis**
+
+| **Step**                       | **Time Complexity** | **Space Complexity** |
+|--------------------------------|---------------------|----------------------|
+| Schedule Analysis Calculation  | `O(V + E)`          | `O(1)`               |
+| File Creation and Header Write | `O(1)`              | `O(1)`               |
+| Writing Activity Data          | `O(V^2)`            | `O(1)`               |
+| Writing Special Activities     | `O(1)`              | `O(1)`               |
+| File Closing                   | `O(1)`              | `O(1)`               |
+| **Total**                      | **`O(V^2)`**        | **`O(1)`**           |
+
+---
+
+### **Conclusions**
+
+#### **Efficiency**
+
+- **Time Complexity**:
+    - The method's dominant factor is the nested loop over activities and their predecessors, resulting in **`O(V^2)`**
+      in the worst case.
+    - The schedule analysis step adds **`O(V + E)`**, but it does not dominate the overall complexity.
+
+- **Space Complexity**: The method is efficient in terms of space, as it writes directly to a file and does not require
+  additional large data structures. The overall space complexity is **`O(1)`**.
+
+#### **Scalability**
+
+- The method may experience performance degradation for large projects with a high number of activities and dense
+  dependencies, as the **`O(V^2)`** complexity can become significant. However, for projects with sparse dependencies,
+  the performance impact is less pronounced.
+
+#### **Error Handling**
+
+- The method includes basic error handling for file writing operations, ensuring robustness in most scenarios.
+  Improvements could be made by enhancing logging or exception propagation for better debugging in production
+  environments.
+
+#### **Optimization Opportunities**
+
+1. **Reduce Predecessor Iteration Cost**:
+    - Using adjacency lists or hash maps for faster lookup of predecessors could reduce the inner loop's complexity.
+2. **Parallelization**:
+    - Writing activity data could be parallelized if activities are independent of one another.
+3. **Batched File Writing**:
+    - Writing data in larger batches instead of individual lines could improve I/O performance for very large datasets.
+
+---
+
+### **Summary**
+
+The `sendProjectScheduleToFile` method is efficient in terms of space but has a worst-case time complexity of **`O(V^2)`
+** due to nested loops over activities and their dependencies. While suitable for moderately sized projects, it may
+require optimization to handle large and densely connected schedules effectively.
+
+
+---
+
+---
+
+# **USEI22 - Critical Path Calculation: Complexity Analysis**
+
+## **Method Overview**
+
+The `calculateCriticalPath` method computes the critical path and total project duration in a graph of activities. It
+leverages depth-first search (DFS) traversal, using stacks for iterative exploration of paths. The method identifies
+nodes connected to a designated "Start" node and evaluates paths ending at nodes connected to a "Finish" node.
+
+---
+
+## **Line-by-Line Complexity Analysis**
+
+### **1. Input Validation**
+
+- **Description**: The method checks whether the input graph is null or empty.
+- **Complexity**:
+    - Null check is **O(1)**.
+    - Checking if vertices are empty involves traversing all vertices, resulting in **O(V)**.
+- **Result**: **O(V)**.
+
+---
+
+### **2. Initialization of Result Variables**
+
+- **Description**: Allocates space for the critical path list and initializes the total duration variable.
+- **Complexity**: Initialization operations are constant time.
+- **Result**: **O(1)**.
+
+---
+
+### **3. Filter Valid Activities**
+
+- **Description**: Iterates over all vertices in the graph, excluding the "Start" and "Finish" nodes from the filtered
+  activity list.
+- **Complexity**:
+    - Iterates through all vertices: **O(V)**.
+    - Performs constant-time checks for each vertex.
+- **Result**: **O(V)**.
+
+---
+
+### **4. Identify Start Nodes**
+
+- **Description**: Iterates through the filtered activities to identify nodes connected to the "Start" node.
+    - For each node, the method checks its predecessors for the presence of a "Start" node.
+- **Complexity**:
+    - Outer loop iterates through filtered activities: **O(V)**.
+    - Inner loop iterates through predecessors: **O(E)**.
+- **Result**: **O(V * E)**.
+
+---
+
+### **5. Initialize Stacks for DFS**
+
+- **Description**: Initializes three stacks used for iterative DFS traversal—one for nodes, one for path durations, and
+  one for tracking paths.
+- **Complexity**: Stack initialization is a constant-time operation.
+- **Result**: **O(1)**.
+
+---
+
+### **6. Explore Paths Using DFS**
+
+#### **Outer Loop for Start Nodes**
+
+- **Description**: Iterates over all start nodes to initialize DFS traversal for each.
+- **Complexity**: For all start nodes, the outer loop is **O(V)**.
+
+#### **DFS Iteration**
+
+- **Description**: Iteratively pops nodes from the stack, evaluates them, and explores successors.
+    - Each node is processed once, and its stack operations are constant time: **O(1)**.
+- **Complexity**:
+    - Processing all nodes via DFS traversal: **O(V)**.
+
+#### **End Node Check**
+
+- **Description**: For each node, checks if it connects to a "Finish" node by examining its successors.
+- **Complexity**:
+    - Checking successors for each node: **O(E)** in total.
+- **Result**: **O(E)**.
+
+#### **Exploring Valid Successors**
+
+- **Description**: Iterates through filtered activities to identify valid successors. Successors must have zero slack
+  and be listed as a successor of the current node.
+- **Complexity**:
+    - Outer loop iterates through filtered activities: **O(V)**.
+    - For each activity, checks if it’s a successor: **O(1)**.
+- **Result**: **O(V^2)** in the worst case.
+
+---
+
+### **7. Construct Results**
+
+- **Description**: Stores the calculated critical path and total duration in a result map.
+- **Complexity**: Inserting results into a map is a constant-time operation.
+- **Result**: **O(1)**.
+
+---
+
+### **8. Error Handling**
+
+- **Description**: Catches exceptions during critical path calculation and logs an error message.
+- **Complexity**: Exception handling is a constant-time operation.
+- **Result**: **O(1)**.
+
+---
+
+## **Final Complexity Summary**
+
+| **Step**                    | **Time Complexity** |
+|-----------------------------|---------------------|
+| Input Validation            | O(V)                |
+| Initialization of Variables | O(1)                |
+| Filter Valid Activities     | O(V)                |
+| Identify Start Nodes        | O(V * E)            |
+| Initialize Stacks           | O(1)                |
+| DFS Path Exploration        | O(V^2)              |
+| Construct Results           | O(1)                |
+| Error Handling              | O(1)                |
+| **Total Complexity**        | **O(V^2)**          |
+
+---
+
+## **Conclusion**
+
+### **Efficiency**
+
+- The method relies on iterative DFS traversal to compute paths. The main computational bottleneck lies in nested loops
+  over vertices and their predecessors/successors, leading to **O(V^2)** complexity in the worst case.
+
+### **Scalability**
+
+- **Suitable for Moderate Graphs**: The method performs well for small to medium-sized graphs but may struggle with
+  large datasets due to quadratic complexity.
+- **Graph Size**: The number of vertices (`V`) and edges (`E`) heavily influences performance.
+
+### **Optimization Opportunities**
+
+1. **Adjacency Lists or Hash Maps**:
+    - Using adjacency lists or hash maps for faster lookups could reduce nested loop dependencies.
+2. **Parallel DFS**:
+    - Parallelizing DFS for independent start nodes may improve performance on large graphs.
+3. **Path Caching**:
+    - Reuse precomputed paths or intermediate results where applicable to avoid redundant calculations.
+
+### **Error Handling**
+
+- The current error-handling mechanism is basic, relying on logging. Introducing structured logging or exception
+  propagation could improve maintainability and debugging.
+
+---
+
+---
+
+# **USEI24 - Simulate Project Delays and Their Impact: Complexity Analysis**
+
+## **Algorithms Class Complexity Analysis**
+
+| **Method**                 | **Time Complexity** |
+|----------------------------|---------------------|
+| `calculateCriticalPath()`  | O(1)                |
+| `updateActivityDuration()` | O(1)                |
+| `removeActivities()`       | O(V + E)            |
+
+---
+
+### **1. `calculateCriticalPath()`**
+
+#### **Description**:
+
+This method is responsible for determining the critical path in a project schedule. Instead of performing the
+calculation directly, it delegates the task to `CriticalPath.calculateCriticalPath(createdMap)`, which processes the
+graph to find the critical path.
+
+#### **Operations**:
+
+1. **Delegation**:
+    - Calls the method `CriticalPath.calculateCriticalPath`, passing a graph object (`createdMap`) as input. This
+      operation itself is constant time: **O(1)**.
+    - The actual complexity of the operation depends on the implementation of the `CriticalPath.calculateCriticalPath`
+      method, which is typically **O(V + E)**, where `V` is the number of vertices (activities) and `E` is the number of
+      edges (dependencies).
+
+#### **Complexity**:
+
+- **Time Complexity**: O(1) for this method itself. The actual critical path
+  calculation (`CriticalPath.calculateCriticalPath`) has a separate complexity of **O(V + E)**.
+
+---
+
+### **2. `updateActivityDuration()`**
+
+#### **Description**:
+
+This method updates the duration of an activity by adding a specified value. If the new duration becomes negative, it
+ensures the duration is reset to zero.
+
+#### **Operations**:
+
+1. **Retrieve Current Duration**:
+    - Retrieves the activity's current duration with a getter method: **O(1)**.
+2. **Update Duration**:
+    - Adds the specified value to the current duration: **O(1)**.
+    - Checks if the new duration is non-negative: **O(1)**.
+3. **Set New Duration**:
+    - Updates the duration using a setter method: **O(1)**.
+
+#### **Complexity**:
+
+- **Time Complexity**: **O(1)**. All operations are constant time and do not depend on the size of the input.
+- **Space Complexity**: **O(1)**. No additional data structures are created.
+
+---
+
+### **3. `removeActivities()`**
+
+#### **Description**:
+
+This method removes specified vertices (activities) from the graph. It ensures that dependencies connected to the
+removed activities are also handled appropriately.
+
+#### **Operations**:
+
+1. **Identify Activities to Remove**:
+    - Iterates through all vertices (`V`) in the graph to identify which ones need to be removed. This involves
+      retrieving each vertex’s ID and comparing it with the IDs of the activities to remove: **O(V)**.
+2. **Remove Vertices**:
+    - Iterates through the list of identified activities to remove. For each vertex:
+        - Removes it from the graph structure.
+        - Updates adjacency lists or internal data structures to maintain the graph's integrity. This step requires
+          traversing the edges connected to each removed vertex: **O(E)**.
+
+#### **Complexity**:
+
+- **Time Complexity**: **O(V + E)**. Iterating over all vertices and edges in the graph dominates the method's
+  performance.
+- **Space Complexity**: **O(1)**. The method does not use additional space beyond existing structures.
+
+---
+
+## **Overall Complexity Analysis**
+
+### **Time Complexity**
+
+1. **Graph Traversal**:
+    - The most computationally expensive operations involve graph traversal. Removing activities (`removeActivities`)
+      and calculating the critical path (`calculateCriticalPath`) involve visiting all vertices and edges.
+    - The dominant time complexity for the system is **O(V + E)**, where `V` is the number of vertices and `E` is the
+      number of edges.
+
+2. **Activity Updates**:
+    - Updating activity durations is a constant-time operation (**O(1)**) and does not significantly contribute to the
+      overall complexity.
+
+### **Space Complexity**
+
+- The methods primarily operate directly on the existing graph data structure and do not create large intermediate data
+  structures.
+- The space complexity for all methods is **O(1)**.
+
+---
+
+## **Conclusion**
+
+- The overall system is dominated by the graph operations (`calculateCriticalPath` and `removeActivities`), which have a
+  time complexity of **O(V + E)**.
+- The `updateActivityDuration` method is efficient and has a negligible impact on the system’s overall performance.
+- The implementation is space-efficient, as no additional memory is required for intermediate calculations.
+
+While the system handles small- to medium-sized projects efficiently, larger graphs with high numbers of vertices and
+edges could result in performance bottlenecks. Future improvements might involve optimizing graph traversal or
+parallelizing operations for better scalability.
