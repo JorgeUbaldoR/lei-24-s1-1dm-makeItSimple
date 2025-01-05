@@ -60,7 +60,7 @@ public class ProjectSchedule {
     }
 
 
-    protected void calculateScheduleAnalysis() {
+    protected void calculateScheduleAnalysis(boolean modify) {
         generateVerticesListBFS();
 
         for (Activity a : verticesList) {
@@ -73,10 +73,15 @@ public class ProjectSchedule {
             } else {
                 earliestStart = getMaxEarliestFinish(a.getPredecessors());
             }
-            a.setEarliestStart(earliestStart);
+            if (modify)
+                a.setEarliestStart(earliestStart);
 
             double earliestFinish = earliestStart + a.getDuration();
-            a.setEarliestFinish(earliestFinish);
+            if (modify)
+                a.setEarliestFinish(earliestFinish);
+
+            if (!modify)
+                printEsEf(a, earliestStart, earliestFinish);
         }
 
         ListIterator<Activity> iterator = verticesList.listIterator(verticesList.size());
@@ -96,15 +101,35 @@ public class ProjectSchedule {
             if (latestFinish == Double.MAX_VALUE) {
                 latestFinish = a.getEarliestFinish();
             }
-            a.setLatestFinish(latestFinish);
+            if(modify)
+                a.setLatestFinish(latestFinish);
 
             double latestStart = latestFinish - a.getDuration();
-            a.setLatestStart(latestStart);
+            if (modify)
+                a.setLatestStart(latestStart);
 
             double slack = latestFinish - a.getEarliestFinish();
-            a.setSlack(slack);
+            if (modify)
+                a.setSlack(slack);
+
+            if(!modify)
+                printLsLfSlack(a, latestStart, latestFinish, slack);
         }
     }
+
+    private void printEsEf(Activity activity, double earliestStart, double earliestFinish) {
+        System.out.printf("Activity: %s || Previous earliest start: %.2f || New earliest start: %.2f%n", activity.getId(), activity.getEarliestStart(), earliestStart);
+        System.out.printf("Activity: %s || Previous earliest finish: %.2f || New earliest finish: %.2f%n", activity.getId(), activity.getEarliestFinish(), earliestFinish);
+        System.out.println();
+    }
+
+    private void printLsLfSlack(Activity activity, double latestStart, double latestFinish, double slack) {
+        System.out.printf("Activity: %s || Previous latest start: %.2f || New latest start: %.2f%n", activity.getId(), activity.getLatestStart(), latestStart);
+        System.out.printf("Activity: %s || Previous latest finish: %.2f || New latest finish: %.2f%n", activity.getId(), activity.getLatestFinish(), latestFinish);
+        System.out.printf("Activity: %s || Previous slack time: %.2f || New slack time: %.2f%n", activity.getId(), activity.getSlack(), slack);
+        System.out.println();
+    }
+
 
     private double getMaxEarliestFinish(List<ID> predecessors) {
         double max = 0;
@@ -137,7 +162,7 @@ public class ProjectSchedule {
     }
 
     public void sendProjectScheduleToFile(String fileName) {
-        calculateScheduleAnalysis();
+        calculateScheduleAnalysis(true);
         try {
            writer = new PrintWriter(FILE_PATH + fileName + ".csv");
             writer.println("act_id;cost;duration;es;ls;ef;lf;prev_act_ids...");
