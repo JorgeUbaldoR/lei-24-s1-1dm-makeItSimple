@@ -13,10 +13,11 @@ public class ItemLevelProcessor {
      */
     public ItemLevelProcessor(boolean orders, String path) {
         tree = new TreeMap<>(Collections.reverseOrder());
-        if (orders)
+        if (!orders)
             associateItemsWithTree();
-        else
+        else {
             associateItemsWithTreeInOrders(path);
+        }
     }
 
     /**
