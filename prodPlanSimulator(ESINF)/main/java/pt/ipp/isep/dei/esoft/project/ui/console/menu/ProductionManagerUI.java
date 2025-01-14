@@ -22,7 +22,7 @@ public class ProductionManagerUI implements Runnable {
         options.add(new MenuItem("| PERT/CPM UI", new PERTCPMUI()));
 
         options.add(new MenuItem("Process Orders", new ProcessOrdersUI()));
-        options.add(new MenuItem("Simulation", new SimulatorUI()));
+        //options.add(new MenuItem("Simulation", new SimulatorUI()));
 
 
 

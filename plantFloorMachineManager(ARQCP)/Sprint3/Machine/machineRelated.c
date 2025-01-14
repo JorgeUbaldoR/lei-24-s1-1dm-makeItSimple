@@ -112,7 +112,7 @@ int get_data(int* temp_buffer, int* hum_buffer, int buffer_length, int* head_tem
                 enqueue_value(temp_buffer, buffer_length, tail_temp, head_temp, temperature); 
                    
             } else {
-                printf("Invalid data received!\n");
+                //printf("Invalid data received!\n");
             }
         } else if (bytes_read == -1) {
             perror("Erro na leitura da porta serial");

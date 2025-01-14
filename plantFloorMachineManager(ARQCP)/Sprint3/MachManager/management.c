@@ -60,7 +60,8 @@ int add_machine_manually(Machine** machines, short identifier, char name[30],
     new_machine->n_operations = 0;
     new_machine->operations = NULL;
     new_machine->operation_sequence = NULL;
-    ALL_MACHINE_IDS[NUMBER_OF_MACHINES] = identifier;
+    extend_operation_ids_container();
+    ALL_MACHINE_IDS[NUMBER_OF_MACHINES -1] = identifier;
 
     return 1;
     }
